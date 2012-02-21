@@ -22,12 +22,12 @@ public class Course {
 		section = _section;
 	}
 
-	public String getComments() { return comments; }
-	public String getID() { return id; }
-	public Instructor getInstructor() { return instructor; }
-	public int getNumReviewers() { return num_reviewers; }
-	public int getNumStudents() { return num_students; }
-	public String getPath() { return path; }
+	public String 		getComments() 		{ return comments; }
+	public String 		getID() 			{ return id; }
+	public Instructor 	getInstructor() 	{ return instructor; }
+	public int 			getNumReviewers() 	{ return num_reviewers; }
+	public int 			getNumStudents() 	{ return num_students; }
+	public String 		getPath() 			{ return path; }
 	public Ratings getRatings() { return ratings; }
 	public Section getSection() { return section; }
 }

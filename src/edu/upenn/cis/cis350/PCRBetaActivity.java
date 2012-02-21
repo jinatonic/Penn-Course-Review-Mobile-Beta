@@ -17,25 +17,6 @@ public class PCRBetaActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		Parser p = new Parser();
-		String s ="Hi";
-		try {
-			s = p.getReviewsForCourse("CIS277");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			s = "What";
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			s = "Huh";
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			s = "Why";
-			e.printStackTrace();
-		}
-		TextView title = (TextView)findViewById(R.id.test);
-		title.setText(s);
+		setContentView(R.layout.search_page);
 	}
 }

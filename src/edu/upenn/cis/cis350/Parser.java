@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class Parser {
 	public final String baseURL = "http://api.penncoursereview.com/v1";
-	public final String token = ""; // Fill in with private token (taken out for purposes of being on github publically)
+	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
 	public JSONObject retrieveJSONObject(String path) throws IOException, ParseException, JSONException {
 		URL url = new URL(path);

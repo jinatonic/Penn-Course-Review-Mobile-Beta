@@ -31,5 +31,4 @@ public class DisplayReviewsForCourse extends Activity {
 		TextView title = (TextView)findViewById(R.id.reviews);
 		title.setText(courseReviews);
 	}
-
 }

@@ -12,12 +12,7 @@ public class Instructor {
 	}
 	
 	public String getID() {	return id; }
-<<<<<<< HEAD
-	public String getName() {return name; }
-	public String getPath() {return path; }
-=======
 	public String getName() { return name; }
 	public String getPath() { return path; }
->>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 }
 

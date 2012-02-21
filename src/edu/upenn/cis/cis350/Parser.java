@@ -30,6 +30,10 @@ public class Parser {
 		Log.v("Length",builder.toString());
 
 		return new JSONObject(builder.toString());
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 	}
 	
 	public String getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
@@ -76,7 +80,11 @@ public class Parser {
 	public String displayCourseReviews(ArrayList<Course> reviews) {
 		String s = "";
 		for (Course c: reviews) {
+<<<<<<< HEAD
 			s+=c.getID() +"\n"+ c.getRatings() + "\n\n";
+=======
+			s+=c.getID() + "\n"+ c.getRatings() + "\n\n";
+>>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 		}
 		return s;
 	}

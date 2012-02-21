@@ -9,7 +9,11 @@ public class Course {
 	private String path;
 	private Ratings ratings;
 	private Section section;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 	public Course(String _comments, String _id, Instructor _instructor, int _num_reviewers,
 			int _num_students, String _path, Ratings _ratings, Section _section) {
 		id = _id;
@@ -21,7 +25,11 @@ public class Course {
 		ratings = _ratings;
 		section = _section;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 	public String getComments() { return comments; }
 	public String getID() { return id; }
 	public Instructor getInstructor() { return instructor; }
@@ -30,4 +38,8 @@ public class Course {
 	public String getPath() { return path; }
 	public Ratings getRatings() { return ratings; }
 	public Section getSection() { return section; }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b638ef56ea27f3cc84cc750c4350c44d3a3e490
 }

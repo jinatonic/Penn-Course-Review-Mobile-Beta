@@ -12,11 +12,11 @@ public class Ratings {
 	private double recommendNonMajor;
 	private double stimulateInterest;
 	private double workRequired;
-	
+
 	public Ratings(Double _amountLearned, Double _commAbility, Double _courseQuality, Double _difficulty, Double _instructorAccess,
 			Double _instructorQuality, Double _readingsValue, Double _recommendMajor, Double _recommendNonMajor, Double _stimulateInterest,
 			Double _workRequired) {
-		
+
 		amountLearned = _amountLearned.doubleValue();
 		commAbility = _commAbility.doubleValue();
 		courseQuality = _courseQuality.doubleValue();
@@ -42,17 +42,17 @@ public class Ratings {
 	public double getStimulateInterest() { return stimulateInterest; }
 	public double getWorkRequired() { return workRequired; }
 	
-	public String toString(){
+	public String toString() {
 		return "Amount Learned: " + amountLearned +
-				"\nCommunication Ability: " + commAbility +
-				"\nCourse Quality: " + courseQuality +
-				"\nDifficulty: " + difficulty +
-				"\nInstructor Access: " + instructorAccess +
+				"\nCommunication Ability: " + commAbility + 
+				"\nCourse Quality: "+ courseQuality +
+				"\nDifficulty: " + difficulty + 
+				"\nInstructor Access: " + instructorAccess + 
 				"\nInstructor Quality: " + instructorQuality +
-				"\nReadings Value: " + readingsValue +
+				"\nReadings Value: " + readingsValue + 
 				"\nRecommend to a Major: " + recommendMajor +
-				"\nRecommend to a nonmajor: " + recommendNonMajor +
-				"\nStimulate Interest: " + stimulateInterest +
+				"\nRecommend to a nonmajor: " + recommendNonMajor+
+				"\nStimulate Interest: " + stimulateInterest + 
 				"\nWork Required: " + workRequired;
 	}
 }

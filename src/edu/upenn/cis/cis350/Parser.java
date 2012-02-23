@@ -15,8 +15,8 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class Parser {
-	public final String baseURL = "http://api.penncoursereview.com/v1";
-	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
+	private static final String BASE_URL = "http://api.penncoursereview.com/v1";
+	private static final String TOKEN = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
 	public JSONObject retrieveJSONObject(String path) throws IOException, ParseException, JSONException {
 		URL url = new URL(path);
@@ -46,7 +46,7 @@ public class Parser {
 		String alias = dept + "-" + num;
 		System.out.println(alias);
 
-		String url = baseURL + "/depts/"+ dept + token;
+		String url = BASE_URL + "/depts/"+ dept + TOKEN;
 
 		JSONObject json = retrieveJSONObject(url);
 		JSONObject result = (JSONObject)json.get("result");
@@ -82,7 +82,7 @@ public class Parser {
 	}
 	
 	public ArrayList<Course> storeReviews(String path) throws IOException, ParseException, JSONException {
-		JSONObject json = retrieveJSONObject(baseURL+path+token);
+		JSONObject json = retrieveJSONObject(BASE_URL+path + TOKEN);
 		JSONArray courses = json.getJSONObject("result").getJSONArray("values");
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		for (int j = 0; j < courses.length(); ++j) {

@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package edu.upenn.cis.cis350;
+package edu.upenn.cis.cis350.display;
 
 public final class R {
     public static final class attr {

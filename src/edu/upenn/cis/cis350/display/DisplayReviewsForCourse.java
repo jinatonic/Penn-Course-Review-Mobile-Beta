@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350;
+package edu.upenn.cis.cis350.display;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.Parser;
 
 public class DisplayReviewsForCourse extends Activity {
 	

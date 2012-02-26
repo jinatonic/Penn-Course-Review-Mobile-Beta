@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350;
+package edu.upenn.cis.cis350.display;
 
 import android.app.Activity;
 import android.os.Bundle;

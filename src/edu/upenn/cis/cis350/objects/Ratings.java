@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350;
+package edu.upenn.cis.cis350.objects;
 
 public class Ratings {
 	private double amountLearned;
@@ -18,17 +18,17 @@ public class Ratings {
 			Double _instructorQuality, Double _readingsValue, Double _recommendMajor, Double _recommendNonMajor, Double _stimulateInterest,
 			Double _workRequired) {
 
-		amountLearned = (_amountLearned!=null) ?_amountLearned.doubleValue():0;
-		commAbility = (_commAbility!=null)?_commAbility.doubleValue():0;
-		courseQuality = (_courseQuality!=null)? _courseQuality.doubleValue():0;
-		difficulty = (_difficulty!=null)?_difficulty.doubleValue():0;
-		instructorAccess = (_instructorAccess!=null)? _instructorAccess.doubleValue():0;
-		instructorQuality = (_instructorQuality!=null)?_instructorQuality.doubleValue():0;
-		readingsValue = (_readingsValue!=null)?_readingsValue.doubleValue():0;
-		recommendMajor = (_recommendMajor!=null)?_recommendMajor.doubleValue():0;
-		recommendNonMajor = (_recommendNonMajor!=null)?_recommendNonMajor.doubleValue():0;
-		stimulateInterest = (_stimulateInterest!=null)?_stimulateInterest.doubleValue():0;
-		workRequired = (_workRequired!=null)?_workRequired.doubleValue():0;
+		amountLearned = (_amountLearned!=null) ? _amountLearned.doubleValue() : 0;
+		commAbility = (_commAbility!=null) ? _commAbility.doubleValue() : 0;
+		courseQuality = (_courseQuality!=null) ? _courseQuality.doubleValue() : 0;
+		difficulty = (_difficulty!=null) ? _difficulty.doubleValue() : 0;
+		instructorAccess = (_instructorAccess!=null) ? _instructorAccess.doubleValue() : 0;
+		instructorQuality = (_instructorQuality!=null) ? _instructorQuality.doubleValue() : 0;
+		readingsValue = (_readingsValue!=null) ? _readingsValue.doubleValue() : 0;
+		recommendMajor = (_recommendMajor!=null) ? _recommendMajor.doubleValue() : 0;
+		recommendNonMajor = (_recommendNonMajor!=null) ? _recommendNonMajor.doubleValue() : 0;
+		stimulateInterest = (_stimulateInterest!=null) ? _stimulateInterest.doubleValue() : 0;
+		workRequired = (_workRequired!=null) ? _workRequired.doubleValue() : 0;
 	}
 
 	public double getAmountLearned() { return amountLearned; }

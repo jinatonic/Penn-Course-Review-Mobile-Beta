@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350;
+package edu.upenn.cis.cis350.objects;
 
 public class Section {
 	private String[] aliases;

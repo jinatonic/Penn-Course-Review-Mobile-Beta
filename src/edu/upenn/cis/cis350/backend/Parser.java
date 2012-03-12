@@ -17,6 +17,8 @@ import android.util.Log;
 import edu.upenn.cis.cis350.objects.*;
 
 public class Parser {
+	
+	Sorter s = new Sorter();
 	public final String baseURL = "http://api.penncoursereview.com/v1";
 	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
@@ -42,6 +44,25 @@ public class Parser {
 		}
 	}
 
+	
+	public String getReviewsForDept(String dept) throws IOException, ParseException, JSONException {
+		dept = dept.trim().toUpperCase();
+		System.out.println(dept);
+		String path = "/depts/"+dept+"/reviews";
+		String url = baseURL + path + token;
+
+		JSONObject json = retrieveJSONObject(url);
+		if (json == null)
+			return null;
+		System.out.println(url);
+		ArrayList<Course> reviews = new ArrayList<Course>();
+		reviews = storeReviews(path);
+
+		System.out.println(reviews.size());
+
+		return displayCourseReviews(reviews);
+		
+	}
 	public String getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
 		course = course.trim();
 		System.out.println(course);
@@ -103,9 +124,10 @@ public class Parser {
 	}
 
 	public String displayCourseReviews(ArrayList<Course> reviews) {
+		reviews = s.sortBy(reviews, "difficulty");
 		String s = "";
 		for (Course c : reviews) {
-			s += c.getID() + "\n"+ c.getRatings() + "\n\n";
+			s += c.getID() + "\n"+ c.getRatings().getDifficulty() + "\n\n";
 		}
 		return s;
 	}

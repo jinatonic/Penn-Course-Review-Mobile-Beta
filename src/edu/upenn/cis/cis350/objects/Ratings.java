@@ -30,7 +30,24 @@ public class Ratings {
 		stimulateInterest = (_stimulateInterest!=null) ? _stimulateInterest.doubleValue() : 0;
 		workRequired = (_workRequired!=null) ? _workRequired.doubleValue() : 0;
 	}
-
+	//returns rating given by r, -1 on error
+	public double getRating(String r){
+		if(r.equalsIgnoreCase("amountLearned")) return amountLearned;
+		if(r.equalsIgnoreCase("commAbility")) return commAbility;
+		if(r.equalsIgnoreCase("courseQuality")) return courseQuality;
+		if(r.equalsIgnoreCase("difficulty")) return difficulty;
+		if(r.equalsIgnoreCase("instructorAccess")) return instructorAccess;
+		if(r.equalsIgnoreCase("instructorQuality")) return instructorQuality;
+		if(r.equalsIgnoreCase("readingsValue")) return readingsValue;
+		if(r.equalsIgnoreCase("recommendMajor")) return recommendMajor;
+		if(r.equalsIgnoreCase("recommendNonMajor")) return recommendNonMajor;
+		if(r.equalsIgnoreCase("stimulateInterest")) return stimulateInterest;
+		if(r.equalsIgnoreCase("workRequired")) return workRequired;
+		
+		return -1;
+		
+		
+	}
 	public double getAmountLearned() { return amountLearned; }
 	public double getCommAbility() { return commAbility; }
 	public double getCourseQuality() { return courseQuality; }

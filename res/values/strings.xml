@@ -5,6 +5,12 @@
     <string name="app_name">PCRBeta</string>
     <string name="enter">Enter</string>
     <string name="clear">Clear</string>
+    <string name="pcr">PennCourseReview</string>
+    <string name="search_text">Search for a class or a professor</string>
     <string name="SEARCH_TERM">Search Term</string>
+
+    <color name="bg_blue">#D7D7EB</color>
+    <color name="text_navy">#191967</color>
+    <color name="text_gray">#62627F</color>
 
 </resources>

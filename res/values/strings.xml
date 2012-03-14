@@ -12,5 +12,6 @@
     <color name="bg_blue">#D7D7EB</color>
     <color name="text_navy">#191967</color>
     <color name="text_gray">#62627F</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

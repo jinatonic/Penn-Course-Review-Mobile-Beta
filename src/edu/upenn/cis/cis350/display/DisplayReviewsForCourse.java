@@ -7,12 +7,13 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Parser;
 
 public class DisplayReviewsForCourse extends Activity {
-	
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.course_reviews);
@@ -31,5 +32,10 @@ public class DisplayReviewsForCourse extends Activity {
 		}
 		TextView title = (TextView)findViewById(R.id.reviews);
 		title.setText(courseReviews);
+
+		// Set font to Times New Roman
+		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
+		TextView searchPCRView = (TextView) findViewById(R.id.header);
+		searchPCRView.setTypeface(timesNewRoman);
 	}
 }

@@ -32,8 +32,16 @@ public class DisplayReviewsForCourse extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		//TextView title = (TextView)findViewById(R.id.reviews);
-		//title.setText(courseReviews);
+		
+		// Top half of page, course name/description
+		TextView number = (TextView)findViewById(R.id.course_number);
+		number.setText(courseReviews.get(0).getAlias());
+		TextView name = (TextView) findViewById(R.id.course_name);
+		name.setText(courseReviews.get(0).getName());
+		TextView description = (TextView)findViewById(R.id.course_description);
+		description.setText(courseReviews.get(0).getDescription());
+		
+		//Bottom half of page, reviews for course
 		// Fill table cells with each Course's fields from courseReviews
 
 		// Set font to Times New Roman

@@ -30,6 +30,7 @@ public class Course {
 		this.ratings = _ratings;
 		this.section = _section;
 	}
+
 	public String getAlias() { return alias; }
 	public String getName() { return name; }
 	public String getDescription() {return description; }

@@ -109,6 +109,13 @@ public class SearchCache {
 		mDbHelper.close();
 	}
 	
+	/** 
+	 * Delete all tables from database (for testing purposes)
+	 */
+	public void deleteAllTables() {
+		mDb.rawQuery("DROP TABLE IF EXISTS " + COURSE_TABLE, null);
+	}
+	
 	/**
 	 * Takes a given course and store the information in the database (if not exists)
 	 * @param course
@@ -162,6 +169,9 @@ public class SearchCache {
 		
 		if (mDb.insert(COURSE_TABLE, null, values) == -1) 
 			Log.w(TAG, "Failed to insert new course into table");
-		
+	}
+	
+	public Course getCourse() {
+		return null;
 	}
 }

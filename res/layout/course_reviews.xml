@@ -19,33 +19,38 @@
         android:layout_width="fill_parent"
         android:layout_height="120dip"
         android:background="@color/bg_blue"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="10dp" >
 
         <TextView
             android:id="@+id/course_number"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello" />
+            android:text="@string/hello"
+            android:textColor="@color/text_navy"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/course_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello" />
+            android:text="@string/hello"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/course_description"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello" />
+            android:text="@string/hello"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:stretchColumns="4" >
+        android:stretchColumns="4"
+        android:background="@color/white" >
 
         <TableRow>
 

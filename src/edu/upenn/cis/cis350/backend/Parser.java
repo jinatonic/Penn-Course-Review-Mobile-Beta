@@ -146,7 +146,7 @@ public class Parser {
 		if(js.has("result")){
 			JSONObject jresult = js.getJSONObject("result");
 			if(jresult.has("aliases")){
-				JSONArray als = js.getJSONArray("aliases");
+				JSONArray als = jresult.getJSONArray("aliases");
 				course_aliases = new String[als.length()];
 				for(int k = 0; k< als.length(); ++k)
 					course_aliases[k] = als.getString(k);

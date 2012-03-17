@@ -1,6 +1,9 @@
 package edu.upenn.cis.cis350.objects;
 
 public class Course {
+	private String name;
+	private String description;
+	private String semester;
 	private String id;
 	private String comments;
 	private Instructor instructor;
@@ -10,8 +13,11 @@ public class Course {
 	private Ratings ratings;
 	private Section section;
 	
-	public Course(String _comments, String _id, Instructor _instructor, int _num_reviewers,
+	public Course(String _name, String _description, String _semester, String _comments, String _id, Instructor _instructor, int _num_reviewers,
 			int _num_students, String _path, Ratings _ratings, Section _section) {
+		name = _name;
+		description = _description;
+		semester = _semester;
 		id = _id;
 		comments = _comments;
 		instructor = _instructor;
@@ -21,7 +27,9 @@ public class Course {
 		ratings = _ratings;
 		section = _section;
 	}
-
+	public String getName() { return name;}
+	public String getDescription() {return description;}
+	public String getSemester() {return semester;}
 	public String getComments() { return comments; }
 	public String getID() { return id; }
 	public Instructor getInstructor() { return instructor; }

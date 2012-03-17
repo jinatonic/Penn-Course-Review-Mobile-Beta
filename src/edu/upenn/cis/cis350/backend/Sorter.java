@@ -27,7 +27,37 @@ public class Sorter {
 		}
 	}
 	
-	public ArrayList<Course> sortBy(ArrayList<Course> courses, String rRating){
+	//sort list by semester, order = 0 is increasing, 1 is decreasing
+	public ArrayList<Course> sortBySemester(ArrayList<Course> courses, int order){
+		Pair [] pairs = new Pair[courses.size()];
+		int count = 0;
+		for(Course c: courses){
+			String s = c.getSemester();
+			double d = Double.parseDouble(s.substring(0,4));
+			if(s.charAt(4) == 'B')
+				d = d + .5;
+			Pair p = new Pair(d,c);
+			pairs[count] = p;
+			count++;
+		}
+		
+		Arrays.sort(pairs);
+		ArrayList<Course> sortedCourses = new ArrayList<Course>();
+		if(order == 0){
+		for(int i = 0; i < pairs.length; i++){
+			sortedCourses.add(pairs[i].getCourse());
+		}
+		}
+		else{
+			for(int i = pairs.length-1; i >= 0; i--){
+				sortedCourses.add(pairs[i].getCourse());
+			}
+		}
+		return sortedCourses;
+		
+	}
+	//sort array according to a specified rating, rRating, and order (0 = increasing, 1 = decreasing)
+	public ArrayList<Course> sortByRating(ArrayList<Course> courses, String rRating, int order){
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;
 		for(Course c: courses){
@@ -39,8 +69,15 @@ public class Sorter {
 		
 		Arrays.sort(pairs);
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
+		if(order == 0){
 		for(int i = 0; i < pairs.length; i++){
 			sortedCourses.add(pairs[i].getCourse());
+		}
+		}
+		else{
+			for(int i = pairs.length-1; i >= 0; i--){
+				sortedCourses.add(pairs[i].getCourse());
+			}
 		}
 		return sortedCourses;
 		

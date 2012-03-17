@@ -105,7 +105,7 @@ public class Parser {
 				for (int k = 0; k < aliases.length(); ++k) {
 					if (aliases.get(k).equals(alias)) {
 						System.out.println(j.toString());
-						path = (String)j.get("path") + "/reviews";
+						path = (String)j.get("path");
 						break;
 					}
 				}
@@ -125,7 +125,7 @@ public class Parser {
 
 	public ArrayList<Course> displayCourseReviews(ArrayList<Course> reviews) {
 		// Right now this method just sorts by difficulty, add additional sorting functionality here or in other methods?
-		reviews = s.sortBy(reviews, "difficulty");
+		reviews = s.sortByRating(reviews, "difficulty", 0);
 		/*
 		ArrayList<Course> courses = new ArrayList<Course>();
 		for (Course c : reviews) {
@@ -137,7 +137,22 @@ public class Parser {
 	}
 
 	public ArrayList<Course> storeReviews(String path) throws IOException, ParseException, JSONException {
-		JSONObject json = retrieveJSONObject(baseURL + path + token);
+		JSONObject js = retrieveJSONObject(baseURL + path + token);
+		String description = null;
+		String name = null;
+		String semester = null;
+		if(js.has("result")){
+			JSONObject jresult = js.getJSONObject("result");
+		
+			if(jresult.has("description"))
+				description = jresult.getString("description");
+			if(jresult.has("name"))
+				name = jresult.getString("name");
+			if(jresult.has("semester"))
+				semester = jresult.getString("semester");
+			
+		}
+		JSONObject json = retrieveJSONObject(baseURL + path + "/reviews"+ token);
 		JSONArray courses = null;
 		if (json.has("result") && json.getJSONObject("result").has("values")){
 			courses = json.getJSONObject("result").getJSONArray("values");
@@ -248,7 +263,7 @@ public class Parser {
 					c_path = course.getString("path");
 				if(course.has("num_students"));
 				num_students = course.getInt("num_students");
-				Course c = new Course(comments,id,i,num_reviewers,num_students,c_path,r,s);
+				Course c = new Course(name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
 				courseReviews.add(c);
 			}
 			return courseReviews;

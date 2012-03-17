@@ -68,28 +68,28 @@
                     android:padding="6dip"
                     android:text="Instructor"
                     android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:textSize="9sp" />
 
                 <TextView
                     android:layout_column="2"
                     android:padding="6dip"
                     android:text="Course Quality"
                     android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:textSize="9sp" />
 
                 <TextView
                     android:layout_column="3"
                     android:padding="6dip"
                     android:text="Instructor Quality"
                     android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:textSize="9sp" />
 
                 <TextView
                     android:layout_column="4"
                     android:padding="6dip"
                     android:text="Difficulty"
                     android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:textSize="9sp" />
             </TableRow>
         </TableLayout>
     </LinearLayout>

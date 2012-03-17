@@ -141,9 +141,18 @@ public class Parser {
 		String description = null;
 		String name = null;
 		String semester = null;
+		String[] course_aliases = null;
+		
 		if(js.has("result")){
 			JSONObject jresult = js.getJSONObject("result");
-		
+			if(jresult.has("aliases")){
+				JSONArray als = js.getJSONArray("aliases");
+				course_aliases = new String[als.length()];
+				for(int k = 0; k< als.length(); ++k)
+					course_aliases[k] = als.getString(k);
+				
+			}
+				
 			if(jresult.has("description"))
 				description = jresult.getString("description");
 			if(jresult.has("name"))
@@ -263,7 +272,7 @@ public class Parser {
 					c_path = course.getString("path");
 				if(course.has("num_students"));
 				num_students = course.getInt("num_students");
-				Course c = new Course(name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
+				Course c = new Course(course_aliases, name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
 				courseReviews.add(c);
 			}
 			return courseReviews;

@@ -1,10 +1,15 @@
 package edu.upenn.cis.cis350.backend;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.Ratings;
+import edu.upenn.cis.cis350.objects.Section;
 
 /**
  * Helper class to access Android SQLite database and store the recently searched data for fast access
@@ -33,7 +38,7 @@ public class SearchCache {
 			"instructor_path char(50) NOT NULL," +
 			"num_reviewers integer NOT NULL DEFAULT 0," +
 			"num_students integer NOT NULL DEFAULT 0," +
-			"path char(50) NOT NULL," +
+			"course_path char(50) NOT NULL," +
 			"ratings_amountLearned float," +
 			"ratings_commAbility float," +
 			"ratings_courseQuality float," +
@@ -103,6 +108,61 @@ public class SearchCache {
 		mDbHelper.close();
 	}
 	
-	
-	
+	/**
+	 * Takes a given course and store the information in the database (if not exists)
+	 * @param course
+	 * @return
+	 */
+	public void addCourse(Course course) {
+		// First we check that the course doesn't already exist in the database
+		Cursor c = mDb.rawQuery("SELECT id FROM " + COURSE_TABLE + " WHERE id='" + course.getID() + "'", null);
+		c.moveToFirst();
+		if (c.getCount() > 0)
+			return;
+		
+		String id = course.getID();
+		
+		// First we add to the course table 
+		ContentValues values = new ContentValues();
+		values.put("id", id);
+		values.put("comments", course.getComments());
+		values.put("instructor_id", course.getInstructor().getID());
+		values.put("instructor_name", course.getInstructor().getName());
+		values.put("instructor_path", course.getInstructor().getPath());
+		values.put("num_reviewers", course.getNumReviewers());
+		values.put("num_students", course.getNumStudents());
+		values.put("course_path", course.getPath());
+		Ratings r = course.getRatings();
+		values.put("ratings_amountLearned", r.getAmountLearned());
+		values.put("ratings_commAbility", r.getCommAbility());
+		values.put("ratings_courseQuality", r.getCourseQuality());
+		values.put("ratings_difficulty", r.getDifficulty());
+		values.put("ratings_instructorAccess", r.getInstructorAccess());
+		values.put("ratings_instructorQuality", r.getInstructorQuality());
+		values.put("ratings_readingsValue", r.getReadingsValue());
+		values.put("ratings_recommendMajor", r.getRecommendMajor());
+		values.put("ratings_recommendNonMajor", r.getRecommendNonMajor());
+		values.put("ratings_stimulateInterest", r.getStimulateInterest());
+		values.put("ratings_workRequired", r.getWorkRequired());
+		
+		if (mDb.insert(COURSE_TABLE, null, values) == -1) 
+			Log.w(TAG, "Failed to insert new course into table");
+		
+		// We first remove all occurrences with the course id
+		mDb.execSQL("DELETE FROM " + SECTION_TABLE + " WHERE course_id='" + id + "'");
+		
+		// Then we loop through the sections and insert into the sections table
+		// TODO: Finish after Charles changed
+		Section sections = course.getSection();
+		values = new ContentValues();
+		values.put("course_id", id);
+		values.put("section_id", sections.getID());
+		values.put("section_path", sections.getPath());
+		values.put("section_number", sections.getSectionNum());
+		values.put("section_alias", sections.getAliases()[0]);
+		
+		if (mDb.insert(SECTION_TABLE, null, values) == -1)
+			Log.w(TAG, "Failed to insert new section into table");
+		
+	}
 }

@@ -6,9 +6,9 @@ public class Instructor {
 	private String path;
 	
 	public Instructor(String _id, String _name, String _path) {
-		id = _id;
-		name = _name;
-		path = _path;
+		this.id = _id;
+		this.name = _name;
+		this.path = _path;
 	}
 	
 	public String getID() {	return id; }

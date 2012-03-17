@@ -175,20 +175,5 @@ public class SearchCache {
 		if (mDb.insert(COURSE_TABLE, null, values) == -1) 
 			Log.w(TAG, "Failed to insert new course into table");
 		
-		// We first remove all occurrences with the course id in all alias tables
-		mDb.execSQL("DELETE FROM " + SECTION_TABLE + " WHERE course_id='" + id + "'");
-		
-		// Then we loop through the sections and insert into the sections table
-		// TODO: Necessary to store more than one alias? probably not
-		Section sections = course.getSection();
-		values = new ContentValues();
-		values.put("course_id", id);
-		values.put("section_id", sections.getID());
-		values.put("section_path", sections.getPath());
-		values.put("section_number", sections.getSectionNum());
-		values.put("section_alias", sections.getAliases()[0]);
-		
-		if (mDb.insert(SECTION_TABLE, null, values) == -1)
-			Log.w(TAG, "Failed to insert new section into table");
 	}
 }

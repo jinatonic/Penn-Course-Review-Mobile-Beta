@@ -18,17 +18,17 @@ public class Ratings {
 			Double _instructorQuality, Double _readingsValue, Double _recommendMajor, Double _recommendNonMajor, Double _stimulateInterest,
 			Double _workRequired) {
 
-		amountLearned = (_amountLearned!=null) ? _amountLearned.doubleValue() : 0;
-		commAbility = (_commAbility!=null) ? _commAbility.doubleValue() : 0;
-		courseQuality = (_courseQuality!=null) ? _courseQuality.doubleValue() : 0;
-		difficulty = (_difficulty!=null) ? _difficulty.doubleValue() : 0;
-		instructorAccess = (_instructorAccess!=null) ? _instructorAccess.doubleValue() : 0;
-		instructorQuality = (_instructorQuality!=null) ? _instructorQuality.doubleValue() : 0;
-		readingsValue = (_readingsValue!=null) ? _readingsValue.doubleValue() : 0;
-		recommendMajor = (_recommendMajor!=null) ? _recommendMajor.doubleValue() : 0;
-		recommendNonMajor = (_recommendNonMajor!=null) ? _recommendNonMajor.doubleValue() : 0;
-		stimulateInterest = (_stimulateInterest!=null) ? _stimulateInterest.doubleValue() : 0;
-		workRequired = (_workRequired!=null) ? _workRequired.doubleValue() : 0;
+		this.amountLearned = (_amountLearned!=null) ? _amountLearned.doubleValue() : 0;
+		this.commAbility = (_commAbility!=null) ? _commAbility.doubleValue() : 0;
+		this.courseQuality = (_courseQuality!=null) ? _courseQuality.doubleValue() : 0;
+		this.difficulty = (_difficulty!=null) ? _difficulty.doubleValue() : 0;
+		this.instructorAccess = (_instructorAccess!=null) ? _instructorAccess.doubleValue() : 0;
+		this.instructorQuality = (_instructorQuality!=null) ? _instructorQuality.doubleValue() : 0;
+		this.readingsValue = (_readingsValue!=null) ? _readingsValue.doubleValue() : 0;
+		this.recommendMajor = (_recommendMajor!=null) ? _recommendMajor.doubleValue() : 0;
+		this.recommendNonMajor = (_recommendNonMajor!=null) ? _recommendNonMajor.doubleValue() : 0;
+		this.stimulateInterest = (_stimulateInterest!=null) ? _stimulateInterest.doubleValue() : 0;
+		this.workRequired = (_workRequired!=null) ? _workRequired.doubleValue() : 0;
 	}
 	//returns rating given by r, -1 on error
 	public double getRating(String r){

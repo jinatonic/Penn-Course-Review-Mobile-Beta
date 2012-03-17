@@ -255,7 +255,7 @@ public class Parser {
 						s_name = section.getString("name");
 					if(section.has("sectionnum"))
 						s_sectionnum = section.getString("sectionnum");
-					s = new Section(aliases, s_id,s_path,s_name,s_sectionnum);
+					s = new Section((aliases == null) ? "" : aliases[0], s_id,s_path,s_name,s_sectionnum);
 				}
 				String comments = null;
 				String id = null;
@@ -272,7 +272,7 @@ public class Parser {
 					c_path = course.getString("path");
 				if(course.has("num_students"));
 				num_students = course.getInt("num_students");
-				Course c = new Course(course_aliases, name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
+				Course c = new Course((course_aliases == null) ? "" : course_aliases[0], name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
 				courseReviews.add(c);
 			}
 			return courseReviews;

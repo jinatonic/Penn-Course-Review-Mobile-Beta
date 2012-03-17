@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.backend;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.ContentValues;
@@ -10,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
@@ -118,8 +120,7 @@ public class SearchCache {
 	
 	/**
 	 * Takes a given course and store the information in the database (if not exists)
-	 * @param course
-	 * @return
+	 * @param course given course to be added to the database
 	 */
 	public void addCourse(Course course) {
 		// First we check that the course doesn't already exist in the database
@@ -171,7 +172,62 @@ public class SearchCache {
 			Log.w(TAG, "Failed to insert new course into table");
 	}
 	
-	public Course getCourse() {
-		return null;
+	/**
+	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
+	 * @param course_alias
+	 * @return ArrayList of courses, or empty ArrayList if no data is found
+	 */
+	public ArrayList<Course> getCourse(String course_alias) {
+		ArrayList<Course> rs = new ArrayList<Course>();
+		
+		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + course_alias + "'", null);
+		c.moveToFirst();
+		
+		// If cached data found, recreate object and return it
+		if (c.getCount() > 0) {
+			Section tSection = new Section(	
+											c.getString(c.getColumnIndex("section_alias")),
+											c.getString(c.getColumnIndex("section_id")),
+											c.getString(c.getColumnIndex("section_path")),
+											c.getString(c.getColumnIndex("section_name")),
+											c.getString(c.getColumnIndex("section_number"))
+										  );
+			Ratings tRate = new Ratings(
+											c.getDouble(c.getColumnIndex("ratings_amountLearned")),
+											c.getDouble(c.getColumnIndex("ratings_commAbility")),
+											c.getDouble(c.getColumnIndex("ratings_courseQuality")),
+											c.getDouble(c.getColumnIndex("ratings_difficulty")),
+											c.getDouble(c.getColumnIndex("ratings_instructorAccess")),
+											c.getDouble(c.getColumnIndex("ratings_instructorQuality")),
+											c.getDouble(c.getColumnIndex("ratings_readingsValue")),
+											c.getDouble(c.getColumnIndex("ratings_recommendMajor")),
+											c.getDouble(c.getColumnIndex("ratings_recommendNonMajor")),
+											c.getDouble(c.getColumnIndex("ratings_stimulateInterest")),
+											c.getDouble(c.getColumnIndex("ratings_workRequired"))
+									   );
+			Instructor tIns = new Instructor(
+												c.getString(c.getColumnIndex("instructor_id")),
+												c.getString(c.getColumnIndex("instructor_name")),
+												c.getString(c.getColumnIndex("instructor_path"))
+										    );
+			Course tCourse = new Course(
+											c.getString(c.getColumnIndex("course_alias")),
+											c.getString(c.getColumnIndex("name")),
+											c.getString(c.getColumnIndex("description")),
+											c.getString(c.getColumnIndex("semester")),
+											c.getString(c.getColumnIndex("comments")),
+											c.getString(c.getColumnIndex("id")),
+											tIns,
+											c.getInt(c.getColumnIndex("num_reviewers")),
+											c.getInt(c.getColumnIndex("num_students")),
+											c.getString(c.getColumnIndex("course_path")),
+											tRate,
+											tSection
+									   );
+			rs.add(tCourse);
+			c.moveToNext();
+		}
+		
+		return rs;
 	}
 }

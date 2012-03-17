@@ -52,8 +52,7 @@ public class DisplayReviewsForCourse extends Activity {
 		TextView name = (TextView) findViewById(R.id.course_name);
 		name.setText(courseReviews.get(0).getName());
 		TextView description = (TextView)findViewById(R.id.course_description);
-		//description.setText(courseReviews.get(0).getDescription());
-		//System.out.println(courseReviews.get(0).getDescription());
+		description.setText(courseReviews.get(0).getDescription());
 
 		Iterator<Course> iter = courseReviews.iterator();
 

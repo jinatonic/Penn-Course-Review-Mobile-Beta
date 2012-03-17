@@ -126,6 +126,7 @@ public class SearchCache {
 	 * @param course given course to be added to the database
 	 */
 	public void addCourse(Course course) {
+		Log.w(TAG, "adding course " + course.getAlias() + " to database");
 		// First we check that the course doesn't already exist in the database
 		Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
 		c.moveToFirst();
@@ -189,6 +190,7 @@ public class SearchCache {
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
+			Log.w(TAG, "getCourse: course found");
 			Section tSection = new Section(	
 											c.getString(c.getColumnIndex("section_alias")),
 											c.getString(c.getColumnIndex("section_id")),
@@ -233,5 +235,16 @@ public class SearchCache {
 		}
 		
 		return rs;
+	}
+	
+	/**
+	 * Get the size of the cache (number of entries)
+	 * @return
+	 */
+	public int getSize() {
+		Log.w(TAG, "Getting size of the table");
+		Cursor c = mDb.rawQuery("SELECT count(*) AS count FROM " + COURSE_TABLE, null);
+		c.moveToFirst();
+		return c.getInt(c.getColumnIndex("count"));
 	}
 }

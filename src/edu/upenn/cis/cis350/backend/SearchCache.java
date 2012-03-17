@@ -13,6 +13,7 @@ import edu.upenn.cis.cis350.objects.Section;
 
 /**
  * Helper class to access Android SQLite database and store the recently searched data for fast access
+ * Old data is deleted on application start (e.g. a week old)
  * @author Jinyan
  *
  */
@@ -50,7 +51,8 @@ public class SearchCache {
 			"ratings_recommendNonMajor float," +
 			"ratings_stimulateInterest float," +
 			"ratings_workRequired float," +
-			"PRIMARY KEY (id))";
+			"date datetime NOT NULL," +
+			"PRIMARY KEY (id))";	// Is id unique? e.g. cis121 in fall09 and spring10
 	
 	private static final String SECTION_TABLE_CREATE = "CREATE table IF NOT EXISTS " + SECTION_TABLE + " (" +
 			"course_id char(20) REFERENCES " + COURSE_TABLE + "," +
@@ -152,7 +154,7 @@ public class SearchCache {
 		mDb.execSQL("DELETE FROM " + SECTION_TABLE + " WHERE course_id='" + id + "'");
 		
 		// Then we loop through the sections and insert into the sections table
-		// TODO: Finish after Charles changed
+		// TODO: Necessary to store more than one alias? probably not
 		Section sections = course.getSection();
 		values = new ContentValues();
 		values.put("course_id", id);
@@ -163,6 +165,5 @@ public class SearchCache {
 		
 		if (mDb.insert(SECTION_TABLE, null, values) == -1)
 			Log.w(TAG, "Failed to insert new section into table");
-		
 	}
 }

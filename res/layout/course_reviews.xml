@@ -44,46 +44,54 @@
             android:layout_height="wrap_content"
             android:text="@string/hello"
             android:textColor="@color/black"
-            android:textSize="11sp" />
+            android:textSize="9sp" />
     </LinearLayout>
 
-    <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="120dip"
         android:background="@color/white"
-        android:stretchColumns="4" >
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-        <TableRow>
+        <TableLayout
+            android:id="@+id/reviews"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/white"
+            android:stretchColumns="4" >
 
-            <TextView
-                android:layout_column="1"
-                android:padding="6dip"
-                android:text="Instructor"
-                android:textColor="@color/black"
-                android:textSize="11sp" />
+            <TableRow>
 
-            <TextView
-                android:layout_column="2"
-                android:padding="6dip"
-                android:text="Course Quality"
-                android:textColor="@color/black"
-                android:textSize="11sp" />
+                <TextView
+                    android:layout_column="1"
+                    android:padding="6dip"
+                    android:text="Instructor"
+                    android:textColor="@color/black"
+                    android:textSize="11sp" />
 
-            <TextView
-                android:layout_column="3"
-                android:padding="6dip"
-                android:text="Instructor Quality"
-                android:textColor="@color/black"
-                android:textSize="11sp" />
+                <TextView
+                    android:layout_column="2"
+                    android:padding="6dip"
+                    android:text="Course Quality"
+                    android:textColor="@color/black"
+                    android:textSize="11sp" />
 
-            <TextView
-                android:layout_column="4"
-                android:padding="6dip"
-                android:text="Difficulty"
-                android:textColor="@color/black"
-                android:textSize="11sp" />
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:layout_column="3"
+                    android:padding="6dip"
+                    android:text="Instructor Quality"
+                    android:textColor="@color/black"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_column="4"
+                    android:padding="6dip"
+                    android:text="Difficulty"
+                    android:textColor="@color/black"
+                    android:textSize="11sp" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
 
 </LinearLayout>

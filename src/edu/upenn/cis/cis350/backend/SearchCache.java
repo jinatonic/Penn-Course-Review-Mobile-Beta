@@ -39,7 +39,7 @@ public class SearchCache {
 			"course_alias char(20) NOT NULL," +
 			"description char(500)," +
 			"semester char(50) NOT NULL," +
-			"id char(20) NOT NULL," +
+			"course_id char(20) NOT NULL," +
 			"comments char(100)," +
 			"instructor_id char(20) NOT NULL," +
 			"instructor_name char(50) NOT NULL," +
@@ -99,6 +99,7 @@ public class SearchCache {
 	 * @throws SQLException
 	 */
 	public SearchCache open() throws SQLException {
+		Log.w(TAG, "Opening SearchCache");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		return this;
@@ -108,14 +109,16 @@ public class SearchCache {
 	 * Close all associated database tables
 	 */
 	public void close() {
+		Log.w(TAG, "Closing SearchCache");
 		mDbHelper.close();
 	}
 	
 	/** 
-	 * Delete all tables from database (for testing purposes)
+	 * Delete all entries from all tables in database (for testing purposes)
 	 */
-	public void deleteAllTables() {
-		mDb.rawQuery("DROP TABLE IF EXISTS " + COURSE_TABLE, null);
+	public void resetTables() {
+		Log.w(TAG, "Resetting database tables");
+		mDb.rawQuery("DELETE FROM " + COURSE_TABLE, null);
 	}
 	
 	/**
@@ -124,7 +127,7 @@ public class SearchCache {
 	 */
 	public void addCourse(Course course) {
 		// First we check that the course doesn't already exist in the database
-		Cursor c = mDb.rawQuery("SELECT id FROM " + COURSE_TABLE + " WHERE id='" + course.getID() + "'", null);
+		Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
 		c.moveToFirst();
 		if (c.getCount() > 0)
 			return;
@@ -137,7 +140,7 @@ public class SearchCache {
 		values.put("course_alias", course.getAlias());
 		values.put("description", course.getDescription());
 		values.put("semester", course.getSemester());
-		values.put("id", id);
+		values.put("course_id", id);
 		values.put("comments", course.getComments());
 		values.put("instructor_id", course.getInstructor().getID());
 		values.put("instructor_name", course.getInstructor().getName());
@@ -178,6 +181,7 @@ public class SearchCache {
 	 * @return ArrayList of courses, or empty ArrayList if no data is found
 	 */
 	public ArrayList<Course> getCourse(String course_alias) {
+		Log.w(TAG, "Searching database for course " + course_alias);
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + course_alias + "'", null);
@@ -216,7 +220,7 @@ public class SearchCache {
 											c.getString(c.getColumnIndex("description")),
 											c.getString(c.getColumnIndex("semester")),
 											c.getString(c.getColumnIndex("comments")),
-											c.getString(c.getColumnIndex("id")),
+											c.getString(c.getColumnIndex("course_id")),
 											tIns,
 											c.getInt(c.getColumnIndex("num_reviewers")),
 											c.getInt(c.getColumnIndex("num_students")),

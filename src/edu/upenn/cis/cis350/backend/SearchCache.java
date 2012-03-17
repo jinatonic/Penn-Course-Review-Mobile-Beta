@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
-import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
@@ -30,13 +29,12 @@ public class SearchCache {
 	/* Database and table names */
 	private static final String DATABASE_NAME = "ResultsCache";
 	private static final String COURSE_TABLE = "CourseResults";
-	private static final String COURSE_ALIAS_TABLE = "CourseAlias";
-	private static final String SECTION_ALIAS_TABLE = "SectionAlias";
 	private static final int DATABASE_VERSION = 2;
 	
 	/* Query strings */
 	private static final String COURSE_TABLE_CREATE = "CREATE table IF NOT EXISTS " + COURSE_TABLE + " (" +
 			"name char(50) NOT NULL," +
+			"course_alias char(20) NOT NULL," +
 			"description char(500)," +
 			"semester char(50) NOT NULL," +
 			"id char(20) NOT NULL," +
@@ -59,20 +57,12 @@ public class SearchCache {
 			"ratings_stimulateInterest float," +
 			"ratings_workRequired float," +
 			"section_id char(20) NOT NULL," +
+			"section_alias char(50) NOT NULL," +
 			"section_path char(50) NOT NULL," +
 			"section_name char(50) NOT NULL," +
 			"section_number char(20) NOT NULL," +
 			"date int NOT NULL," +		// Date is stored as day of year for convenience/computation sake
 			"PRIMARY KEY (course_id, section_id))";
-	
-	private static final String COURSE_ALIAS_TABLE_CREATE = "CREATE table IF NOT EXISTS " + COURSE_ALIAS_TABLE + " (" +
-			"course_id char(20) NOT NULL," +
-			"alias char(20) NOT NULL)";
-	
-	private static final String SECTION_ALIAS_TABLE_CREATE = "CREATE table IF NOT EXISTS " + SECTION_ALIAS_TABLE + " (" +
-			"course_id char(20) NOT NULL," +
-			"section_id char(20) NOT NULL," +
-			"alias char(20) NOT NULL)";
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "SearchCache";
@@ -86,8 +76,6 @@ public class SearchCache {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(COURSE_TABLE_CREATE);
-            db.execSQL(COURSE_ALIAS_TABLE_CREATE);
-            db.execSQL(SECTION_ALIAS_TABLE_CREATE);
         }
 
         @Override
@@ -95,8 +83,6 @@ public class SearchCache {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + COURSE_ALIAS_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + SECTION_ALIAS_TABLE);
             onCreate(db);
         }
     }
@@ -140,6 +126,7 @@ public class SearchCache {
 		// First we add to the course table 
 		ContentValues values = new ContentValues();
 		values.put("name", course.getName());
+		values.put("course_alias", course.getAlias());
 		values.put("description", course.getDescription());
 		values.put("semester", course.getSemester());
 		values.put("id", id);
@@ -166,6 +153,7 @@ public class SearchCache {
 		
 		Section section = course.getSection();
 		values.put("section_id", section.getID());
+		values.put("section_alias", section.getAlias());
 		values.put("section_path", section.getPath());
 		values.put("section_name", section.getName());
 		values.put("section_number", section.getSectionNum());

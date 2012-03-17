@@ -45,7 +45,7 @@ public class Parser {
 	}
 
 	
-	public String getReviewsForDept(String dept) throws IOException, ParseException, JSONException {
+	public ArrayList<Course> getReviewsForDept(String dept) throws IOException, ParseException, JSONException {
 		dept = dept.trim().toUpperCase();
 		System.out.println(dept);
 		String path = "/depts/"+dept+"/reviews";
@@ -63,7 +63,7 @@ public class Parser {
 		return displayCourseReviews(reviews);
 		
 	}
-	public String getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
+	public ArrayList<Course> getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
 		course = course.trim();
 		System.out.println(course);
 		String dept = "";
@@ -123,13 +123,17 @@ public class Parser {
 		return displayCourseReviews(reviews);
 	}
 
-	public String displayCourseReviews(ArrayList<Course> reviews) {
+	public ArrayList<Course> displayCourseReviews(ArrayList<Course> reviews) {
+		// Right now this method just sorts by difficulty, add additional sorting functionality here or in other methods?
 		reviews = s.sortBy(reviews, "difficulty");
-		String s = "";
+		/*
+		ArrayList<Course> courses = new ArrayList<Course>();
 		for (Course c : reviews) {
-			s += c.getID() + "\n"+ c.getRatings().getDifficulty() + "\n\n";
+			//s += c.getID() + "\n"+ c.getRatings().getDifficulty() + "\n\n";
+			courses.add(c);
 		}
-		return s;
+		*/
+		return reviews;
 	}
 
 	public ArrayList<Course> storeReviews(String path) throws IOException, ParseException, JSONException {

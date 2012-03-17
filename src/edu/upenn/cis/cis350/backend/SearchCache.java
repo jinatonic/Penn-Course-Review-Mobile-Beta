@@ -1,5 +1,7 @@
 package edu.upenn.cis.cis350.backend;
 
+import java.util.Calendar;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
@@ -27,13 +30,17 @@ public class SearchCache {
 	/* Database and table names */
 	private static final String DATABASE_NAME = "ResultsCache";
 	private static final String COURSE_TABLE = "CourseResults";
-	private static final String SECTION_TABLE = "CourseSections";
+	private static final String COURSE_ALIAS_TABLE = "CourseAlias";
+	private static final String SECTION_ALIAS_TABLE = "SectionAlias";
 	private static final int DATABASE_VERSION = 2;
 	
 	/* Query strings */
 	private static final String COURSE_TABLE_CREATE = "CREATE table IF NOT EXISTS " + COURSE_TABLE + " (" +
+			"name char(50) NOT NULL," +
+			"description char(500)," +
+			"semester char(50) NOT NULL," +
 			"id char(20) NOT NULL," +
-			"comments char(500)," +
+			"comments char(100)," +
 			"instructor_id char(20) NOT NULL," +
 			"instructor_name char(50) NOT NULL," +
 			"instructor_path char(50) NOT NULL," +
@@ -51,17 +58,21 @@ public class SearchCache {
 			"ratings_recommendNonMajor float," +
 			"ratings_stimulateInterest float," +
 			"ratings_workRequired float," +
-			"date datetime NOT NULL," +
-			"PRIMARY KEY (id))";	// Is id unique? e.g. cis121 in fall09 and spring10
-	
-	private static final String SECTION_TABLE_CREATE = "CREATE table IF NOT EXISTS " + SECTION_TABLE + " (" +
-			"course_id char(20) REFERENCES " + COURSE_TABLE + "," +
 			"section_id char(20) NOT NULL," +
 			"section_path char(50) NOT NULL," +
 			"section_name char(50) NOT NULL," +
 			"section_number char(20) NOT NULL," +
-			"section_alias char(50) NOT NULL," +
-			"PRIMARY KEY (course_id, section_id)";
+			"date int NOT NULL," +		// Date is stored as day of year for convenience/computation sake
+			"PRIMARY KEY (course_id, section_id))";
+	
+	private static final String COURSE_ALIAS_TABLE_CREATE = "CREATE table IF NOT EXISTS " + COURSE_ALIAS_TABLE + " (" +
+			"course_id char(20) NOT NULL," +
+			"alias char(20) NOT NULL)";
+	
+	private static final String SECTION_ALIAS_TABLE_CREATE = "CREATE table IF NOT EXISTS " + SECTION_ALIAS_TABLE + " (" +
+			"course_id char(20) NOT NULL," +
+			"section_id char(20) NOT NULL," +
+			"alias char(20) NOT NULL)";
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "SearchCache";
@@ -75,7 +86,8 @@ public class SearchCache {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(COURSE_TABLE_CREATE);
-            db.execSQL(SECTION_TABLE_CREATE);
+            db.execSQL(COURSE_ALIAS_TABLE_CREATE);
+            db.execSQL(SECTION_ALIAS_TABLE_CREATE);
         }
 
         @Override
@@ -83,7 +95,8 @@ public class SearchCache {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + SECTION_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + COURSE_ALIAS_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + SECTION_ALIAS_TABLE);
             onCreate(db);
         }
     }
@@ -126,6 +139,9 @@ public class SearchCache {
 		
 		// First we add to the course table 
 		ContentValues values = new ContentValues();
+		values.put("name", course.getName());
+		values.put("description", course.getDescription());
+		values.put("semester", course.getSemester());
 		values.put("id", id);
 		values.put("comments", course.getComments());
 		values.put("instructor_id", course.getInstructor().getID());
@@ -134,6 +150,7 @@ public class SearchCache {
 		values.put("num_reviewers", course.getNumReviewers());
 		values.put("num_students", course.getNumStudents());
 		values.put("course_path", course.getPath());
+		
 		Ratings r = course.getRatings();
 		values.put("ratings_amountLearned", r.getAmountLearned());
 		values.put("ratings_commAbility", r.getCommAbility());
@@ -147,10 +164,18 @@ public class SearchCache {
 		values.put("ratings_stimulateInterest", r.getStimulateInterest());
 		values.put("ratings_workRequired", r.getWorkRequired());
 		
+		Section section = course.getSection();
+		values.put("section_id", section.getID());
+		values.put("section_path", section.getPath());
+		values.put("section_name", section.getName());
+		values.put("section_number", section.getSectionNum());
+		
+		values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+		
 		if (mDb.insert(COURSE_TABLE, null, values) == -1) 
 			Log.w(TAG, "Failed to insert new course into table");
 		
-		// We first remove all occurrences with the course id
+		// We first remove all occurrences with the course id in all alias tables
 		mDb.execSQL("DELETE FROM " + SECTION_TABLE + " WHERE course_id='" + id + "'");
 		
 		// Then we loop through the sections and insert into the sections table

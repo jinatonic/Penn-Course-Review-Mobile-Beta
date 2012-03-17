@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,6 +28,21 @@ public class SearchPage extends Activity {
 		searchPCRView.setTypeface(timesNewRoman);
 		TextView searchCommentView = (TextView) findViewById(R.id.search_comment);
 		searchCommentView.setTypeface(timesNewRoman);
+		
+		// Handle user pushing enter after typing search term
+		EditText search = (EditText)findViewById(R.id.search_term);
+		search.setOnKeyListener(new OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// If event is key-down event on "enter" button
+				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+						(keyCode == KeyEvent.KEYCODE_ENTER)) {
+					// Perform action on key press
+					onEnterButtonClick(v);
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 	
 	public void onEnterButtonClick(View v) {
@@ -38,8 +55,8 @@ public class SearchPage extends Activity {
 	}
 	
 	public void onClearButtonClick(View v) {
-		EditText title = (EditText)findViewById(R.id.search_term);
-		title.setText("");
+		EditText search = (EditText)findViewById(R.id.search_term);
+		search.setText("");
 	}
 
 }

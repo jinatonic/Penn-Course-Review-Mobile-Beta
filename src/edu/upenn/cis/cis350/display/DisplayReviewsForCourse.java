@@ -63,51 +63,48 @@ public class DisplayReviewsForCourse extends Activity {
 			Course curCourse = iter.next();
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
+
 			tr.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setText(curCourse.getInstructor().getName());
-			instructor.setLayoutParams(new LayoutParams(
+			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
+					LayoutParams.WRAP_CONTENT);
+			insParams.column = 1;
+			instructor.setLayoutParams(insParams);
 			/* Add TextView to row. */
 			tr.addView(instructor);
-			/* Add row to TableLayout. */
-			tl.addView(tr,new TableLayout.LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
 			
 			TextView courseQuality = new TextView(this);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
-			courseQuality.setLayoutParams(new LayoutParams(
+			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
+					LayoutParams.WRAP_CONTENT);
+			courseParams.column = 2;
+			courseQuality.setLayoutParams(courseParams);
 			/* Add TextView to row. */
 			tr.addView(courseQuality);
-			/* Add row to TableLayout. */
-			tl.addView(tr,new TableLayout.LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
 			
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
-			instructorQuality.setLayoutParams(new LayoutParams(
+			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
+					LayoutParams.WRAP_CONTENT);
+			insQualParams.column = 3;
+			instructorQuality.setLayoutParams(insQualParams);
 			/* Add TextView to row. */
 			tr.addView(instructorQuality);
-			/* Add row to TableLayout. */
-			tl.addView(tr,new TableLayout.LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
-			
+		
 			TextView difficulty = new TextView(this);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
-			difficulty.setLayoutParams(new LayoutParams(
+			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
+					LayoutParams.WRAP_CONTENT);
+			diffParams.column = 4;
+			difficulty.setLayoutParams(diffParams);
 			/* Add TextView to row. */
 			tr.addView(difficulty);
 			/* Add row to TableLayout. */

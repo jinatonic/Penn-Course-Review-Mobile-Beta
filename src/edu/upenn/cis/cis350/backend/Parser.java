@@ -17,7 +17,7 @@ import android.util.Log;
 import edu.upenn.cis.cis350.objects.*;
 
 public class Parser {
-	
+
 	Sorter s = new Sorter();
 	public final String baseURL = "http://api.penncoursereview.com/v1";
 	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
@@ -44,7 +44,7 @@ public class Parser {
 		}
 	}
 
-	
+
 	public ArrayList<Course> getReviewsForDept(String dept) throws IOException, ParseException, JSONException {
 		dept = dept.trim().toUpperCase();
 		System.out.println(dept);
@@ -61,7 +61,7 @@ public class Parser {
 		System.out.println(reviews.size());
 
 		return displayCourseReviews(reviews);
-		
+
 	}
 	public ArrayList<Course> getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
 		course = course.trim();
@@ -132,151 +132,174 @@ public class Parser {
 			//s += c.getID() + "\n"+ c.getRatings().getDifficulty() + "\n\n";
 			courses.add(c);
 		}
-		*/
+		 */
 		return reviews;
 	}
 
 	public ArrayList<Course> storeReviews(String path) throws IOException, ParseException, JSONException {
+		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = retrieveJSONObject(baseURL + path + token);
-		String description = null;
-		String name = null;
-		String semester = null;
+
 		String[] course_aliases = null;
-		
+
+
 		if(js.has("result")){
 			JSONObject jresult = js.getJSONObject("result");
 			if(jresult.has("aliases")){
-				JSONArray als = js.getJSONArray("aliases");
+				JSONArray als = jresult.getJSONArray("aliases");
 				course_aliases = new String[als.length()];
 				for(int k = 0; k< als.length(); ++k)
 					course_aliases[k] = als.getString(k);
+
+			}
+
+			if(jresult.has("courses")){
+				JSONArray courses_array = jresult.getJSONArray("courses");
+				for(int m = 0; m < courses_array.length(); m++){
+					String description = null;
+					String name = null;
+					String semester = null;
+					String course_path = null;
+					JSONObject course2 = courses_array.getJSONObject(m);
+					if(course2.has("name"))
+						name = course2.getString("name");
+					if(course2.has("semester"))
+						semester = course2.getString("semester");
+					if(course2.has("path")){
+						course_path = course2.getString("path");
+						JSONObject course_object = retrieveJSONObject(baseURL + course_path + token);
+						JSONObject course_result = null;
+						if(course_object.has("result")){
+							course_result = course_object.getJSONObject("result");
+							if(course_result.has("description"))
+								description = course_result.getString("description");
+							String review_path = course_path + "/reviews";
+							JSONObject json = retrieveJSONObject(baseURL + review_path + token);
+							JSONArray courses = null;
+							if (json.has("result") && json.getJSONObject("result").has("values")){
+								courses = json.getJSONObject("result").getJSONArray("values");
+
+								for (int j = 0; j < courses.length(); ++j) {
+									JSONObject course = courses.getJSONObject(j);
+									JSONObject instructor = null;
+									Instructor i = null;
+									if(course.has("instructor")){
+										instructor = course.getJSONObject("instructor");
+										String i_id = null;
+										String i_name = null;
+										String i_path = null;
+										if(instructor.has("id"))
+											i_id = instructor.getString("id");
+										if(instructor.has("name"))
+											i_name = instructor.getString("name");
+										if(instructor.has("path"))
+											i_path = instructor.getString("path");
+										i = new Instructor(i_id, i_name, i_path);
+									}
+									JSONObject ratings = null;
+									Ratings r = null;
+									if(course.has("ratings")){
+										ratings = course.getJSONObject("ratings");
+										String rAmountLearned = null;
+										String rCommAbility = null;
+										String rCourseQuality = null;
+										String rDifficulty = null;
+										String rInstructorAccess = null;
+										String rInstructorQuality = null;
+										String rReadingsValue = null;
+										String rRecommendMajor = null;
+										String rRecommendNonMajor = null;
+										String rStimulateInterest = null;
+										String rWorkRequired = null;
+
+										if(ratings.has("rAmountLearned"))
+											rAmountLearned = ratings.getString("rAmountLearned");
+										if(ratings.has("rCommAbility"))
+											rCommAbility = ratings.getString("rCommAbility");
+										if(ratings.has("rCourseQuality"))
+											rCourseQuality = ratings.getString("rCourseQuality");
+										if(ratings.has("rDifficulty"))
+											rDifficulty = ratings.getString("rDifficulty");
+										if(ratings.has("rInstructorAccess"))
+											rInstructorAccess = ratings.getString("rInstructorAccess");
+										if(ratings.has("rInstructorQuality"))
+											rInstructorQuality = ratings.getString("rInstructorQuality");
+										if(ratings.has("rReadingsValue"))
+											rReadingsValue = ratings.getString("rReadingsValue");
+										if(ratings.has("rRecommendMajor"))
+											rRecommendMajor =ratings.getString("rRecommendMajor");
+										if(ratings.has("rRecommendNonMajor"))
+											rRecommendNonMajor = ratings.getString("rRecommendNonMajor");
+										if(ratings.has("rStimulateInterest"))
+											rStimulateInterest = ratings.getString("rStimulateInterest");
+										if(ratings.has("rWorkRequired"))
+											rWorkRequired = ratings.getString("rWorkRequired");
+
+										r = new Ratings(rAmountLearned!=null?Double.parseDouble(rAmountLearned):null,
+												rCommAbility!=null?Double.parseDouble(rCommAbility):null,
+														rCourseQuality!=null?Double.parseDouble(rCourseQuality):null,
+																rDifficulty!=null?Double.parseDouble(rDifficulty):null,
+																		rInstructorAccess!=null?Double.parseDouble(rInstructorAccess):null,
+																				rInstructorQuality!=null?Double.parseDouble(rInstructorQuality):null,
+																						rReadingsValue!=null?Double.parseDouble(rReadingsValue):null,
+																								rRecommendMajor!=null?Double.parseDouble(rRecommendMajor):null,
+																										rRecommendNonMajor!=null?Double.parseDouble(rRecommendNonMajor):null,
+																												rStimulateInterest!=null?Double.parseDouble(rStimulateInterest):null,
+																														rWorkRequired!=null?Double.parseDouble(rWorkRequired):null);
+									}
+									JSONObject section = null;
+									Section s = null;
+									if(course.has("section") && course.getJSONObject("section").has("aliases")){
+										section = course.getJSONObject("section");
+										JSONArray a = section.getJSONArray("aliases");
+										String[] aliases = new String[a.length()];
+										for (int p = 0; p < a.length(); ++p) {
+											aliases[p] = a.getString(p);
+										}
+										String s_id = null;
+										String s_path = null;
+										String s_name = null;
+										String s_sectionnum= null;
+										if(section.has("id"))
+											s_id = section.getString("id");
+										if(section.has("path"))
+											s_path = section.getString("path");
+										if(section.has("name"))
+											s_name = section.getString("name");
+										if(section.has("sectionnum"))
+											s_sectionnum = section.getString("sectionnum");
+										s = new Section((aliases == null) ? "" : aliases[0], s_id,s_path,s_name,s_sectionnum);
+									}
+									String comments = null;
+									String id = null;
+									int num_reviewers = 0;
+									int num_students = 0;
+									String c_path = null;
+									if(course.has("comments"))
+										comments = course.getString("comments");
+									if(course.has("id"))
+										id = course.getString("id");
+									if(course.has("num_reviewers"))
+										num_reviewers = course.getInt("num_reviewers");
+									if(course.has("path"))
+										c_path = course.getString("path");
+									if(course.has("num_students"));
+									num_students = course.getInt("num_students");
+									Course c = new Course((course_aliases == null) ? "" : course_aliases[0], name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
+									courseReviews.add(c);
+								}
+
+
+							}
+						}
+					}
+
+					
+				}
 				
 			}
-				
-			if(jresult.has("description"))
-				description = jresult.getString("description");
-			if(jresult.has("name"))
-				name = jresult.getString("name");
-			if(jresult.has("semester"))
-				semester = jresult.getString("semester");
 			
 		}
-		JSONObject json = retrieveJSONObject(baseURL + path + "/reviews"+ token);
-		JSONArray courses = null;
-		if (json.has("result") && json.getJSONObject("result").has("values")){
-			courses = json.getJSONObject("result").getJSONArray("values");
-			ArrayList<Course> courseReviews = new ArrayList<Course>();
-			for (int j = 0; j < courses.length(); ++j) {
-				JSONObject course = courses.getJSONObject(j);
-				JSONObject instructor = null;
-				Instructor i = null;
-				if(course.has("instructor")){
-					instructor = course.getJSONObject("instructor");
-					String i_id = null;
-					String i_name = null;
-					String i_path = null;
-					if(instructor.has("id"))
-						i_id = instructor.getString("id");
-					if(instructor.has("name"))
-						i_name = instructor.getString("name");
-					if(instructor.has("path"))
-						i_path = instructor.getString("path");
-					i = new Instructor(i_id, i_name, i_path);
-				}
-				JSONObject ratings = null;
-				Ratings r = null;
-				if(course.has("ratings")){
-					ratings = course.getJSONObject("ratings");
-					String rAmountLearned = null;
-					String rCommAbility = null;
-					String rCourseQuality = null;
-					String rDifficulty = null;
-					String rInstructorAccess = null;
-					String rInstructorQuality = null;
-					String rReadingsValue = null;
-					String rRecommendMajor = null;
-					String rRecommendNonMajor = null;
-					String rStimulateInterest = null;
-					String rWorkRequired = null;
-
-					if(ratings.has("rAmountLearned"))
-						rAmountLearned = ratings.getString("rAmountLearned");
-					if(ratings.has("rCommAbility"))
-						rCommAbility = ratings.getString("rCommAbility");
-					if(ratings.has("rCourseQuality"))
-						rCourseQuality = ratings.getString("rCourseQuality");
-					if(ratings.has("rDifficulty"))
-						rDifficulty = ratings.getString("rDifficulty");
-					if(ratings.has("rInstructorAccess"))
-						rInstructorAccess = ratings.getString("rInstructorAccess");
-					if(ratings.has("rInstructorQuality"))
-						rInstructorQuality = ratings.getString("rInstructorQuality");
-					if(ratings.has("rReadingsValue"))
-						rReadingsValue = ratings.getString("rReadingsValue");
-					if(ratings.has("rRecommendMajor"))
-						rRecommendMajor =ratings.getString("rRecommendMajor");
-					if(ratings.has("rRecommendNonMajor"))
-						rRecommendNonMajor = ratings.getString("rRecommendNonMajor");
-					if(ratings.has("rStimulateInterest"))
-						rStimulateInterest = ratings.getString("rStimulateInterest");
-					if(ratings.has("rWorkRequired"))
-						rWorkRequired = ratings.getString("rWorkRequired");
-
-					r = new Ratings(rAmountLearned!=null?Double.parseDouble(rAmountLearned):null,
-							rCommAbility!=null?Double.parseDouble(rCommAbility):null,
-							rCourseQuality!=null?Double.parseDouble(rCourseQuality):null,
-							rDifficulty!=null?Double.parseDouble(rDifficulty):null,
-							rInstructorAccess!=null?Double.parseDouble(rInstructorAccess):null,
-							rInstructorQuality!=null?Double.parseDouble(rInstructorQuality):null,
-							rReadingsValue!=null?Double.parseDouble(rReadingsValue):null,
-							rRecommendMajor!=null?Double.parseDouble(rRecommendMajor):null,
-							rRecommendNonMajor!=null?Double.parseDouble(rRecommendNonMajor):null,
-							rStimulateInterest!=null?Double.parseDouble(rStimulateInterest):null,
-							rWorkRequired!=null?Double.parseDouble(rWorkRequired):null);
-				}
-				JSONObject section = null;
-				Section s = null;
-				if(course.has("section") && course.getJSONObject("section").has("aliases")){
-					section = course.getJSONObject("section");
-					JSONArray a = section.getJSONArray("aliases");
-					String[] aliases = new String[a.length()];
-					for (int p = 0; p < a.length(); ++p) {
-						aliases[p] = a.getString(p);
-					}
-					String s_id = null;
-					String s_path = null;
-					String s_name = null;
-					String s_sectionnum= null;
-					if(section.has("id"))
-						s_id = section.getString("id");
-					if(section.has("path"))
-						s_path = section.getString("path");
-					if(section.has("name"))
-						s_name = section.getString("name");
-					if(section.has("sectionnum"))
-						s_sectionnum = section.getString("sectionnum");
-					s = new Section((aliases == null) ? "" : aliases[0], s_id,s_path,s_name,s_sectionnum);
-				}
-				String comments = null;
-				String id = null;
-				int num_reviewers = 0;
-				int num_students = 0;
-				String c_path = null;
-				if(course.has("comments"))
-					comments = course.getString("comments");
-				if(course.has("id"))
-					id = course.getString("id");
-				if(course.has("num_reviewers"))
-					num_reviewers = course.getInt("num_reviewers");
-				if(course.has("path"))
-					c_path = course.getString("path");
-				if(course.has("num_students"));
-				num_students = course.getInt("num_students");
-				Course c = new Course((course_aliases == null) ? "" : course_aliases[0], name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
-				courseReviews.add(c);
-			}
-			return courseReviews;
-		}
-		return null;
+		return courseReviews;
 	}
 }

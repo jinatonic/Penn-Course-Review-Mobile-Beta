@@ -12,6 +12,7 @@ public final class R {
     }
     public static final class color {
         public static final int bg_blue=0x7f050000;
+        public static final int black=0x7f050004;
         public static final int text_gray=0x7f050002;
         public static final int text_navy=0x7f050001;
         public static final int white=0x7f050003;

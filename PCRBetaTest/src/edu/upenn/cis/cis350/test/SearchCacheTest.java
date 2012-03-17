@@ -66,9 +66,9 @@ public class SearchCacheTest extends AndroidTestCase {
 	}
 	
 	/**
-	 * Test getting information from database (should still have the CIS-121 entry from previous tests)
+	 * Test getting information from database based on course alias (should still have the CIS-121 entry from previous tests)
 	 */
-	public void testGetCourse() {
+	public void testGetCourseWithCourseAlias() {
 		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
 		
 		assertEquals(1, testCourses.size());
@@ -76,5 +76,27 @@ public class SearchCacheTest extends AndroidTestCase {
 		assertEquals("123", testCourses.get(0).getInstructor().getID());
 		assertEquals("12345", testCourses.get(0).getSection().getID());
 		assertEquals(4.0, testCourses.get(0).getRatings().getAmountLearned());
+	}
+	
+	/**
+	 * Test getting information from database based on professor's name (should still have the CIS-121 entry from previous tests)
+	 */
+	public void testGetCourseWithProfName() {
+		ArrayList<Course> testCourses = cache.getCourse("Kostas");
+		
+		assertEquals(1, testCourses.size());
+		assertEquals("12", testCourses.get(0).getID());
+		assertEquals("123", testCourses.get(0).getInstructor().getID());
+		assertEquals("12345", testCourses.get(0).getSection().getID());
+		assertEquals(4.0, testCourses.get(0).getRatings().getAmountLearned());
+	}
+	
+	/**
+	 * Test getting information from database with invalid input
+	 */
+	public void testGetCourseInvalidEntry() {
+		ArrayList<Course> testCourses = cache.getCourse("HAHAHA");
+		
+		assertEquals(0, testCourses.size());
 	}
 }

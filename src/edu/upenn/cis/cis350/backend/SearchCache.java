@@ -178,15 +178,22 @@ public class SearchCache {
 	
 	/**
 	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
-	 * @param course_alias
+	 * @param keyword can be either course-alias (normalized) or professor's name
 	 * @return ArrayList of courses, or empty ArrayList if no data is found
 	 */
-	public ArrayList<Course> getCourse(String course_alias) {
-		Log.w(TAG, "Searching database for course " + course_alias);
+	public ArrayList<Course> getCourse(String keyword) {
+		Log.w(TAG, "Searching database for course " + keyword);
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
-		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + course_alias + "'", null);
+		// First try to match based on course alias
+		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + keyword + "'", null);
 		c.moveToFirst();
+		
+		if (c.getCount() == 0) {
+			// if failed, try to match based on professor name
+			c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE instructor_name='" + keyword + "'", null);
+			c.moveToFirst();
+		}
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {

@@ -13,5 +13,6 @@
     <color name="text_navy">#191967</color>
     <color name="text_gray">#62627F</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 
 </resources>

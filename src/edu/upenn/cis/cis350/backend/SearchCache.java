@@ -126,6 +126,7 @@ public class SearchCache {
 	 * @param course given course to be added to the database
 	 */
 	public void addCourse(Course course) {
+		Log.w(TAG, "adding course " + course.getAlias() + " to database");
 		// First we check that the course doesn't already exist in the database
 		Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
 		c.moveToFirst();
@@ -177,18 +178,26 @@ public class SearchCache {
 	
 	/**
 	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
-	 * @param course_alias
+	 * @param keyword can be either course-alias (normalized) or professor's name
 	 * @return ArrayList of courses, or empty ArrayList if no data is found
 	 */
-	public ArrayList<Course> getCourse(String course_alias) {
-		Log.w(TAG, "Searching database for course " + course_alias);
+	public ArrayList<Course> getCourse(String keyword) {
+		Log.w(TAG, "Searching database for course " + keyword);
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
-		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + course_alias + "'", null);
+		// First try to match based on course alias
+		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + keyword + "'", null);
 		c.moveToFirst();
+		
+		if (c.getCount() == 0) {
+			// if failed, try to match based on professor name
+			c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE instructor_name='" + keyword + "'", null);
+			c.moveToFirst();
+		}
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
+			Log.w(TAG, "getCourse: course found");
 			Section tSection = new Section(	
 											c.getString(c.getColumnIndex("section_alias")),
 											c.getString(c.getColumnIndex("section_id")),
@@ -233,5 +242,16 @@ public class SearchCache {
 		}
 		
 		return rs;
+	}
+	
+	/**
+	 * Get the size of the cache (number of entries)
+	 * @return
+	 */
+	public int getSize() {
+		Log.w(TAG, "Getting size of the table");
+		Cursor c = mDb.rawQuery("SELECT count(*) AS count FROM " + COURSE_TABLE, null);
+		c.moveToFirst();
+		return c.getInt(c.getColumnIndex("count"));
 	}
 }

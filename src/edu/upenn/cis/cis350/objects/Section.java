@@ -15,7 +15,7 @@ public class Section {
 		sectionNum = _sectionNum;
 	}
 
-	public String[] getAliases() { return aliases;}
+	public String[] getAliases() { return aliases; }
 	public String getID() { return id; }
 	public String getPath() { return path; }
 	public String getName() { return name; }

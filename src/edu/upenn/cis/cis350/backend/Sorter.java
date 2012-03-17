@@ -6,7 +6,7 @@ import edu.upenn.cis.cis350.objects.*;
 
 public class Sorter {
 	
-	private class Pair implements Comparable{
+	private class Pair implements Comparable<Pair>{
 		double d;
 		Course c;
 		public Pair(double d, Course c){
@@ -17,10 +17,10 @@ public class Sorter {
 		public double getDouble() { return d;}
 		public Course getCourse() {return c;}
 		
-		public int compareTo(Object o1) {
-			if(d == ((Pair)o1).getDouble())
+		public int compareTo(Pair o1) {
+			if(d == o1.getDouble())
 				return 0;
-			else if(d > ((Pair)o1).getDouble())
+			else if(d > o1.getDouble())
 				return 1;
 			else
 				return -1;

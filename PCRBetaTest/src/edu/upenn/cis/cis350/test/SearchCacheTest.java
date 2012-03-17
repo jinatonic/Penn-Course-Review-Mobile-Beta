@@ -26,7 +26,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test initializing the tables and such
 	 */
-	public void testInitialization() {
+	public void test_initialization() {
 		cache.resetTables();
 		
 		ArrayList<Course> rs = cache.getCourse("test");
@@ -38,7 +38,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test inserting an element into the table
 	 */
-	public void testInsertingCourse() {
+	public void test_insertingCourse() {
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
 		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
 		Instructor testInstructor = new Instructor("123", "Kostas", "insn_path");
@@ -52,7 +52,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test inserting invalid elements into the table
 	 */
-	public void testInsertingCourseWithInvalidEntries() {
+	public void test_insertingCourseWithInvalidEntries() {
 		assertEquals(1, cache.getSize());	// should still have the last entry entered
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
@@ -68,7 +68,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test getting information from database based on course alias (should still have the CIS-121 entry from previous tests)
 	 */
-	public void testGetCourseWithCourseAlias() {
+	public void test_getCourseWithCourseAlias() {
 		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
 		
 		assertEquals(1, testCourses.size());
@@ -81,7 +81,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test getting information from database based on professor's name (should still have the CIS-121 entry from previous tests)
 	 */
-	public void testGetCourseWithProfName() {
+	public void test_getCourseWithProfName() {
 		ArrayList<Course> testCourses = cache.getCourse("Kostas");
 		
 		assertEquals(1, testCourses.size());
@@ -94,7 +94,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	/**
 	 * Test getting information from database with invalid input
 	 */
-	public void testGetCourseInvalidEntry() {
+	public void test_getCourseInvalidEntry() {
 		ArrayList<Course> testCourses = cache.getCourse("HAHAHA");
 		
 		assertEquals(0, testCourses.size());

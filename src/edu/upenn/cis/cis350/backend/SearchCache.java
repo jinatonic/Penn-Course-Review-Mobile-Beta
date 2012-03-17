@@ -39,9 +39,9 @@ public class SearchCache {
 			"course_alias char(20) NOT NULL," +
 			"description char(500)," +
 			"semester char(50) NOT NULL," +
-			"course_id char(20) NOT NULL," +
+			"course_id char(50) NOT NULL," +
 			"comments char(100)," +
-			"instructor_id char(20) NOT NULL," +
+			"instructor_id char(50) NOT NULL," +
 			"instructor_name char(50) NOT NULL," +
 			"instructor_path char(50) NOT NULL," +
 			"num_reviewers integer NOT NULL DEFAULT 0," +
@@ -58,7 +58,7 @@ public class SearchCache {
 			"ratings_recommendNonMajor float," +
 			"ratings_stimulateInterest float," +
 			"ratings_workRequired float," +
-			"section_id char(20) NOT NULL," +
+			"section_id char(50) NOT NULL," +
 			"section_alias char(50) NOT NULL," +
 			"section_path char(50) NOT NULL," +
 			"section_name char(50) NOT NULL," +
@@ -219,10 +219,10 @@ public class SearchCache {
 											c.getDouble(c.getColumnIndex("ratings_workRequired"))
 									   );
 			Instructor tIns = new Instructor(
-												c.getString(c.getColumnIndex("instructor_id")),
-												c.getString(c.getColumnIndex("instructor_name")),
-												c.getString(c.getColumnIndex("instructor_path"))
-										    );
+											c.getString(c.getColumnIndex("instructor_id")),
+											c.getString(c.getColumnIndex("instructor_name")),
+											c.getString(c.getColumnIndex("instructor_path"))
+											);
 			Course tCourse = new Course(
 											c.getString(c.getColumnIndex("course_alias")),
 											c.getString(c.getColumnIndex("name")),

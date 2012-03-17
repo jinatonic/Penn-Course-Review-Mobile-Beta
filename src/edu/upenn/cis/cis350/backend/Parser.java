@@ -13,8 +13,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-
-import edu.upenn.cis.cis350.objects.*;
+import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.Instructor;
+import edu.upenn.cis.cis350.objects.Ratings;
+import edu.upenn.cis.cis350.objects.Section;
 
 public class Parser {
 
@@ -25,6 +27,7 @@ public class Parser {
 	public JSONObject retrieveJSONObject(String path){
 		try{
 			URL url = new URL(path);
+			Log.w("Parser: retrieveJSONObject", "url=" + url);
 			URLConnection connection = url.openConnection();
 			String line;
 			StringBuilder builder = new StringBuilder();
@@ -37,9 +40,12 @@ public class Parser {
 			return new JSONObject(builder.toString());
 		}
 		catch(IOException e) {
-			System.out.println("Bad url");
+			Log.w("Parser: retrieveJSONObject", "IOException: Bad Url");
+			e.printStackTrace();
 			return null;
 		} catch (JSONException e) {
+			Log.w("Parser: retrieveJSONObject", "JSONException: mis-formatted JSON");
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -68,10 +74,6 @@ public class Parser {
 					if(o.has("path")){
 						course_path = o.getString("path");
 						reviews.addAll(storeReviews(course_path));
-								
-							
-						
-						
 					}
 				}
 			}
@@ -218,7 +220,7 @@ public class Parser {
 		if (json.has("result") && json.getJSONObject("result").has("values")){
 			courses = json.getJSONObject("result").getJSONArray("values");
 
-			for (int j = 0; j < courses.length(); ++j) {
+			for (int j = 0; j < courses.length(); j++) {
 				JSONObject course = courses.getJSONObject(j);
 				JSONObject instructor = null;
 				Instructor i = null;
@@ -274,17 +276,19 @@ public class Parser {
 					if(ratings.has("rWorkRequired"))
 						rWorkRequired = ratings.getString("rWorkRequired");
 
-					r = new Ratings(rAmountLearned!=null?Double.parseDouble(rAmountLearned):null,
-							rCommAbility!=null?Double.parseDouble(rCommAbility):null,
-									rCourseQuality!=null?Double.parseDouble(rCourseQuality):null,
-											rDifficulty!=null?Double.parseDouble(rDifficulty):null,
-													rInstructorAccess!=null?Double.parseDouble(rInstructorAccess):null,
-															rInstructorQuality!=null?Double.parseDouble(rInstructorQuality):null,
-																	rReadingsValue!=null?Double.parseDouble(rReadingsValue):null,
-																			rRecommendMajor!=null?Double.parseDouble(rRecommendMajor):null,
-																					rRecommendNonMajor!=null?Double.parseDouble(rRecommendNonMajor):null,
-																							rStimulateInterest!=null?Double.parseDouble(rStimulateInterest):null,
-																									rWorkRequired!=null?Double.parseDouble(rWorkRequired):null);
+					r = new Ratings(
+										rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
+										rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+										rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+										rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+										rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+										rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+										rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+										rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+										rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+										rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+										rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+									);
 				}
 				JSONObject section = null;
 				Section s = null;

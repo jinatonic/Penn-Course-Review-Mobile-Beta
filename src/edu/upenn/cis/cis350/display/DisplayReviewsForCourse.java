@@ -78,6 +78,42 @@ public class DisplayReviewsForCourse extends Activity {
 			tl.addView(tr,new TableLayout.LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
+			
+			TextView courseQuality = new TextView(this);
+			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			courseQuality.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+			/* Add TextView to row. */
+			tr.addView(courseQuality);
+			/* Add row to TableLayout. */
+			tl.addView(tr,new TableLayout.LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+			
+			TextView instructorQuality = new TextView(this);
+			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
+			instructorQuality.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+			/* Add TextView to row. */
+			tr.addView(instructorQuality);
+			/* Add row to TableLayout. */
+			tl.addView(tr,new TableLayout.LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+			
+			TextView difficulty = new TextView(this);
+			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			difficulty.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+			/* Add TextView to row. */
+			tr.addView(difficulty);
+			/* Add row to TableLayout. */
+			tl.addView(tr,new TableLayout.LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
 		}
 
 		// Set font to Times New Roman

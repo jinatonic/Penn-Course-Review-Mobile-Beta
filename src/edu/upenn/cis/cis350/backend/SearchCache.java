@@ -63,8 +63,7 @@ public class SearchCache {
 			"section_path char(50) NOT NULL," +
 			"section_name char(50) NOT NULL," +
 			"section_number char(20) NOT NULL," +
-			"date int NOT NULL," +		// Date is stored as day of year for convenience/computation sake
-			"PRIMARY KEY (course_id, section_id))";
+			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "SearchCache";
@@ -118,7 +117,7 @@ public class SearchCache {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.rawQuery("DELETE FROM " + COURSE_TABLE, null);
+		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE course_id > -1");
 	}
 	
 	/** 
@@ -128,7 +127,7 @@ public class SearchCache {
 		Log.w(TAG, "Clearing database of old entries");
 		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
 		int end_day = (day < 30) ? day + 365 - 30 : day - 80;
-		mDb.rawQuery("DELETE FROM " + COURSE_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")", null);
+		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")");
 	}
 	
 	/**
@@ -207,48 +206,49 @@ public class SearchCache {
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
-			Log.w(TAG, "getCourse: course found");
-			Section tSection = new Section(	
-											c.getString(c.getColumnIndex("section_alias")),
-											c.getString(c.getColumnIndex("section_id")),
-											c.getString(c.getColumnIndex("section_path")),
-											c.getString(c.getColumnIndex("section_name")),
-											c.getString(c.getColumnIndex("section_number"))
-										  );
-			Ratings tRate = new Ratings(
-											c.getDouble(c.getColumnIndex("ratings_amountLearned")),
-											c.getDouble(c.getColumnIndex("ratings_commAbility")),
-											c.getDouble(c.getColumnIndex("ratings_courseQuality")),
-											c.getDouble(c.getColumnIndex("ratings_difficulty")),
-											c.getDouble(c.getColumnIndex("ratings_instructorAccess")),
-											c.getDouble(c.getColumnIndex("ratings_instructorQuality")),
-											c.getDouble(c.getColumnIndex("ratings_readingsValue")),
-											c.getDouble(c.getColumnIndex("ratings_recommendMajor")),
-											c.getDouble(c.getColumnIndex("ratings_recommendNonMajor")),
-											c.getDouble(c.getColumnIndex("ratings_stimulateInterest")),
-											c.getDouble(c.getColumnIndex("ratings_workRequired"))
-									   );
-			Instructor tIns = new Instructor(
-											c.getString(c.getColumnIndex("instructor_id")),
-											c.getString(c.getColumnIndex("instructor_name")),
-											c.getString(c.getColumnIndex("instructor_path"))
-											);
-			Course tCourse = new Course(
-											c.getString(c.getColumnIndex("course_alias")),
-											c.getString(c.getColumnIndex("name")),
-											c.getString(c.getColumnIndex("description")),
-											c.getString(c.getColumnIndex("semester")),
-											c.getString(c.getColumnIndex("comments")),
-											c.getString(c.getColumnIndex("course_id")),
-											tIns,
-											c.getInt(c.getColumnIndex("num_reviewers")),
-											c.getInt(c.getColumnIndex("num_students")),
-											c.getString(c.getColumnIndex("course_path")),
-											tRate,
-											tSection
-									   );
-			rs.add(tCourse);
-			c.moveToNext();
+			Log.w(TAG, "getCourse: course found, number is " + c.getCount());
+			do {
+				Section tSection = new Section(	
+												c.getString(c.getColumnIndex("section_alias")),
+												c.getString(c.getColumnIndex("section_id")),
+												c.getString(c.getColumnIndex("section_path")),
+												c.getString(c.getColumnIndex("section_name")),
+												c.getString(c.getColumnIndex("section_number"))
+											  );
+				Ratings tRate = new Ratings(
+												c.getDouble(c.getColumnIndex("ratings_amountLearned")),
+												c.getDouble(c.getColumnIndex("ratings_commAbility")),
+												c.getDouble(c.getColumnIndex("ratings_courseQuality")),
+												c.getDouble(c.getColumnIndex("ratings_difficulty")),
+												c.getDouble(c.getColumnIndex("ratings_instructorAccess")),
+												c.getDouble(c.getColumnIndex("ratings_instructorQuality")),
+												c.getDouble(c.getColumnIndex("ratings_readingsValue")),
+												c.getDouble(c.getColumnIndex("ratings_recommendMajor")),
+												c.getDouble(c.getColumnIndex("ratings_recommendNonMajor")),
+												c.getDouble(c.getColumnIndex("ratings_stimulateInterest")),
+												c.getDouble(c.getColumnIndex("ratings_workRequired"))
+										   );
+				Instructor tIns = new Instructor(
+												c.getString(c.getColumnIndex("instructor_id")),
+												c.getString(c.getColumnIndex("instructor_name")),
+												c.getString(c.getColumnIndex("instructor_path"))
+												);
+				Course tCourse = new Course(
+												c.getString(c.getColumnIndex("course_alias")),
+												c.getString(c.getColumnIndex("name")),
+												c.getString(c.getColumnIndex("description")),
+												c.getString(c.getColumnIndex("semester")),
+												c.getString(c.getColumnIndex("comments")),
+												c.getString(c.getColumnIndex("course_id")),
+												tIns,
+												c.getInt(c.getColumnIndex("num_reviewers")),
+												c.getInt(c.getColumnIndex("num_students")),
+												c.getString(c.getColumnIndex("course_path")),
+												tRate,
+												tSection
+										   );
+				rs.add(tCourse);
+			} while (c.moveToNext());
 		}
 		
 		return rs;

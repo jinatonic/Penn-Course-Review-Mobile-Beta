@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
@@ -24,6 +25,12 @@ public class Parser {
 	public final String baseURL = "http://api.penncoursereview.com/v1";
 	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
+	public SearchCache cache;
+	
+	public Parser(SearchCache _cache) {
+		cache = _cache;
+	}
+	
 	public JSONObject retrieveJSONObject(String path){
 		try{
 			URL url = new URL(path);
@@ -98,6 +105,11 @@ public class Parser {
 		}
 		String alias = dept + "-" + num;
 		System.out.println(alias);
+		
+		/* Try to get the data from cache if exists */
+		ArrayList<Course> reviews = cache.getCourse(alias);
+		if (reviews.size() > 0)
+			return reviews;
 
 		String url = baseURL + "/depts/"+ dept + token;
 
@@ -136,7 +148,7 @@ public class Parser {
 		}
 
 		System.out.println(path);
-		ArrayList<Course> reviews = new ArrayList<Course>();
+		reviews = new ArrayList<Course>();
 		reviews = storeReviews(path);
 
 		System.out.println(reviews.size());
@@ -196,19 +208,17 @@ public class Parser {
 								description = course_result.getString("description");
 							String review_path = course_path + "/reviews";
 							Course c = createCourseReview(review_path,course_aliases,name,description,semester);
+							
+							/* Add this course review to database */
+							cache.addCourse(c);
+							
 							courseReviews.add(c);
+							Log.w("TESTTT","ADDING NEW COURSE");
 						}
-
-
 					}
 				}
 			}
-
-
 		}
-
-
-
 
 		return courseReviews;
 	}

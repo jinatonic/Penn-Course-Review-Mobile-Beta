@@ -23,6 +23,11 @@ public class SearchCacheTest extends AndroidTestCase {
 		cache.open();
 	}
 	
+	@Override
+	public void tearDown() {
+		cache.close();
+	}
+	
 	/**
 	 * Test initializing the tables and such
 	 */
@@ -98,5 +103,12 @@ public class SearchCacheTest extends AndroidTestCase {
 		ArrayList<Course> testCourses = cache.getCourse("HAHAHA");
 		
 		assertEquals(0, testCourses.size());
+	}
+	
+	/**
+	 * Test resetting the table
+	 */
+	public void test_resetTable() {
+		cache.resetTables();
 	}
 }

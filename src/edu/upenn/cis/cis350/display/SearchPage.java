@@ -10,6 +10,7 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.SearchCache;
 
 public class SearchPage extends Activity {
 	public static final int ACTIVITY_DisplayReviewsForCourse = 1;
@@ -19,6 +20,12 @@ public class SearchPage extends Activity {
 	
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		// Perform clear on database
+		SearchCache cache = new SearchCache(this.getApplicationContext());
+		cache.open();
+		cache.clearOldEntries();
+		cache.close();
 		
 		setContentView(R.layout.search_page);
 		

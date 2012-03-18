@@ -4,14 +4,23 @@ import org.json.JSONObject;
 
 import android.test.AndroidTestCase;
 import edu.upenn.cis.cis350.backend.Parser;
+import edu.upenn.cis.cis350.backend.SearchCache;
 
 public class ParserTest extends AndroidTestCase {
 
+	SearchCache cache;
 	Parser p;
 	
 	@Override
 	public void setUp() {
-		p = new Parser();
+		cache = new SearchCache(this.getContext());
+		cache.open();
+		p = new Parser(cache);
+	}
+	
+	@Override
+	public void tearDown() {
+		cache.close();
 	}
 	
 	/**

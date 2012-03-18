@@ -43,7 +43,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="9sp" />
+            android:textSize="9sp"
+            android:lineSpacingExtra="2sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -74,6 +75,7 @@
                         android:text="@string/instructor"
                         android:textColor="@color/black"
                         android:textSize="9sp"
+                        android:textStyle="bold"
                         android:width="115dip" />
 
                     <TextView
@@ -82,7 +84,8 @@
                         android:text="@string/course_quality"
                         android:textColor="@color/black"
                         android:textSize="9sp"
-                        android:width="55dip" />
+                        android:textStyle="bold"
+                        android:width="58dip" />
 
                     <TextView
                         android:layout_column="3"
@@ -90,7 +93,8 @@
                         android:text="@string/instructor_quality"
                         android:textColor="@color/black"
                         android:textSize="9sp"
-                        android:width="55dip" />
+                        android:textStyle="bold"
+                        android:width="58dip" />
 
                     <TextView
                         android:layout_column="4"
@@ -98,7 +102,8 @@
                         android:text="@string/difficulty"
                         android:textColor="@color/black"
                         android:textSize="9sp"
-                        android:width="55dip" />
+                        android:textStyle="bold"
+                        android:width="58dip" />
                 </TableRow>
             </TableLayout>
         </ScrollView>

@@ -62,7 +62,7 @@ public class DisplayReviewsForCourse extends Activity {
 		
 		// Top half of page under PCR header
 		TextView number = (TextView)findViewById(R.id.course_number);
-		if (courseReviews == null) {
+		if (courseReviews == null || courseReviews.size() == 0) {
 			number.setText("No reviews found for this course.");
 			return;
 		}
@@ -90,8 +90,9 @@ public class DisplayReviewsForCourse extends Activity {
 
 			/* Create a TextView for Instructor to be the row-content. */
 			TextView instructor = new TextView(this);
-			instructor.setTextSize(9);
-			instructor.setTextColor(R.color.text_gray);
+			instructor.setHeight(35);
+			instructor.setTextSize((float)9.5);
+			instructor.setTextColor(getResources().getColor(R.color.text_gray));
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -103,10 +104,11 @@ public class DisplayReviewsForCourse extends Activity {
 
 			/* Create a TextView for Course Quality to be the row-content. */
 			TextView courseQuality = new TextView(this);
-			courseQuality.setTextSize(9);
-			courseQuality.setTextColor(R.color.text_gray);
+			courseQuality.setHeight(35);
+			courseQuality.setTextSize((float)9.5);
+			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
-			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			courseQuality.setText(((Double)curCourse.getRatings().getCourseQuality()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -117,8 +119,9 @@ public class DisplayReviewsForCourse extends Activity {
 
 			/* Create a TextView for Instructor Quality to be the row-content. */
 			TextView instructorQuality = new TextView(this);
-			instructorQuality.setTextSize(9);
-			instructorQuality.setTextColor(R.color.text_gray);
+			instructorQuality.setHeight(35);
+			instructorQuality.setTextSize((float)9.5);
+			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
@@ -131,8 +134,9 @@ public class DisplayReviewsForCourse extends Activity {
 
 			/* Create a TextView for Difficulty to be the row-content. */
 			TextView difficulty = new TextView(this);
-			difficulty.setTextSize(9);
-			difficulty.setTextColor(R.color.text_gray);
+			difficulty.setHeight(35);
+			difficulty.setTextSize((float)9.5);
+			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(

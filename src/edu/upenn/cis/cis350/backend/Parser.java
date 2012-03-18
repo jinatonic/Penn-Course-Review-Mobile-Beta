@@ -112,7 +112,7 @@ public class Parser {
 		/* Try to get the data from cache if exists */
 		ArrayList<Course> reviews = cache.getCourse(alias);
 		if (reviews.size() > 0)
-			return reviews;
+			return displayCourseReviews(reviews);
 
 		String url = baseURL + "/depts/"+ dept + token;
 

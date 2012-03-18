@@ -45,9 +45,8 @@ public class Ratings {
 		if(r.equalsIgnoreCase("workRequired")) return workRequired;
 		
 		return -1;
-		
-		
 	}
+	
 	public double getAmountLearned() { return amountLearned; }
 	public double getCommAbility() { return commAbility; }
 	public double getCourseQuality() { return courseQuality; }

@@ -11,7 +11,7 @@ import edu.upenn.cis.cis350.backend.KeywordMap.Type;
 public class AutoComplete {
 	//Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR
 		//Example format for course: name = "INTRO GREEK ARCHAELOGY", path = "/coursehistories/2", course_id = "AAMW-401", type = COURSE
-		public ArrayList<KeywordMap> getAutoCompleteTerms(){
+		public static ArrayList<KeywordMap> getAutoCompleteTerms(){
 			ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
 			JSONObject instructor_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/instructors" + Parser.token);
 			JSONObject dept_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/depts" + Parser.token);

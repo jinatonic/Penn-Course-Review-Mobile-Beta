@@ -1,10 +1,5 @@
 package edu.upenn.cis.cis350.backend;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -13,7 +8,6 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import edu.upenn.cis.cis350.backend.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -313,17 +307,17 @@ public class Parser extends AsyncTask<String, Integer, String> {
 
 					r = new Ratings(
 							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-							);
+							rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+							rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+							rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+							rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+							rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+							rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+							rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+							rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+							rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+						);
 				}
 				JSONObject section = null;
 				Section s = null;

@@ -14,6 +14,7 @@ import edu.upenn.cis.cis350.objects.Section;
 public class SearchCacheTest extends AndroidTestCase {
 
 	Context c;
+	Course testCourse;
 	SearchCache cache;
 	
 	@Override
@@ -21,6 +22,12 @@ public class SearchCacheTest extends AndroidTestCase {
 		c = getContext();
 		cache = new SearchCache(c);
 		cache.open();
+		cache.resetTables();
+		
+		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
+		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
+		Instructor testInstructor = new Instructor("123", "Kostas", "insn_path");
+		testCourse = new Course("CIS-121", "Data structure and algo", "you learn stuff", "SPRING 2012", "no comments", "12", testInstructor, 50, 100, "course_path", testRatings, testSection);
 	}
 	
 	@Override
@@ -44,11 +51,6 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test inserting an element into the table
 	 */
 	public void test_insertingCourse() {
-		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
-		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
-		Instructor testInstructor = new Instructor("123", "Kostas", "insn_path");
-		Course testCourse = new Course("CIS-121", "Data structure and algo", "you learn stuff", "SPRING 2012", "no comments", "12", testInstructor, 50, 100, "course_path", testRatings, testSection);
-		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
@@ -61,7 +63,7 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test inserting invalid elements into the table
 	 */
 	public void test_insertingCourseWithInvalidEntries() {
-		assertEquals(1, cache.getSize());	// should still have the last entry entered
+		assertEquals(0, cache.getSize());
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
 		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
@@ -73,13 +75,18 @@ public class SearchCacheTest extends AndroidTestCase {
 		
 		cache.addCourse(t);		// should fail and not insert anything
 		
-		assertEquals(1, cache.getSize());	// should still have the last entry entered
+		assertEquals(0, cache.getSize());
 	}
 	
 	/**
 	 * Test getting information from database based on course alias (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithCourseAlias() {
+		ArrayList<Course> t = new ArrayList<Course>();
+		t.add(testCourse);
+		
+		cache.addCourse(t);
+		
 		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
 		
 		assertEquals(1, testCourses.size());
@@ -93,6 +100,11 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database based on professor's name (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithProfName() {
+		ArrayList<Course> t = new ArrayList<Course>();
+		t.add(testCourse);
+		
+		cache.addCourse(t);
+		
 		ArrayList<Course> testCourses = cache.getCourse("Kostas");
 		
 		assertEquals(1, testCourses.size());
@@ -115,6 +127,14 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test resetting the table
 	 */
 	public void test_resetTable() {
+		ArrayList<Course> t = new ArrayList<Course>();
+		t.add(testCourse);
+		
+		cache.addCourse(t);
+		
 		cache.resetTables();
+		
+		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
+		assertEquals(0, testCourses.size());
 	}
 }

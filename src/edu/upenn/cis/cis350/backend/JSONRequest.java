@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class JSONRequest {
+	
 	public static JSONObject retrieveJSONObject(String path){
 		try{
 			URL url = new URL(path);

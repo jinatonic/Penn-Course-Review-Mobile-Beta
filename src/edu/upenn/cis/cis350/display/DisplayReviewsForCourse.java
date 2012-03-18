@@ -43,17 +43,18 @@ public class DisplayReviewsForCourse extends Activity {
 			e.printStackTrace();
 		}
 
-		// Set font to Times New Roman
-		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		TextView searchPCRView = (TextView) findViewById(R.id.header);
-		searchPCRView.setTypeface(timesNewRoman);
-
 		// Top half of page, course name/description
 		TextView number = (TextView)findViewById(R.id.course_number);
 		if (courseReviews.size() == 0) {
 			number.setText("No reviews found for this course.");
 			return;
 		}
+
+		// Set font to Times New Roman
+		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
+		TextView searchPCRView = (TextView) findViewById(R.id.header);
+		searchPCRView.setTypeface(timesNewRoman);
+
 		number.setText(courseReviews.get(0).getAlias());
 		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.course_name);

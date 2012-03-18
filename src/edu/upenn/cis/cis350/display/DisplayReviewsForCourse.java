@@ -57,8 +57,10 @@ public class DisplayReviewsForCourse extends Activity {
 			return;
 		}
 		number.setText(courseReviews.get(0).getAlias());
+		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.course_name);
 		name.setText(courseReviews.get(0).getName());
+		name.setTypeface(timesNewRoman);
 		TextView description = (TextView)findViewById(R.id.course_description);
 		description.setText(courseReviews.get(0).getDescription());
 

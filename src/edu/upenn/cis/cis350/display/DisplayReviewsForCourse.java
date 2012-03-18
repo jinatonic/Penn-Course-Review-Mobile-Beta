@@ -71,13 +71,13 @@ public class DisplayReviewsForCourse extends Activity {
 			Course curCourse = iter.next();
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
-
 			tr.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setTextSize(9);
+			instructor.setTextColor(R.color.text_gray);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -89,6 +89,7 @@ public class DisplayReviewsForCourse extends Activity {
 
 			TextView courseQuality = new TextView(this);
 			courseQuality.setTextSize(9);
+			courseQuality.setTextColor(R.color.text_gray);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -100,6 +101,7 @@ public class DisplayReviewsForCourse extends Activity {
 
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setTextSize(9);
+			instructorQuality.setTextColor(R.color.text_gray);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -111,6 +113,7 @@ public class DisplayReviewsForCourse extends Activity {
 
 			TextView difficulty = new TextView(this);
 			difficulty.setTextSize(9);
+			difficulty.setTextColor(R.color.text_gray);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,

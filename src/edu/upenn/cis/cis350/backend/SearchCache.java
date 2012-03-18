@@ -134,55 +134,57 @@ public class SearchCache {
 	 * Takes a given course and store the information in the database (if not exists)
 	 * @param course given course to be added to the database
 	 */
-	public void addCourse(Course course) {
-		Log.w(TAG, "adding course " + course.getAlias() + " to database");
-		// First we check that the course doesn't already exist in the database
-		Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
-		c.moveToFirst();
-		if (c.getCount() > 0)
-			return;
-		
-		String id = course.getID();
-		
-		// First we add to the course table 
-		ContentValues values = new ContentValues();
-		values.put("name", course.getName());
-		values.put("course_alias", course.getAlias());
-		values.put("description", course.getDescription());
-		values.put("semester", course.getSemester());
-		values.put("course_id", id);
-		values.put("comments", course.getComments());
-		values.put("instructor_id", course.getInstructor().getID());
-		values.put("instructor_name", course.getInstructor().getName());
-		values.put("instructor_path", course.getInstructor().getPath());
-		values.put("num_reviewers", course.getNumReviewers());
-		values.put("num_students", course.getNumStudents());
-		values.put("course_path", course.getPath());
-		
-		Ratings r = course.getRatings();
-		values.put("ratings_amountLearned", r.getAmountLearned());
-		values.put("ratings_commAbility", r.getCommAbility());
-		values.put("ratings_courseQuality", r.getCourseQuality());
-		values.put("ratings_difficulty", r.getDifficulty());
-		values.put("ratings_instructorAccess", r.getInstructorAccess());
-		values.put("ratings_instructorQuality", r.getInstructorQuality());
-		values.put("ratings_readingsValue", r.getReadingsValue());
-		values.put("ratings_recommendMajor", r.getRecommendMajor());
-		values.put("ratings_recommendNonMajor", r.getRecommendNonMajor());
-		values.put("ratings_stimulateInterest", r.getStimulateInterest());
-		values.put("ratings_workRequired", r.getWorkRequired());
-		
-		Section section = course.getSection();
-		values.put("section_id", section.getID());
-		values.put("section_alias", section.getAlias());
-		values.put("section_path", section.getPath());
-		values.put("section_name", section.getName());
-		values.put("section_number", section.getSectionNum());
-		
-		values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
-		
-		if (mDb.insert(COURSE_TABLE, null, values) == -1) 
-			Log.w(TAG, "Failed to insert new course into table");
+	public void addCourse(ArrayList<Course> courses) {
+		for (Course course : courses) {
+			Log.w(TAG, "adding course " + course.getAlias() + " to database");
+			// First we check that the course doesn't already exist in the database
+			Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
+			c.moveToFirst();
+			if (c.getCount() > 0)
+				return;
+			
+			String id = course.getID();
+			
+			// First we add to the course table 
+			ContentValues values = new ContentValues();
+			values.put("name", course.getName());
+			values.put("course_alias", course.getAlias());
+			values.put("description", course.getDescription());
+			values.put("semester", course.getSemester());
+			values.put("course_id", id);
+			values.put("comments", course.getComments());
+			values.put("instructor_id", course.getInstructor().getID());
+			values.put("instructor_name", course.getInstructor().getName());
+			values.put("instructor_path", course.getInstructor().getPath());
+			values.put("num_reviewers", course.getNumReviewers());
+			values.put("num_students", course.getNumStudents());
+			values.put("course_path", course.getPath());
+			
+			Ratings r = course.getRatings();
+			values.put("ratings_amountLearned", r.getAmountLearned());
+			values.put("ratings_commAbility", r.getCommAbility());
+			values.put("ratings_courseQuality", r.getCourseQuality());
+			values.put("ratings_difficulty", r.getDifficulty());
+			values.put("ratings_instructorAccess", r.getInstructorAccess());
+			values.put("ratings_instructorQuality", r.getInstructorQuality());
+			values.put("ratings_readingsValue", r.getReadingsValue());
+			values.put("ratings_recommendMajor", r.getRecommendMajor());
+			values.put("ratings_recommendNonMajor", r.getRecommendNonMajor());
+			values.put("ratings_stimulateInterest", r.getStimulateInterest());
+			values.put("ratings_workRequired", r.getWorkRequired());
+			
+			Section section = course.getSection();
+			values.put("section_id", section.getID());
+			values.put("section_alias", section.getAlias());
+			values.put("section_path", section.getPath());
+			values.put("section_name", section.getName());
+			values.put("section_number", section.getSectionNum());
+			
+			values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+			
+			if (mDb.insert(COURSE_TABLE, null, values) == -1) 
+				Log.w(TAG, "Failed to insert new course into table");
+		}
 	}
 	
 	/**

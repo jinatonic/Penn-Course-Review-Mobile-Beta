@@ -49,7 +49,10 @@ public class SearchCacheTest extends AndroidTestCase {
 		Instructor testInstructor = new Instructor("123", "Kostas", "insn_path");
 		Course testCourse = new Course("CIS-121", "Data structure and algo", "you learn stuff", "SPRING 2012", "no comments", "12", testInstructor, 50, 100, "course_path", testRatings, testSection);
 		
-		cache.addCourse(testCourse);
+		ArrayList<Course> t = new ArrayList<Course>();
+		t.add(testCourse);
+		
+		cache.addCourse(t);
 		
 		assertEquals(1, cache.getSize());
 	}
@@ -65,7 +68,10 @@ public class SearchCacheTest extends AndroidTestCase {
 		Instructor testInstructor = new Instructor("123", "Kostas", "insn_path");
 		Course testCourse = new Course(null, null, null, null, null, null, testInstructor, 50, 100, "course_path", testRatings, testSection);
 		
-		cache.addCourse(testCourse);		// should fail and not insert anything
+		ArrayList<Course> t = new ArrayList<Course>();
+		t.add(testCourse);
+		
+		cache.addCourse(t);		// should fail and not insert anything
 		
 		assertEquals(1, cache.getSize());	// should still have the last entry entered
 	}

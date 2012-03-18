@@ -12,13 +12,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
-public class Parser {
+public class Parser extends AsyncTask<String, Integer, String>{
 
 	Sorter s = new Sorter();
 	public final String baseURL = "http://api.penncoursereview.com/v1";
@@ -26,8 +27,27 @@ public class Parser {
 
 	public SearchCache cache;
 	
+	@Override
+	protected String doInBackground(String... input) {
+		if (input == null || input.length != 0) {
+			Log.w("Parser", "given input is more than one string");
+			return null;
+		}
+		
+		// Run the parser
+		runParser(input[0]);
+		
+		return "COMPLETE"; // CHANGE
+	}
+	
 	public Parser(SearchCache _cache) {
 		cache = _cache;
+	}
+	
+	public void runParser(String input) {
+		// TODO FIX
+		ArrayList<Course> courses = getReviewsForCourse(input);
+		cache.addCourse(courses);
 	}
 	
 	public JSONObject retrieveJSONObject(String path){
@@ -231,12 +251,7 @@ public class Parser {
 								String review_path = course_path + "/reviews";
 								ArrayList<Course> c =  createCourseReview(review_path,course_aliases,name,description,semester);
 								
-								/* Add this course review to database */
-								for(int l = 0; l < c.size(); l++)
-									cache.addCourse(c.get(l));
-								
 								courseReviews.addAll(c);
-								Log.w("TESTTT","ADDING NEW COURSE");
 							}
 						}
 					}

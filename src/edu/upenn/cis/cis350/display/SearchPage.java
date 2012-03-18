@@ -54,9 +54,9 @@ public class SearchPage extends Activity {
 		startActivityForResult(i, SearchPage.ACTIVITY_DisplayReviewsForCourse);
 	}
 	
+	// Clear search term on clear button click
 	public void onClearButtonClick(View v) {
 		EditText search = (EditText)findViewById(R.id.search_term);
 		search.setText("");
 	}
-
 }

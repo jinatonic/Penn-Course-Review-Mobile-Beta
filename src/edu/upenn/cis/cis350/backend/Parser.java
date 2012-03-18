@@ -31,9 +31,6 @@ public class Parser {
 		cache = _cache;
 	}
 
-	
-	
-
 	public ArrayList<Course> getReviewsForDept(String dept) {
 		if(dept == null) return null;
 		dept = dept.trim().toUpperCase();
@@ -69,14 +66,13 @@ public class Parser {
 			}
 		}	
 		System.out.println(reviews.size());
-
 		return displayCourseReviews(reviews);
 	}
 
 	public ArrayList<Course> getReviewsForCourse(String course) {
-		if(course == null) return null;
+		if (course == null) return null;
 		course = course.trim();
-		if(course.length()>7) return null;
+		if (course.length() > 7) return null;
 		System.out.println(course);
 		String dept = "";
 		String num = "";
@@ -87,7 +83,7 @@ public class Parser {
 				break;
 			}
 		}
-		if(dept == "" || num == "") return null;
+		if (dept == "" || num == "") return null;
 		String alias = dept + "-" + num;
 		System.out.println(alias);
 

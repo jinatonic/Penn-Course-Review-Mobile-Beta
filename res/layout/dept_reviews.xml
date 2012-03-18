@@ -23,7 +23,7 @@
         android:padding="10dp" >
 
         <TextView
-            android:id="@+id/course_number"
+            android:id="@+id/dept_number"
             android:layout_width="fill_parent"
             android:layout_height="25dip"
             android:textColor="@color/text_navy"
@@ -31,20 +31,12 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/course_name"
+            android:id="@+id/dept_name"
             android:layout_width="fill_parent"
             android:layout_height="25dip"
             android:textColor="@color/text_gray"
             android:textSize="15sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/course_description"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="2sp"
-            android:textColor="@color/black"
-            android:textSize="9sp" />
     </LinearLayout>
 
     <View
@@ -58,57 +50,6 @@
         android:background="@layout/bg_gradient"
         android:orientation="vertical"
         android:padding="10dp" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="115dip"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="3dip"
-                android:text="@string/instructor"
-                android:textColor="@color/text_navy"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="58dip"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:padding="6dip"
-                android:text="@string/course_quality"
-                android:textColor="@color/text_navy"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="58dip"
-                android:layout_height="wrap_content"
-                android:layout_column="3"
-                android:padding="6dip"
-                android:text="@string/instructor_quality"
-                android:textColor="@color/text_navy"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="58dip"
-                android:layout_height="wrap_content"
-                android:layout_column="4"
-                android:padding="5dip"
-                android:text="@string/difficulty"
-                android:textColor="@color/text_navy"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="@color/text_navy" />
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -127,33 +68,40 @@
 
                     <TextView
                         android:layout_column="1"
-                        android:height="0dip"
-                        android:padding="3dip"
+                        android:padding="6dip"
+                        android:text="@string/instructor"
+                        android:textColor="@color/black"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
                         android:width="115dip" />
 
                     <TextView
                         android:layout_column="2"
-                        android:height="0dip"
                         android:padding="6dip"
+                        android:text="@string/course_quality"
+                        android:textColor="@color/black"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
                         android:width="58dip" />
 
                     <TextView
                         android:layout_column="3"
-                        android:height="0dip"
                         android:padding="6dip"
+                        android:text="@string/instructor_quality"
+                        android:textColor="@color/black"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
                         android:width="58dip" />
 
                     <TextView
                         android:layout_column="4"
-                        android:height="0dip"
                         android:padding="5dip"
+                        android:text="@string/difficulty"
+                        android:textColor="@color/black"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
                         android:width="58dip" />
                 </TableRow>
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="12dip"
-                    android:background="@android:color/transparent" />
             </TableLayout>
         </ScrollView>
     </LinearLayout>

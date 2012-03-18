@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.CourseAverage;
+import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
@@ -44,9 +46,25 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		cache.addCourse(courses);
 	}
 
-	public ArrayList<Course> getReviewsForDept(String dept) {
+	public Department getReviewsForDept(String dept) {
 		if(dept == null) return null;
 		dept = dept.trim().toUpperCase();
+		Department department = null;
+		//change this stuff once autocomplete works to get dept name, id
+		try{
+			JSONObject all_dept = JSONRequest.retrieveJSONObject(baseURL + "/depts" + token);
+		
+		JSONArray dept_array = all_dept.getJSONObject("result").getJSONArray("values");
+		String dept_name = "";
+		String dept_id = "";
+		for(int h = 0; h > dept_array.length(); h ++){
+			if(dept_array.getJSONObject(h).getString("id").equalsIgnoreCase(dept)){
+				dept_name = dept_array.getJSONObject(h).getString("name");
+				dept_id = dept_array.getJSONObject(h).getString("id");
+				break;
+			}
+				
+		}
 		System.out.println(dept);
 		String path = "/depts/"+dept;
 		String url = baseURL + path + token;
@@ -56,7 +74,8 @@ public class Parser extends AsyncTask<String, Integer, String> {
 			return null;
 		}
 		System.out.println(url);
-		ArrayList<Course> reviews = new ArrayList<Course>();
+	
+		ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
 		JSONObject result = null;
 		if (json.has("result")) {
 			try {
@@ -67,19 +86,41 @@ public class Parser extends AsyncTask<String, Integer, String> {
 					for (int i = 0; i < coursehistories.length(); i++) {
 						JSONObject o = coursehistories.getJSONObject(i);
 						String course_path = null;
+						String course_name = "";
+						String course_id = "";
+						if(o.has("aliases"))
+							course_id = o.getJSONArray("aliases").getString(0);
+						if(o.has("name"))
+							course_name = o.getString("name");
 						if (o.has("path")) {
 							course_path = o.getString("path");
-							reviews.addAll(storeReviews(course_path));
+							CourseAverage a = new CourseAverage(course_path, course_name, course_id, storeReviews(course_path));
+							courseAverages.add(a);
 						}
 					}
+					department = new Department(dept_name, dept_id, path, courseAverages);
+					
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 				return null;
 			}
 		}	
-		System.out.println(reviews.size());
-		return displayCourseReviews(reviews);
+		
+		return  department;
+		}catch(JSONException e) { e.printStackTrace(); return department;}
+	}
+	
+	//path is of form: "/instructors/1-DONALD-D-FITTS
+	public ArrayList<Course> getReviewsForInstructor(String path){
+		ArrayList<Course> reviews = new ArrayList<Course>();
+		if(path == null) return null;
+		String reviewpath = path + "/reviews";
+		String instructor_name = "GET NAME FROM DATABASE"; //TBD
+		try{
+		reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
+		} catch (JSONException e) { e.printStackTrace(); }
+		return reviews;
 	}
 
 	public ArrayList<Course> getReviewsForCourse(String course) {
@@ -169,6 +210,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		return reviews;
 	}
 
+	//path is format: "/coursehistories/2"
 	public ArrayList<Course> storeReviews(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);

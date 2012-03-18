@@ -44,9 +44,17 @@ public class AutoComplete {
 						dept_values = dept_result.getJSONArray("values");
 						for(int j = 0; j < dept_values.length(); j++){
 							String dept_path = "";
+							String dept_id = "";
+							String dept_name = "";
 							JSONObject dpt = dept_values.getJSONObject(j);
 							if(dpt.has("path"))
 								dept_path = dpt.getString("path");
+							if(dpt.has("id"))
+								dept_id = dpt.getString("id");
+							if(dpt.has("name"))
+								dept_name = dpt.getString("name");
+							KeywordMap deptMap = new KeywordMap(dept_path, dept_name, dept_id, Type.DEPARTMENT);
+							keywordMap.add(deptMap);
 							JSONObject dpt_object = JSONRequest.retrieveJSONObject(Parser.baseURL + dept_path + Parser.token);
 							JSONObject dpt_result = null;
 							if(dpt_object.has("result")){

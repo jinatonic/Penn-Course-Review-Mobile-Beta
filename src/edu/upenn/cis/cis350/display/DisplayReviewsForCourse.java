@@ -45,6 +45,11 @@ public class DisplayReviewsForCourse extends Activity {
 			e.printStackTrace();
 		}
 
+		// Set font to Times New Roman
+		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
+		TextView searchPCRView = (TextView) findViewById(R.id.header);
+		searchPCRView.setTypeface(timesNewRoman);
+
 		// Top half of page, course name/description
 		TextView number = (TextView)findViewById(R.id.course_number);
 		if (courseReviews.size() == 0) {
@@ -82,7 +87,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setLayoutParams(insParams);
 			/* Add TextView to row. */
 			tr.addView(instructor);
-			
+
 			TextView courseQuality = new TextView(this);
 			courseQuality.setWidth(COL_WIDTH);
 			courseQuality.setTextSize(8);
@@ -94,7 +99,7 @@ public class DisplayReviewsForCourse extends Activity {
 			courseQuality.setLayoutParams(courseParams);
 			/* Add TextView to row. */
 			tr.addView(courseQuality);
-			
+
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setWidth(COL_WIDTH);
 			instructorQuality.setTextSize(8);
@@ -106,7 +111,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructorQuality.setLayoutParams(insQualParams);
 			/* Add TextView to row. */
 			tr.addView(instructorQuality);
-		
+
 			TextView difficulty = new TextView(this);
 			difficulty.setWidth(COL_WIDTH);
 			difficulty.setTextSize(8);
@@ -123,10 +128,5 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 		}
-
-		// Set font to Times New Roman
-		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		TextView searchPCRView = (TextView) findViewById(R.id.header);
-		searchPCRView.setTypeface(timesNewRoman);
 	}
 }

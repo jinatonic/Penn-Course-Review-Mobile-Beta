@@ -121,6 +121,16 @@ public class SearchCache {
 		mDb.rawQuery("DELETE FROM " + COURSE_TABLE, null);
 	}
 	
+	/** 
+	 * Scan the table and remove any entries older than 30 days
+	 */
+	public void clearOldEntries() {
+		Log.w(TAG, "Clearing database of old entries");
+		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+		int end_day = (day < 30) ? day + 365 - 30 : day - 80;
+		mDb.rawQuery("DELETE FROM " + COURSE_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")", null);
+	}
+	
 	/**
 	 * Takes a given course and store the information in the database (if not exists)
 	 * @param course given course to be added to the database

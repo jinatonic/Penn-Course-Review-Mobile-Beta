@@ -229,12 +229,13 @@ public class Parser {
 									description = course_result.getString("description");
 								}
 								String review_path = course_path + "/reviews";
-								Course c = createCourseReview(review_path,course_aliases,name,description,semester);
+								ArrayList<Course> c =  createCourseReview(review_path,course_aliases,name,description,semester);
 								
 								/* Add this course review to database */
-								cache.addCourse(c);
+								for(int l = 0; l < c.size(); l++)
+									cache.addCourse(c.get(l));
 								
-								courseReviews.add(c);
+								courseReviews.addAll(c);
 								Log.w("TESTTT","ADDING NEW COURSE");
 							}
 						}
@@ -248,7 +249,8 @@ public class Parser {
 		return courseReviews;
 	}
 
-	public Course createCourseReview(String path,String[] course_aliases,String name, String description, String semester) throws JSONException {
+	public ArrayList<Course> createCourseReview(String path,String[] course_aliases,String name, String description, String semester) throws JSONException {
+		ArrayList<Course> course_list = new ArrayList<Course>();
 		JSONObject json = retrieveJSONObject(baseURL + path + token);
 		JSONArray courses = null;
 		if (json.has("result") && json.getJSONObject("result").has("values")) {
@@ -374,9 +376,9 @@ public class Parser {
 				if (course.has("num_students"));
 				num_students = course.getInt("num_students");
 				Course c = new Course((course_aliases == null) ? "" : course_aliases[0], name, description, semester, comments,id,i,num_reviewers,num_students,c_path,r,s);
-				return c;
+				course_list.add(c);
 			}
 		}
-		return null;
+		return course_list;
 	}
 }

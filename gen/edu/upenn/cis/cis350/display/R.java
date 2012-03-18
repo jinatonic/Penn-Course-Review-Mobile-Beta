@@ -34,9 +34,10 @@ public final class R {
         public static final int test=0x7f060005;
     }
     public static final class layout {
-        public static final int course_reviews=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int search_page=0x7f030002;
+        public static final int bg_gradient=0x7f030000;
+        public static final int course_reviews=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int search_page=0x7f030003;
     }
     public static final class string {
         public static final int SEARCH_TERM=0x7f040006;

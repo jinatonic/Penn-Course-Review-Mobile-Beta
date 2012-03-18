@@ -79,7 +79,6 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setTextSize(9);
-			instructor.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructor.setTextColor(R.color.text_gray);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(

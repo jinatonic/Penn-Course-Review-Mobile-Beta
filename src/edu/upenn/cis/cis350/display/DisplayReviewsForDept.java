@@ -16,6 +16,9 @@ import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.CourseAverage;
+import edu.upenn.cis.cis350.objects.Department;
+import edu.upenn.cis.cis350.objects.Ratings;
 
 /* Display all reviews for a specific dept */
 public class DisplayReviewsForDept extends Activity {
@@ -36,8 +39,8 @@ public class DisplayReviewsForDept extends Activity {
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		Parser p = new Parser(cache);
-		ArrayList<Course> courseReviews = new ArrayList<Course>();
-		courseReviews = p.getReviewsForDept(searchTerm);
+		Department dept = p.getReviewsForDept(searchTerm);
+		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
 		// Always close DB after using it!
 		cache.close();
 
@@ -48,23 +51,24 @@ public class DisplayReviewsForDept extends Activity {
 		
 		// Top half of page under PCR header
 		TextView number = (TextView)findViewById(R.id.dept_number);
-		if (courseReviews == null || courseReviews.size() == 0) {
-			number.setText("No reviews found for this dept.");
+		if (dept == null || (courseAvgs.size() == 0) || (courseAvgs == null)) {
+			number.setText("No reviews found for this department.");
 			return;
 		}
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
-		number.setText(courseReviews.get(0).getAlias());
+		number.setText(dept.getId());
 		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.dept_name);
-		name.setText(courseReviews.get(0).getName());
+		name.setText(dept.getName());
 		name.setTypeface(timesNewRoman);
 
-		// Iterate through reviews for course and fill table cells
-		Iterator<Course> iter = courseReviews.iterator();
+		// Iterate through avg course reviews for dept and fill table cells
+		Iterator<CourseAverage> iter = courseAvgs.iterator();
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
 		while(iter.hasNext()) {
-			Course curCourse = iter.next();
+			CourseAverage curCourseAvg = iter.next();
+			Ratings curRatings = curCourseAvg.getRatings();
 
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
@@ -72,19 +76,19 @@ public class DisplayReviewsForDept extends Activity {
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 
-			/* Create a TextView for Instructor to be the row-content. */
-			TextView instructor = new TextView(this);
-			instructor.setHeight(35);
-			instructor.setTextSize((float)9.5);
-			instructor.setTextColor(getResources().getColor(R.color.text_gray));
-			instructor.setText(curCourse.getInstructor().getName());
+			/* Create a TextView for Course ID to be the row-content. */
+			TextView courseId = new TextView(this);
+			courseId.setHeight(35);
+			courseId.setTextSize((float)9.5);
+			courseId.setTextColor(getResources().getColor(R.color.text_gray));
+			courseId.setText(curCourseAvg.getId());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
 			insParams.column = 1;
-			instructor.setLayoutParams(insParams);
+			courseId.setLayoutParams(insParams);
 			/* Add TextView to row. */
-			tr.addView(instructor);
+			tr.addView(courseId);
 
 			/* Create a TextView for Course Quality to be the row-content. */
 			TextView courseQuality = new TextView(this);
@@ -92,7 +96,7 @@ public class DisplayReviewsForDept extends Activity {
 			courseQuality.setTextSize((float)9.5);
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
-			courseQuality.setText(((Double)curCourse.getRatings().getCourseQuality()).toString());
+			courseQuality.setText(((Double)curRatings.getCourseQuality()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -107,7 +111,7 @@ public class DisplayReviewsForDept extends Activity {
 			instructorQuality.setTextSize((float)9.5);
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
-			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
+			instructorQuality.setText(((Double)curRatings.getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -122,7 +126,7 @@ public class DisplayReviewsForDept extends Activity {
 			difficulty.setTextSize((float)9.5);
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
-			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			difficulty.setText(((Double)curRatings.getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);

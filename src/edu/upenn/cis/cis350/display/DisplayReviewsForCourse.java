@@ -20,6 +20,8 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.objects.Course;
 
 public class DisplayReviewsForCourse extends Activity {
+	
+	public static final int COL_WIDTH = 6;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ public class DisplayReviewsForCourse extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.course_reviews);
+		
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 		Parser p = new Parser();
@@ -41,6 +44,11 @@ public class DisplayReviewsForCourse extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+
+		// Set font to Times New Roman
+		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
+		TextView searchPCRView = (TextView) findViewById(R.id.header);
+		searchPCRView.setTypeface(timesNewRoman);
 
 		// Top half of page, course name/description
 		TextView number = (TextView)findViewById(R.id.course_number);
@@ -69,6 +77,8 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
+			instructor.setWidth(COL_WIDTH);
+			instructor.setTextSize(8);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -77,8 +87,10 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setLayoutParams(insParams);
 			/* Add TextView to row. */
 			tr.addView(instructor);
-			
+
 			TextView courseQuality = new TextView(this);
+			courseQuality.setWidth(COL_WIDTH);
+			courseQuality.setTextSize(8);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -87,8 +99,10 @@ public class DisplayReviewsForCourse extends Activity {
 			courseQuality.setLayoutParams(courseParams);
 			/* Add TextView to row. */
 			tr.addView(courseQuality);
-			
+
 			TextView instructorQuality = new TextView(this);
+			instructorQuality.setWidth(COL_WIDTH);
+			instructorQuality.setTextSize(8);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -97,8 +111,10 @@ public class DisplayReviewsForCourse extends Activity {
 			instructorQuality.setLayoutParams(insQualParams);
 			/* Add TextView to row. */
 			tr.addView(instructorQuality);
-		
+
 			TextView difficulty = new TextView(this);
+			difficulty.setWidth(COL_WIDTH);
+			difficulty.setTextSize(8);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -112,10 +128,5 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 		}
-
-		// Set font to Times New Roman
-		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		TextView searchPCRView = (TextView) findViewById(R.id.header);
-		searchPCRView.setTypeface(timesNewRoman);
 	}
 }

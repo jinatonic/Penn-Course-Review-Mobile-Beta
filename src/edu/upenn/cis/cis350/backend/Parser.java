@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import edu.upenn.cis.cis350.backend.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -21,11 +22,11 @@ import edu.upenn.cis.cis350.objects.Section;
 public class Parser extends AsyncTask<String, Integer, String> {
 
 	Sorter s = new Sorter();
-	public final String baseURL = "http://api.penncoursereview.com/v1";
-	public final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
+	public static final String baseURL = "http://api.penncoursereview.com/v1";
+	public static final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
 	public SearchCache cache;
-	
+
 	@Override
 	protected String doInBackground(String... input) {
 		if (input == null || input.length != 0) {
@@ -48,32 +49,6 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		ArrayList<Course> courses = getReviewsForCourse(input);
 		cache.addCourse(courses);
 	}
-	
-	public JSONObject retrieveJSONObject(String path){
-		try{
-			URL url = new URL(path);
-			Log.w("Parser: retrieveJSONObject", "url=" + url);
-			URLConnection connection = url.openConnection();
-			String line;
-			StringBuilder builder = new StringBuilder();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			while ((line = reader.readLine()) != null) {
-				builder.append(line);
-			}
-			Log.v("Length",builder.toString());
-
-			return new JSONObject(builder.toString());
-		}
-		catch(IOException e) {
-			Log.w("Parser: retrieveJSONObject", "IOException: Bad Url");
-			e.printStackTrace();
-			return null;
-		} catch (JSONException e) {
-			Log.w("Parser: retrieveJSONObject", "JSONException: mis-formatted JSON");
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	public ArrayList<Course> getReviewsForDept(String dept) {
 		if(dept == null) return null;
@@ -82,7 +57,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		String path = "/depts/"+dept;
 		String url = baseURL + path + token;
 
-		JSONObject json = retrieveJSONObject(url);
+		JSONObject json = JSONRequest.retrieveJSONObject(url);
 		if (json == null) {
 			return null;
 		}
@@ -112,11 +87,11 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		System.out.println(reviews.size());
 		return displayCourseReviews(reviews);
 	}
-	
+
 	public ArrayList<Course> getReviewsForCourse(String course) {
-		if(course == null) return null;
+		if (course == null) return null;
 		course = course.trim();
-		if(course.length()>7) return null;
+		if (course.length() > 7) return null;
 		System.out.println(course);
 		String dept = "";
 		String num = "";
@@ -127,10 +102,10 @@ public class Parser extends AsyncTask<String, Integer, String> {
 				break;
 			}
 		}
-		if(dept == "" || num == "") return null;
+		if (dept == "" || num == "") return null;
 		String alias = dept + "-" + num;
 		System.out.println(alias);
-		
+
 		/* Try to get the data from cache if exists */
 		ArrayList<Course> reviews = cache.getCourse(alias);
 		if (reviews.size() > 0)
@@ -138,7 +113,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 
 		String url = baseURL + "/depts/"+ dept + token;
 
-		JSONObject json = retrieveJSONObject(url);
+		JSONObject json = JSONRequest.retrieveJSONObject(url);
 		if (json == null) {
 			return null;
 		}
@@ -167,7 +142,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 				JSONArray aliases = null;
 				if (j.has("aliases")) {
 					aliases = j.getJSONArray("aliases");
-	
+
 					for (int k = 0; k < aliases.length(); ++k) {
 						if (aliases.get(k).equals(alias)) {
 							System.out.println(j.toString());
@@ -202,10 +177,10 @@ public class Parser extends AsyncTask<String, Integer, String> {
 
 	public ArrayList<Course> storeReviews(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
-		JSONObject js = retrieveJSONObject(baseURL + path + token);
+		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 
 		String[] course_aliases = null;
-		
+
 		if (js.has("result")) {
 			JSONObject jresult;
 			try {
@@ -240,7 +215,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 						}
 						if (course2.has("path")) {
 							course_path = course2.getString("path");
-							JSONObject course_object = retrieveJSONObject(baseURL + course_path + token);
+							JSONObject course_object = JSONRequest.retrieveJSONObject(baseURL + course_path + token);
 							JSONObject course_result = null;
 							if (course_object.has("result")) {
 								course_result = course_object.getJSONObject("result");
@@ -249,7 +224,6 @@ public class Parser extends AsyncTask<String, Integer, String> {
 								}
 								String review_path = course_path + "/reviews";
 								ArrayList<Course> c =  createCourseReview(review_path,course_aliases,name,description,semester);
-								
 								courseReviews.addAll(c);
 							}
 						}
@@ -265,7 +239,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 
 	public ArrayList<Course> createCourseReview(String path,String[] course_aliases,String name, String description, String semester) throws JSONException {
 		ArrayList<Course> course_list = new ArrayList<Course>();
-		JSONObject json = retrieveJSONObject(baseURL + path + token);
+		JSONObject json = JSONRequest.retrieveJSONObject(baseURL + path + token);
 		JSONArray courses = null;
 		if (json.has("result") && json.getJSONObject("result").has("values")) {
 			courses = json.getJSONObject("result").getJSONArray("values");
@@ -338,18 +312,18 @@ public class Parser extends AsyncTask<String, Integer, String> {
 					}
 
 					r = new Ratings(
-										rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-										rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-										rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-										rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-										rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-										rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-										rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-										rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-										rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-										rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-										rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-									);
+							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
+									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+							);
 				}
 				JSONObject section = null;
 				Section s = null;

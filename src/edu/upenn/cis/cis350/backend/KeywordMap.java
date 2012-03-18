@@ -7,7 +7,7 @@ public class KeywordMap {
 	private Type t;
 	
 	public enum Type{
-		COURSE, INSTRUCTOR;
+		COURSE, INSTRUCTOR, DEPARTMENT;
 	}
 	
 	public KeywordMap(String _path, String _name, String _course_id, Type _t){

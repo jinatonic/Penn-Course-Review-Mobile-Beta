@@ -11,7 +11,7 @@ import edu.upenn.cis.cis350.backend.KeywordMap.Type;
 public class AutoComplete {
 	//Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR
 		//Example format for course: name = "INTRO GREEK ARCHAELOGY", path = "/coursehistories/2", course_id = "AAMW-401", type = COURSE
-		public ArrayList<KeywordMap> getAutoCompleteTerms(){
+		public static ArrayList<KeywordMap> getAutoCompleteTerms(){
 			ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
 			JSONObject instructor_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/instructors" + Parser.token);
 			JSONObject dept_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/depts" + Parser.token);
@@ -44,9 +44,17 @@ public class AutoComplete {
 						dept_values = dept_result.getJSONArray("values");
 						for(int j = 0; j < dept_values.length(); j++){
 							String dept_path = "";
+							String dept_id = "";
+							String dept_name = "";
 							JSONObject dpt = dept_values.getJSONObject(j);
 							if(dpt.has("path"))
 								dept_path = dpt.getString("path");
+							if(dpt.has("id"))
+								dept_id = dpt.getString("id");
+							if(dpt.has("name"))
+								dept_name = dpt.getString("name");
+							KeywordMap deptMap = new KeywordMap(dept_path, dept_name, dept_id, Type.DEPARTMENT);
+							keywordMap.add(deptMap);
 							JSONObject dpt_object = JSONRequest.retrieveJSONObject(Parser.baseURL + dept_path + Parser.token);
 							JSONObject dpt_result = null;
 							if(dpt_object.has("result")){

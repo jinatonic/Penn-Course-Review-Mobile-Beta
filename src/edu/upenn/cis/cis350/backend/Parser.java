@@ -58,6 +58,7 @@ public class Parser {
 	}
 
 	public ArrayList<Course> getReviewsForDept(String dept) throws IOException, ParseException, JSONException {
+		if(dept == null) return null;
 		dept = dept.trim().toUpperCase();
 		System.out.println(dept);
 		String path = "/depts/"+dept;
@@ -91,7 +92,9 @@ public class Parser {
 	}
 	
 	public ArrayList<Course> getReviewsForCourse(String course) throws IOException, ParseException, JSONException {
+		if(course == null) return null;
 		course = course.trim();
+		if(course.length()>7) return null;
 		System.out.println(course);
 		String dept = "";
 		String num = "";
@@ -102,6 +105,7 @@ public class Parser {
 				break;
 			}
 		}
+		if(dept == "" || num == "") return null;
 		String alias = dept + "-" + num;
 		System.out.println(alias);
 		

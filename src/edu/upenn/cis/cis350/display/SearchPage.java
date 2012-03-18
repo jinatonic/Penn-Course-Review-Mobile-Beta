@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis350.display;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,9 +16,13 @@ import edu.upenn.cis.cis350.backend.SearchCache;
 public class SearchPage extends Activity {
 	public static final int ACTIVITY_DisplayReviewsForCourse = 1;
 	public static final int ACTIVITY_DisplayReviewsForDept = 2;
+	
+	public static Context context;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		context = this.getApplicationContext();
 
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);

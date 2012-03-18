@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import edu.upenn.cis.cis350.display.SearchPage;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
@@ -36,14 +37,17 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		return "COMPLETE"; // CHANGE
 	}
 	
-	public Parser(SearchCache _cache) {
-		cache = _cache;
-	}
-	
 	public void runParser(String input) {
+		// Get application context from SearchPage and use it to initialize cache
+		cache = new SearchCache(SearchPage.context);
+
 		// TODO FIX
 		ArrayList<Course> courses = getReviewsForCourse(input);
+		
+		// Add the resulting courses into cache
+		cache.open();
 		cache.addCourse(courses);
+		cache.close();
 	}
 
 	public Department getReviewsForDept(String dept) {
@@ -141,11 +145,6 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		String alias = dept + "-" + num;
 		System.out.println(alias);
 
-		/* Try to get the data from cache if exists */
-		ArrayList<Course> reviews = cache.getCourse(alias);
-		if (reviews.size() > 0)
-			return displayCourseReviews(reviews);
-
 		String url = baseURL + "/depts/"+ dept + token;
 
 		JSONObject json = JSONRequest.retrieveJSONObject(url);
@@ -196,7 +195,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		}
 
 		System.out.println(path);
-		reviews = new ArrayList<Course>();
+		ArrayList<Course> reviews = new ArrayList<Course>();
 		reviews = storeReviews(path);
 
 		System.out.println(reviews.size());

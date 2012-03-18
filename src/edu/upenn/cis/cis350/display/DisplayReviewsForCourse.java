@@ -23,7 +23,7 @@ import edu.upenn.cis.cis350.objects.Course;
 
 /* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Activity {
-	
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -35,14 +35,16 @@ public class DisplayReviewsForCourse extends Activity {
 		// Get course reviews for the search term
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
-		
+
 		// Initialize cache so parser can use it
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		Parser p = new Parser(cache);
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		try {
+			System.out.println("****Got here, about to try getting reviews for course");
 			courseReviews = p.getReviewsForCourse(searchTerm);
+			System.out.println("****Just got reviews for course");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -53,17 +55,17 @@ public class DisplayReviewsForCourse extends Activity {
 		// Always close DB after using it!
 		cache.close();
 
+		// Set font to Times New Roman
+		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
+		TextView searchPCRView = (TextView) findViewById(R.id.header);
+		searchPCRView.setTypeface(timesNewRoman);
+		
 		// Top half of page under PCR header
 		TextView number = (TextView)findViewById(R.id.course_number);
 		if (courseReviews == null) {
 			number.setText("No reviews found for this course.");
 			return;
 		}
-
-		// Set font to Times New Roman
-		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		TextView searchPCRView = (TextView) findViewById(R.id.header);
-		searchPCRView.setTypeface(timesNewRoman);
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(courseReviews.get(0).getAlias());
@@ -79,13 +81,13 @@ public class DisplayReviewsForCourse extends Activity {
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
 		while(iter.hasNext()) {
 			Course curCourse = iter.next();
-			
+
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
 			tr.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
-			
+
 			/* Create a TextView for Instructor to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setTextSize(9);
@@ -98,7 +100,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setLayoutParams(insParams);
 			/* Add TextView to row. */
 			tr.addView(instructor);
-			
+
 			/* Create a TextView for Course Quality to be the row-content. */
 			TextView courseQuality = new TextView(this);
 			courseQuality.setTextSize(9);
@@ -140,7 +142,7 @@ public class DisplayReviewsForCourse extends Activity {
 			difficulty.setLayoutParams(diffParams);
 			/* Add TextView to row. */
 			tr.addView(difficulty);
-			
+
 			/* Add row to TableLayout. */
 			tl.addView(tr,new TableLayout.LayoutParams(
 					LayoutParams.FILL_PARENT,

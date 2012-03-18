@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="120dip"
+        android:layout_height="wrap_content"
         android:background="@color/bg_blue"
         android:orientation="vertical"
         android:padding="10dp" >
@@ -25,33 +25,25 @@
         <TextView
             android:id="@+id/course_number"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hello"
+            android:layout_height="25dip"
             android:textColor="@color/text_navy"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/course_name"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hello"
+            android:layout_height="25dip"
             android:textColor="@color/text_gray"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-        <ScrollView
+        <TextView
+            android:id="@+id/course_description"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:scrollbars="none" >
-
-            <TextView
-                android:id="@+id/course_description"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/hello"
-                android:textColor="@color/black"
-                android:textSize="9sp" />
-        </ScrollView>
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="9sp" />
     </LinearLayout>
 
     <LinearLayout

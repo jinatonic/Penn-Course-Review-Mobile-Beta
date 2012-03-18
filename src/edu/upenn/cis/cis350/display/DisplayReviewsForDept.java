@@ -21,8 +21,8 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 
-/* Display all reviews for a specific course */
-public class DisplayReviewsForCourse extends Activity {
+/* Display all reviews for a specific dept */
+public class DisplayReviewsForDept extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,7 +30,7 @@ public class DisplayReviewsForCourse extends Activity {
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		setContentView(R.layout.course_reviews);
+		setContentView(R.layout.dept_reviews);
 
 		// Get course reviews for the search term
 		Intent i = getIntent();
@@ -41,7 +41,7 @@ public class DisplayReviewsForCourse extends Activity {
 		cache.open();
 		Parser p = new Parser(cache);
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
-		courseReviews = p.getReviewsForCourse(searchTerm);
+		courseReviews = p.getReviewsForDept(searchTerm);
 		// Always close DB after using it!
 		cache.close();
 
@@ -51,20 +51,18 @@ public class DisplayReviewsForCourse extends Activity {
 		searchPCRView.setTypeface(timesNewRoman);
 		
 		// Top half of page under PCR header
-		TextView number = (TextView)findViewById(R.id.course_number);
+		TextView number = (TextView)findViewById(R.id.dept_number);
 		if (courseReviews == null || courseReviews.size() == 0) {
-			number.setText("No reviews found for this course.");
+			number.setText("No reviews found for this dept.");
 			return;
 		}
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(courseReviews.get(0).getAlias());
 		number.setTypeface(timesNewRoman);
-		TextView name = (TextView) findViewById(R.id.course_name);
+		TextView name = (TextView) findViewById(R.id.dept_name);
 		name.setText(courseReviews.get(0).getName());
 		name.setTypeface(timesNewRoman);
-		TextView description = (TextView)findViewById(R.id.course_description);
-		description.setText(courseReviews.get(0).getDescription());
 
 		// Iterate through reviews for course and fill table cells
 		Iterator<Course> iter = courseReviews.iterator();

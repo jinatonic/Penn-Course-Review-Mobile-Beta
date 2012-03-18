@@ -91,7 +91,6 @@ public class Parser {
 			}
 		}	
 		System.out.println(reviews.size());
-
 		return displayCourseReviews(reviews);
 	}
 	

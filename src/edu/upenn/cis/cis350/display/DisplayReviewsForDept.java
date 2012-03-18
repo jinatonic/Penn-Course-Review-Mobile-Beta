@@ -1,11 +1,7 @@
 package edu.upenn.cis.cis350.display;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Intent;

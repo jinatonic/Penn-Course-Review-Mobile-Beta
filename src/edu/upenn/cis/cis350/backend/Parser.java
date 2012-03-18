@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -19,7 +18,7 @@ import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
-public class Parser extends AsyncTask<String, Integer, String>{
+public class Parser extends AsyncTask<String, Integer, String> {
 
 	Sorter s = new Sorter();
 	public final String baseURL = "http://api.penncoursereview.com/v1";

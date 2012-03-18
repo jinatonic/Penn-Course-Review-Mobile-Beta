@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="60dip"
+        android:layout_height="40dip"
         android:background="@color/text_navy"
         android:gravity="center_vertical"
         android:padding="10dp"
@@ -37,7 +37,6 @@
             android:text="@string/hello"
             android:textColor="@color/text_gray"
             android:textSize="15sp" />
-
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -82,28 +81,32 @@
                         android:padding="6dip"
                         android:text="Instructor"
                         android:textColor="@color/black"
-                        android:textSize="25sp" />
+                        android:textSize="9sp"
+                        android:width="115dip" />
 
                     <TextView
                         android:layout_column="2"
                         android:padding="6dip"
                         android:text="Course Quality"
                         android:textColor="@color/black"
-                        android:textSize="5sp" />
+                        android:textSize="9sp"
+                        android:width="55dip" />
 
                     <TextView
                         android:layout_column="3"
                         android:padding="6dip"
                         android:text="Instructor Quality"
                         android:textColor="@color/black"
-                        android:textSize="5sp" />
+                        android:textSize="9sp"
+                        android:width="55dip" />
 
                     <TextView
                         android:layout_column="4"
                         android:padding="5dip"
                         android:text="Difficulty"
                         android:textColor="@color/black"
-                        android:textSize="5sp" />
+                        android:textSize="9sp"
+                        android:width="55dip" />
                 </TableRow>
             </TableLayout>
         </ScrollView>

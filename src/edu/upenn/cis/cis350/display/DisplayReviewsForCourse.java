@@ -28,7 +28,7 @@ public class DisplayReviewsForCourse extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.course_reviews);
-		
+
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 		Parser p = new Parser();
@@ -77,7 +77,7 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
-			instructor.setTextSize(8);
+			instructor.setTextSize(9);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -88,7 +88,7 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructor);
 
 			TextView courseQuality = new TextView(this);
-			courseQuality.setTextSize(8);
+			courseQuality.setTextSize(9);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -99,7 +99,7 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(courseQuality);
 
 			TextView instructorQuality = new TextView(this);
-			instructorQuality.setTextSize(8);
+			instructorQuality.setTextSize(9);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -110,7 +110,7 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructorQuality);
 
 			TextView difficulty = new TextView(this);
-			difficulty.setTextSize(8);
+			difficulty.setTextSize(9);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,

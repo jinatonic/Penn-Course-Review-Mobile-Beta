@@ -20,8 +20,6 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.objects.Course;
 
 public class DisplayReviewsForCourse extends Activity {
-	
-	public static final int COL_WIDTH = 6;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,7 +28,7 @@ public class DisplayReviewsForCourse extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.course_reviews);
-		
+
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 		Parser p = new Parser();
@@ -57,8 +55,10 @@ public class DisplayReviewsForCourse extends Activity {
 			return;
 		}
 		number.setText(courseReviews.get(0).getAlias());
+		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.course_name);
 		name.setText(courseReviews.get(0).getName());
+		name.setTypeface(timesNewRoman);
 		TextView description = (TextView)findViewById(R.id.course_description);
 		description.setText(courseReviews.get(0).getDescription());
 
@@ -71,14 +71,13 @@ public class DisplayReviewsForCourse extends Activity {
 			Course curCourse = iter.next();
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
-
 			tr.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
-			instructor.setWidth(COL_WIDTH);
-			instructor.setTextSize(8);
+			instructor.setTextSize(9);
+			instructor.setTextColor(R.color.text_gray);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -89,8 +88,8 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructor);
 
 			TextView courseQuality = new TextView(this);
-			courseQuality.setWidth(COL_WIDTH);
-			courseQuality.setTextSize(8);
+			courseQuality.setTextSize(9);
+			courseQuality.setTextColor(R.color.text_gray);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -101,8 +100,8 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(courseQuality);
 
 			TextView instructorQuality = new TextView(this);
-			instructorQuality.setWidth(COL_WIDTH);
-			instructorQuality.setTextSize(8);
+			instructorQuality.setTextSize(9);
+			instructorQuality.setTextColor(R.color.text_gray);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -113,8 +112,8 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructorQuality);
 
 			TextView difficulty = new TextView(this);
-			difficulty.setWidth(COL_WIDTH);
-			difficulty.setTextSize(8);
+			difficulty.setTextSize(9);
+			difficulty.setTextColor(R.color.text_gray);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,

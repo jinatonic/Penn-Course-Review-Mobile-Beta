@@ -1,10 +1,13 @@
 package edu.upenn.cis.cis350.test;
 
+import java.util.ArrayList;
+
 import org.json.JSONObject;
 
 import android.test.AndroidTestCase;
 import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
+import edu.upenn.cis.cis350.objects.Course;
 
 public class ParserTest extends AndroidTestCase {
 
@@ -15,6 +18,7 @@ public class ParserTest extends AndroidTestCase {
 	public void setUp() {
 		cache = new SearchCache(this.getContext());
 		cache.open();
+		cache.resetTables();
 		p = new Parser(cache);
 	}
 	
@@ -40,4 +44,10 @@ public class ParserTest extends AndroidTestCase {
 		assertNull(result);
 	}
 	
+	/**
+	 * 
+	 */
+	public void test_getReviewsForCourse() {
+		ArrayList<Course> rs = p.getReviewsForCourse("cis121");
+	}
 }

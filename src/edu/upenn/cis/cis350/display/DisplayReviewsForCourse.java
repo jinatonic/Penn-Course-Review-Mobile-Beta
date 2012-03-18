@@ -20,8 +20,6 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.objects.Course;
 
 public class DisplayReviewsForCourse extends Activity {
-	
-	public static final int COL_WIDTH = 6;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,7 +75,6 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.WRAP_CONTENT));
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
-			instructor.setWidth(COL_WIDTH);
 			instructor.setTextSize(8);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
@@ -89,7 +86,6 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructor);
 
 			TextView courseQuality = new TextView(this);
-			courseQuality.setWidth(COL_WIDTH);
 			courseQuality.setTextSize(8);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
@@ -101,7 +97,6 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(courseQuality);
 
 			TextView instructorQuality = new TextView(this);
-			instructorQuality.setWidth(COL_WIDTH);
 			instructorQuality.setTextSize(8);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
@@ -113,7 +108,6 @@ public class DisplayReviewsForCourse extends Activity {
 			tr.addView(instructorQuality);
 
 			TextView difficulty = new TextView(this);
-			difficulty.setWidth(COL_WIDTH);
 			difficulty.setTextSize(8);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(

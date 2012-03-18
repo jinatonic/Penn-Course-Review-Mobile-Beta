@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -77,6 +78,7 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setTextSize(9);
+			instructor.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructor.setTextColor(R.color.text_gray);
 			instructor.setText(curCourse.getInstructor().getName());
 			LayoutParams insParams = new LayoutParams(
@@ -90,6 +92,7 @@ public class DisplayReviewsForCourse extends Activity {
 			TextView courseQuality = new TextView(this);
 			courseQuality.setTextSize(9);
 			courseQuality.setTextColor(R.color.text_gray);
+			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -102,6 +105,7 @@ public class DisplayReviewsForCourse extends Activity {
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setTextSize(9);
 			instructorQuality.setTextColor(R.color.text_gray);
+			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -114,6 +118,7 @@ public class DisplayReviewsForCourse extends Activity {
 			TextView difficulty = new TextView(this);
 			difficulty.setTextSize(9);
 			difficulty.setTextColor(R.color.text_gray);
+			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,

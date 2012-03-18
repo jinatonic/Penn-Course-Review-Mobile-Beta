@@ -8,6 +8,10 @@
     <string name="pcr">PennCourseReview</string>
     <string name="search_text">Search for a class or a professor</string>
     <string name="SEARCH_TERM">Search Term</string>
+    <string name="instructor">Instructor</string>
+    <string name="course_quality">Course Quality</string>
+    <string name="instructor_quality">Instructor Quality</string>
+    <string name="difficulty">Difficulty</string>
 
     <color name="bg_blue">#D7D7EB</color>
     <color name="text_navy">#191967</color>

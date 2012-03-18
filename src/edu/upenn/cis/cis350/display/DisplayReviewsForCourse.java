@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -20,6 +21,7 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 
+/* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Activity {
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class DisplayReviewsForCourse extends Activity {
 
 		setContentView(R.layout.course_reviews);
 
+		// Get course reviews for the search term
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 		
@@ -50,17 +53,19 @@ public class DisplayReviewsForCourse extends Activity {
 		// Always close DB after using it!
 		cache.close();
 
+		// Top half of page under PCR header
+		TextView number = (TextView)findViewById(R.id.course_number);
+		if (courseReviews == null) {
+			number.setText("No reviews found for this course.");
+			return;
+		}
+
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);
 
-		// Top half of page, course name/description
-		TextView number = (TextView)findViewById(R.id.course_number);
-		if (courseReviews.size() == 0) {
-			number.setText("No reviews found for this course.");
-			return;
-		}
+		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(courseReviews.get(0).getAlias());
 		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.course_name);
@@ -69,19 +74,19 @@ public class DisplayReviewsForCourse extends Activity {
 		TextView description = (TextView)findViewById(R.id.course_description);
 		description.setText(courseReviews.get(0).getDescription());
 
+		// Iterate through reviews for course and fill table cells
 		Iterator<Course> iter = courseReviews.iterator();
-
-		// Bottom half of page, reviews for course
-		// Fill table cells with each Course's fields from courseReviews
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
 		while(iter.hasNext()) {
 			Course curCourse = iter.next();
+			
 			/* Create a new row to be added. */
 			TableRow tr = new TableRow(this);
 			tr.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
-			/* Create a TextView to be the row-content. */
+			
+			/* Create a TextView for Instructor to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setTextSize(9);
 			instructor.setTextColor(R.color.text_gray);
@@ -93,10 +98,12 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setLayoutParams(insParams);
 			/* Add TextView to row. */
 			tr.addView(instructor);
-
+			
+			/* Create a TextView for Course Quality to be the row-content. */
 			TextView courseQuality = new TextView(this);
 			courseQuality.setTextSize(9);
 			courseQuality.setTextColor(R.color.text_gray);
+			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -106,9 +113,11 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Add TextView to row. */
 			tr.addView(courseQuality);
 
+			/* Create a TextView for Instructor Quality to be the row-content. */
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setTextSize(9);
 			instructorQuality.setTextColor(R.color.text_gray);
+			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -118,9 +127,11 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Add TextView to row. */
 			tr.addView(instructorQuality);
 
+			/* Create a TextView for Difficulty to be the row-content. */
 			TextView difficulty = new TextView(this);
 			difficulty.setTextSize(9);
 			difficulty.setTextColor(R.color.text_gray);
+			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -129,6 +140,7 @@ public class DisplayReviewsForCourse extends Activity {
 			difficulty.setLayoutParams(diffParams);
 			/* Add TextView to row. */
 			tr.addView(difficulty);
+			
 			/* Add row to TableLayout. */
 			tl.addView(tr,new TableLayout.LayoutParams(
 					LayoutParams.FILL_PARENT,

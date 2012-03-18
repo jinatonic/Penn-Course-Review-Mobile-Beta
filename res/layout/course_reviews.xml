@@ -79,7 +79,7 @@
                     <TextView
                         android:layout_column="1"
                         android:padding="6dip"
-                        android:text="Instructor"
+                        android:text="@string/instructor"
                         android:textColor="@color/black"
                         android:textSize="9sp"
                         android:width="115dip" />
@@ -87,7 +87,7 @@
                     <TextView
                         android:layout_column="2"
                         android:padding="6dip"
-                        android:text="Course Quality"
+                        android:text="@string/course_quality"
                         android:textColor="@color/black"
                         android:textSize="9sp"
                         android:width="55dip" />
@@ -95,7 +95,7 @@
                     <TextView
                         android:layout_column="3"
                         android:padding="6dip"
-                        android:text="Instructor Quality"
+                        android:text="@string/instructor_quality"
                         android:textColor="@color/black"
                         android:textSize="9sp"
                         android:width="55dip" />
@@ -103,7 +103,7 @@
                     <TextView
                         android:layout_column="4"
                         android:padding="5dip"
-                        android:text="Difficulty"
+                        android:text="@string/difficulty"
                         android:textColor="@color/black"
                         android:textSize="9sp"
                         android:width="55dip" />

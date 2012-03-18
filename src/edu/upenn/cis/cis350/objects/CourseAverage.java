@@ -11,7 +11,7 @@ public class CourseAverage {
 	public CourseAverage(String _name, String _id, String _path, ArrayList<Course> courses) {
 		path = _path;
 		name = _name;
-		id = _name;
+		id = _id;
 		ratings = computeAverageRatings(courses);
 	}
 
@@ -104,17 +104,40 @@ public class CourseAverage {
 			}
 
 		}
-		double avg_amountLearned = tot_amountLearned/count_amountLearned;
-		double avg_commAbility = tot_commAbility/count_commAbility;
-		double avg_courseQuality = tot_courseQuality/count_courseQuality;
-		double avg_difficulty = tot_difficulty/count_difficulty;
-		double avg_instructorAccess = tot_instructorAccess/count_instructorAccess;
-		double avg_instructorQuality = tot_instructorQuality/count_instructorQuality;
-		double avg_readingsValue = tot_readingsValue/count_readingsValue;
-		double avg_recommendMajor = tot_recommendMajor/count_recommendMajor;
-		double avg_recommendNonMajor = tot_recommendNonMajor/count_recommendNonMajor;
-		double avg_stimulateInterest = tot_stimulateInterest/count_stimulateInterest;
-		double avg_workRequired = tot_workRequired/count_workRequired;
+		
+		int temp_amountLearned = (int)((tot_amountLearned/count_amountLearned) * 100);
+		double avg_amountLearned = (double)temp_amountLearned/100.0;
+		
+		int temp_commAbility = (int)((tot_commAbility/count_commAbility) * 100);
+		double avg_commAbility = (double)temp_commAbility/100.0;
+		
+		int temp_courseQuality = (int)((tot_courseQuality/count_courseQuality) * 100);
+		double avg_courseQuality = (double)temp_courseQuality/100.0;
+		
+		int temp_difficulty = (int)((tot_difficulty/count_difficulty) * 100);
+		double avg_difficulty = (double)temp_difficulty/100.0;
+		
+		int temp_instructorAccess = (int)((tot_instructorAccess/count_instructorAccess) * 100);
+		double avg_instructorAccess = (double)temp_instructorAccess/100.0;
+		
+		int temp_instructorQuality = (int)((tot_instructorQuality/count_instructorQuality) * 100);
+		double avg_instructorQuality = (double)temp_instructorQuality/100.0;
+		
+		int temp_readingsValue = (int)((tot_readingsValue/count_readingsValue) * 100);
+		double avg_readingsValue = (double)temp_readingsValue/100.0;
+		
+		int temp_recommendMajor = (int)((tot_recommendMajor/count_recommendMajor) * 100);
+		double avg_recommendMajor = (double)temp_recommendMajor/100.0;
+		
+		int temp_recommendNonMajor = (int)((tot_recommendNonMajor/count_recommendNonMajor) * 100);
+		double avg_recommendNonMajor = (double)temp_recommendNonMajor/100.0;
+		
+		int temp_stimulateInterest = (int)((tot_stimulateInterest/count_stimulateInterest) * 100);
+		double avg_stimulateInterest = (double)temp_stimulateInterest/100.0;
+		
+		int temp_workRequired = (int)((tot_workRequired/count_workRequired) * 100);
+		double avg_workRequired = (double)temp_workRequired/100.0;
+		
 		Ratings avgRatings = new Ratings(avg_amountLearned, avg_commAbility, avg_courseQuality,
 				avg_difficulty, avg_instructorAccess, avg_instructorQuality, avg_readingsValue,
 				avg_recommendMajor, avg_recommendNonMajor, avg_stimulateInterest, avg_workRequired);

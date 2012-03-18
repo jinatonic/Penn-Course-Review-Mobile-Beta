@@ -57,7 +57,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		JSONArray dept_array = all_dept.getJSONObject("result").getJSONArray("values");
 		String dept_name = "";
 		String dept_id = "";
-		for(int h = 0; h > dept_array.length(); h ++){
+		for(int h = 0; h < dept_array.length(); h ++){
 			if(dept_array.getJSONObject(h).getString("id").equalsIgnoreCase(dept)){
 				dept_name = dept_array.getJSONObject(h).getString("name");
 				dept_id = dept_array.getJSONObject(h).getString("id");
@@ -94,7 +94,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 							course_name = o.getString("name");
 						if (o.has("path")) {
 							course_path = o.getString("path");
-							CourseAverage a = new CourseAverage(course_path, course_name, course_id, storeReviews(course_path));
+							CourseAverage a = new CourseAverage(course_name, course_id, course_path, storeReviews(course_path));
 							courseAverages.add(a);
 						}
 					}

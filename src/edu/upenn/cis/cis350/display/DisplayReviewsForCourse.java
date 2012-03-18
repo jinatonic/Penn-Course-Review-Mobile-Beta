@@ -41,17 +41,9 @@ public class DisplayReviewsForCourse extends Activity {
 		cache.open();
 		Parser p = new Parser(cache);
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
-		try {
-			System.out.println("****Got here, about to try getting reviews for course");
-			courseReviews = p.getReviewsForCourse(searchTerm);
-			System.out.println("****Just got reviews for course");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		System.out.println("****Got here, about to try getting reviews for course");
+		courseReviews = p.getReviewsForCourse(searchTerm);
+		System.out.println("****Just got reviews for course");
 		// Always close DB after using it!
 		cache.close();
 

@@ -30,8 +30,8 @@ public class Parser {
 		cache = _cache;
 	}
 	
-	public JSONObject retrieveJSONObject(String path){
-		try{
+	public JSONObject retrieveJSONObject(String path) {
+		try {
 			URL url = new URL(path);
 			Log.w("Parser: retrieveJSONObject", "url=" + url);
 			URLConnection connection = url.openConnection();
@@ -95,9 +95,9 @@ public class Parser {
 	}
 	
 	public ArrayList<Course> getReviewsForCourse(String course) {
-		if(course == null) return null;
+		if (course == null) return null;
 		course = course.trim();
-		if(course.length()>7) return null;
+		if (course.length() > 7) return null;
 		System.out.println(course);
 		String dept = "";
 		String num = "";
@@ -108,7 +108,7 @@ public class Parser {
 				break;
 			}
 		}
-		if(dept == "" || num == "") return null;
+		if (dept == "" || num == "") return null;
 		String alias = dept + "-" + num;
 		System.out.println(alias);
 		

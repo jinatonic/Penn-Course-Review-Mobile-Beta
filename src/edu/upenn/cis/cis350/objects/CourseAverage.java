@@ -7,19 +7,34 @@ public class CourseAverage {
 	private String id;
 	private String path;
 	private Ratings ratings;
-	
-	public CourseAverage(String _name, String _id, String _path, ArrayList<Course> courses) {
 
+	public CourseAverage(String _name, String _id, String _path, ArrayList<Course> courses) {
 		path = _path;
 		name = _name;
 		id = _name;
 		ratings = computeAverageRatings(courses);
 	}
+
+	public Ratings getRatings() {
+		return ratings;
+	}
 	
-	private Ratings computeAverageRatings(ArrayList<Course> courses){
-		
+	public String getName() {
+		return name;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	private Ratings computeAverageRatings(ArrayList<Course> courses) {
+
 		double count_amountLearned = 0;
-	    double count_commAbility = 0;
+		double count_commAbility = 0;
 		double count_courseQuality = 0;
 		double count_difficulty = 0;
 		double count_instructorAccess = 0;
@@ -30,7 +45,7 @@ public class CourseAverage {
 		double count_stimulateInterest = 0;
 		double count_workRequired = 0;
 		double tot_amountLearned = 0;
-	    double tot_commAbility = 0;
+		double tot_commAbility = 0;
 		double tot_courseQuality = 0;
 		double tot_difficulty = 0;
 		double tot_instructorAccess = 0;
@@ -40,7 +55,7 @@ public class CourseAverage {
 		double tot_recommendNonMajor = 0;
 		double tot_stimulateInterest = 0;
 		double tot_workRequired = 0;
-		
+
 		for(int i = 0; i < courses.size(); i++){
 			Ratings r = courses.get(i).getRatings();
 			if(r.getAmountLearned() > 0){
@@ -87,10 +102,10 @@ public class CourseAverage {
 				tot_workRequired += r.getWorkRequired();
 				count_workRequired += 1;
 			}
-			
+
 		}
 		double avg_amountLearned = tot_amountLearned/count_amountLearned;
-	    double avg_commAbility = tot_commAbility/count_commAbility;
+		double avg_commAbility = tot_commAbility/count_commAbility;
 		double avg_courseQuality = tot_courseQuality/count_courseQuality;
 		double avg_difficulty = tot_difficulty/count_difficulty;
 		double avg_instructorAccess = tot_instructorAccess/count_instructorAccess;

@@ -36,14 +36,16 @@ public final class R {
     }
     public static final class layout {
         public static final int bg_gradient=0x7f030000;
-        public static final int course_reviews=0x7f030001;
-        public static final int dept_reviews=0x7f030002;
-        public static final int search_page=0x7f030003;
+        public static final int cell_gridline=0x7f030001;
+        public static final int course_reviews=0x7f030002;
+        public static final int dept_reviews=0x7f030003;
+        public static final int search_page=0x7f030004;
     }
     public static final class string {
         public static final int SEARCH_TERM=0x7f040005;
         public static final int app_name=0x7f040000;
         public static final int clear=0x7f040002;
+        public static final int course_id=0x7f04000a;
         public static final int course_quality=0x7f040007;
         public static final int difficulty=0x7f040009;
         public static final int enter=0x7f040001;

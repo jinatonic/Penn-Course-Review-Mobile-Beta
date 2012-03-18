@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -61,7 +62,7 @@ public class DisplayReviewsForCourse extends Activity {
 		name.setTypeface(timesNewRoman);
 		TextView description = (TextView)findViewById(R.id.course_description);
 		description.setText(courseReviews.get(0).getDescription());
-
+		
 		// Iterate through reviews for course and fill table cells
 		Iterator<Course> iter = courseReviews.iterator();
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
@@ -80,6 +81,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setTextSize((float)9.5);
 			instructor.setTextColor(getResources().getColor(R.color.text_gray));
 			instructor.setText(curCourse.getInstructor().getName());
+			instructor.setClickable(true);
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -95,6 +97,7 @@ public class DisplayReviewsForCourse extends Activity {
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curCourse.getRatings().getCourseQuality()).toString());
+			courseQuality.setClickable(true);
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -110,6 +113,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
+			instructorQuality.setClickable(true);
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -125,6 +129,7 @@ public class DisplayReviewsForCourse extends Activity {
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			difficulty.setClickable(true);
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);

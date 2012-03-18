@@ -20,6 +20,7 @@
         </activity>
         <activity
             android:name="DisplayReviewsForCourse" />
+        <activity android:name="DisplayReviewsForDept"></activity>
     </application>
 
 </manifest>

@@ -40,7 +40,6 @@ public class DisplayReviewsForDept extends Activity {
 		cache.open();
 		Parser p = new Parser(cache);
 		Department dept = p.getReviewsForDept(searchTerm);
-		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
 		// Always close DB after using it!
 		cache.close();
 
@@ -48,17 +47,24 @@ public class DisplayReviewsForDept extends Activity {
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);
-		
-		// Top half of page under PCR header
+
+		// Check if the department was found
 		TextView number = (TextView)findViewById(R.id.dept_number);
-		if (dept == null || (courseAvgs.size() == 0) || (courseAvgs == null)) {
+		number.setTypeface(timesNewRoman);
+		if (dept == null) {
+			number.setText("No reviews found for this department.");
+			return;
+		}
+		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
+
+		// Top half of page under PCR header
+		if ((courseAvgs.size() == 0) || (courseAvgs == null)) {
 			number.setText("No reviews found for this department.");
 			return;
 		}
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(dept.getId());
-		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.dept_name);
 		name.setText(dept.getName());
 		name.setTypeface(timesNewRoman);

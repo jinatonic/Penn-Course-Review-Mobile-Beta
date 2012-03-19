@@ -92,12 +92,7 @@ public class LoadingPage extends Activity {
 			Parser parser = new Parser();
 			
 			// TODO FIX
-			String path = parser.getPathForCourse(input);
-			publishProgress(30);
-			ArrayList<Course> courses = parser.getReviewsForCourse(path);
-			publishProgress(70);
-			courses = parser.displayCourseReviews(courses);
-			publishProgress(80);
+			ArrayList<Course> courses = parser.getReviewsForCourse(input);
 			
 			// Add the resulting courses into cache
 			if (courses == null) {

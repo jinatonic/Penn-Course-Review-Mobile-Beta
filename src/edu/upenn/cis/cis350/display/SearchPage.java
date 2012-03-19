@@ -66,14 +66,14 @@ public class SearchPage extends Activity {
 		cache.clearOldEntries();
 		cache.close();
 
-		/*autocomplete = new AutoCompleteDB(this.getApplicationContext());
+		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
 		autocomplete.resetTables();
 		autocomplete.close();
 		autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
-		} */
+		}
 	}
 
 	public void onEnterButtonClick(View v) {

@@ -67,7 +67,7 @@ public class Parser {
 							course_name = o.getString("name");
 						if (o.has("path")) {
 							course_path = o.getString("path");
-							CourseAverage a = new CourseAverage(course_path, course_name, course_id, getReviewsForCourse(course_path));
+							CourseAverage a = new CourseAverage(course_name, course_id, course_path, storeReviews(course_path));
 							courseAverages.add(a);
 						}
 					}
@@ -81,14 +81,11 @@ public class Parser {
 		}	
 		
 		return  department;
-		} catch(JSONException e) { 
-			e.printStackTrace(); 
-			return department;
-		}
+		}catch(JSONException e) { e.printStackTrace(); return department;}
 	}
 	
 	//path is of form: "/instructors/1-DONALD-D-FITTS
-	public ArrayList<Course> getReviewsForInstructor(String path) {
+	public ArrayList<Course> getReviewsForInstructor(String path){
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		if(path == null) return null;
 		String reviewpath = path + "/reviews";
@@ -99,11 +96,11 @@ public class Parser {
 		return reviews;
 	}
 
-	public String getPathForCourse(String course) {
+	public ArrayList<Course> getReviewsForCourse(String course) {
 		if (course == null) return null;
 
 		String dept = course.substring(0, course.indexOf('-'));
-		
+
 		String url = baseURL + "/depts/"+ dept + token;
 
 		JSONObject json = JSONRequest.retrieveJSONObject(url);
@@ -126,6 +123,7 @@ public class Parser {
 		else {
 			return null;
 		}
+
 
 		String path ="";
 		for (int i = 0; i < coursehistories.length(); ++i) {
@@ -153,7 +151,12 @@ public class Parser {
 		}
 
 		System.out.println(path);
-		return path; 
+		ArrayList<Course> reviews = new ArrayList<Course>();
+		reviews = storeReviews(path);
+
+		System.out.println(reviews.size());
+
+		return displayCourseReviews(reviews);
 	}
 
 	public ArrayList<Course> displayCourseReviews(ArrayList<Course> reviews) {
@@ -163,7 +166,7 @@ public class Parser {
 	}
 
 	//path is format: "/coursehistories/2"
-	public ArrayList<Course> getReviewsForCourse(String path) {
+	public ArrayList<Course> storeReviews(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 

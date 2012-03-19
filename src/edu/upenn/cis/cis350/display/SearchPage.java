@@ -2,6 +2,9 @@ package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -66,14 +69,15 @@ public class SearchPage extends Activity {
 		cache.clearOldEntries();
 		cache.close();
 
-		autocomplete = new AutoCompleteDB(this.getApplicationContext());
+		/* autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
 		autocomplete.resetTables();
 		autocomplete.close();
 		autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
-		}
+		} 
+		UNCOMMENT FOR AUTOCOMPLETE */
 	}
 
 	public void onEnterButtonClick(View v) {
@@ -103,8 +107,17 @@ public class SearchPage extends Activity {
 				return null;
 			}
 
-			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
+			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteForInstructor();
 			autocomplete.addEntries(result);
+			
+			JSONArray json = AutoComplete.getJSONArrayForDept();
+			for (int i=0; i<json.length(); i++) {
+				try {
+					result = AutoComplete.getAutoCompleteForCourse(json.getJSONObject(i));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
 			
 			return "COMPLETE"; // CHANGE
 		}

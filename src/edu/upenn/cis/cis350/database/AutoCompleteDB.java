@@ -33,9 +33,9 @@ public class AutoCompleteDB {
 	
 	/* Query strings */
 	private static final String AUTOCOMPLETE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + AUTOCOMPLETE_TABLE + " (" +
-			"path char(50) NOT NULL," +
-			"name char(50) NOT NULL," +
-			"course_id char(50) NOT NULL," +
+			"path char(50)," +
+			"name char(50)," +
+			"course_id char(50)," +
 			"type int NOT NULL," +		// 0 - course, 1 - instructor, 2 - department
 			"year int NOT NULL)";	
 	
@@ -140,7 +140,7 @@ public class AutoCompleteDB {
 	}
 	
 	/** 
-	 * Scan the table and remove any entries older than 30 days
+	 * Delete all entries from table
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting the AutoComplete table");

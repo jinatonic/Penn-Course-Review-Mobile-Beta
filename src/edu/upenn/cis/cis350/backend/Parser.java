@@ -30,7 +30,7 @@ public class Parser {
 		JSONArray dept_array = all_dept.getJSONObject("result").getJSONArray("values");
 		String dept_name = "";
 		String dept_id = "";
-		for(int h = 0; h > dept_array.length(); h ++){
+		for(int h = 0; h < dept_array.length(); h ++){
 			if(dept_array.getJSONObject(h).getString("id").equalsIgnoreCase(dept)){
 				dept_name = dept_array.getJSONObject(h).getString("name");
 				dept_id = dept_array.getJSONObject(h).getString("id");

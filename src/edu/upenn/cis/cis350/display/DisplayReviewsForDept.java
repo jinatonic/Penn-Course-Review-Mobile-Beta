@@ -37,29 +37,36 @@ public class DisplayReviewsForDept extends Activity {
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
-		searchTerm = Normalizer.normalize(searchTerm);
-		
-		Department dept = null;
-		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
-		
-		
-		/* TODO FIX */
-		
+		// Initialize cache so parser can use it
+		SearchCache cache = new SearchCache(this.getApplicationContext());
+		cache.open();
+		Parser p = new Parser();
+		Department dept = p.getReviewsForDept(searchTerm);
+		// Always close DB after using it!
+		cache.close();
+
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);
-		
-		// Top half of page under PCR header
+
+		// Check if the department was found
 		TextView number = (TextView)findViewById(R.id.dept_number);
-		if (dept == null || (courseAvgs.size() == 0) || (courseAvgs == null)) {
+		number.setTypeface(timesNewRoman);
+		if (dept == null) {
+			number.setText("No reviews found for this department.");
+			return;
+		}
+		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
+
+		// Top half of page under PCR header
+		if ((courseAvgs.size() == 0) || (courseAvgs == null)) {
 			number.setText("No reviews found for this department.");
 			return;
 		}
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(dept.getId());
-		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.dept_name);
 		name.setText(dept.getName());
 		name.setTypeface(timesNewRoman);
@@ -83,6 +90,8 @@ public class DisplayReviewsForDept extends Activity {
 			courseId.setTextSize((float)9.5);
 			courseId.setTextColor(getResources().getColor(R.color.text_gray));
 			courseId.setText(curCourseAvg.getId());
+			courseId.setBackgroundResource(R.layout.cell_gridline);
+			courseId.setClickable(true);
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -98,6 +107,8 @@ public class DisplayReviewsForDept extends Activity {
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curRatings.getCourseQuality()).toString());
+			courseQuality.setBackgroundResource(R.layout.cell_gridline);
+			courseQuality.setClickable(true);
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -113,6 +124,8 @@ public class DisplayReviewsForDept extends Activity {
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curRatings.getInstructorQuality()).toString());
+			instructorQuality.setBackgroundResource(R.layout.cell_gridline);
+			instructorQuality.setClickable(true);
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -128,6 +141,8 @@ public class DisplayReviewsForDept extends Activity {
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curRatings.getDifficulty()).toString());
+			difficulty.setBackgroundResource(R.layout.cell_gridline);
+			difficulty.setClickable(true);
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);

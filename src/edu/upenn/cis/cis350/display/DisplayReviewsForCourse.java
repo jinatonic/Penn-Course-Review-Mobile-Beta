@@ -45,6 +45,7 @@ public class DisplayReviewsForCourse extends Activity {
 		
 		// Top half of page under PCR header
 		TextView number = (TextView)findViewById(R.id.course_number);
+		number.setTypeface(timesNewRoman);
 		if (courseReviews == null || courseReviews.size() == 0) {
 			number.setText("No reviews found for this course.");
 			return;
@@ -52,7 +53,6 @@ public class DisplayReviewsForCourse extends Activity {
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(courseReviews.get(0).getAlias());
-		number.setTypeface(timesNewRoman);
 		TextView name = (TextView) findViewById(R.id.course_name);
 		name.setText(courseReviews.get(0).getName());
 		name.setTypeface(timesNewRoman);

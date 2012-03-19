@@ -187,6 +187,23 @@ public class SearchCache {
 		}
 	}
 	
+	public boolean ifExistsInDB(String keyword) {
+		// First try to match based on course alias
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
+						keyword + "')";
+		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		
+		if (c.getCount() == 0) {
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
+			// if failed, try to match based on professor name
+			c = mDb.rawQuery(query, null);
+			c.moveToFirst();
+		}
+		
+		return c.getCount() != 0;
+	}
+	
 	/**
 	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
 	 * @param keyword can be either course-alias (normalized) or professor's name
@@ -197,12 +214,15 @@ public class SearchCache {
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias
-		Cursor c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE course_alias='" + keyword + "'", null);
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
+						keyword + "')";
+		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
 		if (c.getCount() == 0) {
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
 			// if failed, try to match based on professor name
-			c = mDb.rawQuery("SELECT * FROM " + COURSE_TABLE + " WHERE instructor_name='" + keyword + "'", null);
+			c = mDb.rawQuery(query, null);
 			c.moveToFirst();
 		}
 		

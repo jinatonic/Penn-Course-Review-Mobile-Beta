@@ -13,6 +13,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
@@ -35,15 +36,14 @@ public class DisplayReviewsForDept extends Activity {
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
-		// Initialize cache so parser can use it
-		SearchCache cache = new SearchCache(this.getApplicationContext());
-		cache.open();
-		Parser p = new Parser(cache);
-		Department dept = p.getReviewsForDept(searchTerm);
-		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
-		// Always close DB after using it!
-		cache.close();
-
+		searchTerm = Normalizer.normalize(searchTerm);
+		
+		//ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
+		ArrayList<CourseAverage> courseAvgs = null;
+		Department dept = null;
+		
+		/* TODO FIX */
+		
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);

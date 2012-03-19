@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.Normalizer;
-import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.backend.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 
@@ -34,18 +31,11 @@ public class DisplayReviewsForCourse extends Activity {
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
-		// Normalize the input accordingly
-		searchTerm = Normalizer.normalize(searchTerm);
-		
 		// Search database first
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		ArrayList<Course> courseReviews = cache.getCourse(searchTerm);
-		if (courseReviews == null || courseReviews.size() == 0) {
-			// Async call to get the necessary data
-			new Parser().execute(searchTerm);
-			courseReviews = cache.getCourse(searchTerm);
-		}
+		cache.close();
 		
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");

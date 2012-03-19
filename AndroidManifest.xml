@@ -21,6 +21,7 @@
         <activity
             android:name="DisplayReviewsForCourse" />
         <activity android:name="DisplayReviewsForDept"></activity>
+        <activity android:name="LoadingPage"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
 package edu.upenn.cis.cis350.display;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,16 +13,12 @@ import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.SearchCache;
 
 public class SearchPage extends Activity {
-	public static final int ACTIVITY_DisplayReviewsForCourse = 1;
-	public static final int ACTIVITY_DisplayReviewsForDept = 2;
 	
-	public static Context context;
-
+	public static final int ACTIVITY_LOADING_PAGE = 1;
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		context = this.getApplicationContext();
-
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -62,22 +57,12 @@ public class SearchPage extends Activity {
 		// Check whether the search term entered was a dept or a course (ends in a number)
 		// TODO does not yet account for instructor, will update after auto-complete implemented
 		String searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
-		char lastChar = searchTerm.charAt(searchTerm.length() - 1);
-		if ((lastChar >= 48) && (lastChar <= 57)) {  // Display reviews for course
-			// Create an Intent using the current Activity and the Class to be created
-			Intent i = new Intent(this, DisplayReviewsForCourse.class);
-			// Add the search term as an extra to this Intent
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
-			// Pass the Intent to the proper Activity (check for course search vs. dept search)
-			startActivityForResult(i, SearchPage.ACTIVITY_DisplayReviewsForCourse);
-		} else {  // Display reviews for dept
-			// Create an Intent using the current Activity and the Class to be created
-			Intent i = new Intent(this, DisplayReviewsForDept.class);
-			// Add the search term as an extra to this Intent
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
-			// Pass the Intent to the proper Activity (check for course search vs. dept search)
-			startActivityForResult(i, SearchPage.ACTIVITY_DisplayReviewsForDept);
-		}
+		// Create an Intent using the current Activity and the Class to be created
+		Intent i = new Intent(this, LoadingPage.class);
+		// Add the search term as an extra to this Intent
+		i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
+		// Pass the Intent to the proper Activity (check for course search vs. dept search)
+		startActivityForResult(i, SearchPage.ACTIVITY_LOADING_PAGE);
 	}
 
 	// Clear search term on clear button click

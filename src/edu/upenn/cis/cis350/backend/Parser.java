@@ -6,9 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.util.Log;
-import edu.upenn.cis.cis350.display.SearchPage;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
@@ -16,39 +13,11 @@ import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
-public class Parser extends AsyncTask<String, Integer, String> {
+public class Parser {
 
 	Sorter s = new Sorter();
 	public static final String baseURL = "http://api.penncoursereview.com/v1";
 	public static final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
-
-	public SearchCache cache;
-
-	@Override
-	protected String doInBackground(String... input) {
-		if (input == null || input.length != 0) {
-			Log.w("Parser", "given input is more than one string");
-			return null;
-		}
-		
-		// Run the parser
-		runParser(input[0]);
-		
-		return "COMPLETE"; // CHANGE
-	}
-	
-	public void runParser(String input) {
-		// Get application context from SearchPage and use it to initialize cache
-		cache = new SearchCache(SearchPage.context);
-
-		// TODO FIX
-		ArrayList<Course> courses = getReviewsForCourse(input);
-		
-		// Add the resulting courses into cache
-		cache.open();
-		cache.addCourse(courses);
-		cache.close();
-	}
 
 	public Department getReviewsForDept(String dept) {
 		if(dept == null) return null;
@@ -98,7 +67,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 							course_name = o.getString("name");
 						if (o.has("path")) {
 							course_path = o.getString("path");
-							CourseAverage a = new CourseAverage(course_path, course_name, course_id, storeReviews(course_path));
+							CourseAverage a = new CourseAverage(course_path, course_name, course_id, getReviewsForCourse(course_path));
 							courseAverages.add(a);
 						}
 					}
@@ -112,11 +81,14 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		}	
 		
 		return  department;
-		}catch(JSONException e) { e.printStackTrace(); return department;}
+		} catch(JSONException e) { 
+			e.printStackTrace(); 
+			return department;
+		}
 	}
 	
 	//path is of form: "/instructors/1-DONALD-D-FITTS
-	public ArrayList<Course> getReviewsForInstructor(String path){
+	public ArrayList<Course> getReviewsForInstructor(String path) {
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		if(path == null) return null;
 		String reviewpath = path + "/reviews";
@@ -127,24 +99,11 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		return reviews;
 	}
 
-	public ArrayList<Course> getReviewsForCourse(String course) {
+	public String getPathForCourse(String course) {
 		if (course == null) return null;
-		course = course.trim();
-		if (course.length() > 7) return null;
-		System.out.println(course);
-		String dept = "";
-		String num = "";
-		for (int i = 0; i <course.length(); ++i) {
-			if (course.charAt(i) >= 48 && course.charAt(i) <= 57) {
-				dept = course.substring(0,i).toUpperCase();
-				num = course.substring(i);
-				break;
-			}
-		}
-		if (dept == "" || num == "") return null;
-		String alias = dept + "-" + num;
-		System.out.println(alias);
 
+		String dept = course.substring(0, course.indexOf('-'));
+		
 		String url = baseURL + "/depts/"+ dept + token;
 
 		JSONObject json = JSONRequest.retrieveJSONObject(url);
@@ -168,7 +127,6 @@ public class Parser extends AsyncTask<String, Integer, String> {
 			return null;
 		}
 
-
 		String path ="";
 		for (int i = 0; i < coursehistories.length(); ++i) {
 			try {
@@ -178,7 +136,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 					aliases = j.getJSONArray("aliases");
 
 					for (int k = 0; k < aliases.length(); ++k) {
-						if (aliases.get(k).equals(alias)) {
+						if (aliases.getString(k).toLowerCase().equals(course)) {
 							System.out.println(j.toString());
 							path = (String)j.get("path");
 							break;
@@ -195,12 +153,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 		}
 
 		System.out.println(path);
-		ArrayList<Course> reviews = new ArrayList<Course>();
-		reviews = storeReviews(path);
-
-		System.out.println(reviews.size());
-
-		return displayCourseReviews(reviews);
+		return path; 
 	}
 
 	public ArrayList<Course> displayCourseReviews(ArrayList<Course> reviews) {
@@ -210,7 +163,7 @@ public class Parser extends AsyncTask<String, Integer, String> {
 	}
 
 	//path is format: "/coursehistories/2"
-	public ArrayList<Course> storeReviews(String path) {
+	public ArrayList<Course> getReviewsForCourse(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 

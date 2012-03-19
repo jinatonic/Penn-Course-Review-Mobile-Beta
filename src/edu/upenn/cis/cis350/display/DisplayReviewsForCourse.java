@@ -81,6 +81,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructor.setTextSize((float)9.5);
 			instructor.setTextColor(getResources().getColor(R.color.text_gray));
 			instructor.setText(curCourse.getInstructor().getName());
+			instructor.setBackgroundResource(R.layout.cell_gridline);
 			instructor.setClickable(true);
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -97,6 +98,7 @@ public class DisplayReviewsForCourse extends Activity {
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curCourse.getRatings().getCourseQuality()).toString());
+			courseQuality.setBackgroundResource(R.layout.cell_gridline);
 			courseQuality.setClickable(true);
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -113,6 +115,7 @@ public class DisplayReviewsForCourse extends Activity {
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
+			instructorQuality.setBackgroundResource(R.layout.cell_gridline);
 			instructorQuality.setClickable(true);
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
@@ -129,6 +132,7 @@ public class DisplayReviewsForCourse extends Activity {
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
+			difficulty.setBackgroundResource(R.layout.cell_gridline);
 			difficulty.setClickable(true);
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,

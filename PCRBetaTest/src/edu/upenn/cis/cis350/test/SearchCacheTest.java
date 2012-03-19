@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
-import edu.upenn.cis.cis350.backend.SearchCache;
+import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;

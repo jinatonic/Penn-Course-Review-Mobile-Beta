@@ -1,32 +1,38 @@
 package edu.upenn.cis.cis350.display;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.SearchCache;
+import edu.upenn.cis.cis350.backend.AutoComplete;
+import edu.upenn.cis.cis350.database.AutoCompleteDB;
+import edu.upenn.cis.cis350.database.SearchCache;
+import edu.upenn.cis.cis350.objects.KeywordMap;
+
 
 public class SearchPage extends Activity {
-	
+
 	public static final int ACTIVITY_LOADING_PAGE = 1;
-	
+
+	private AutoCompleteDB autocomplete;
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		// Perform clear on database
-		SearchCache cache = new SearchCache(this.getApplicationContext());
-		cache.open();
-		cache.clearOldEntries();
-		cache.close();
+		databaseMaintainance();
 
 		setContentView(R.layout.search_page);
 
@@ -53,6 +59,23 @@ public class SearchPage extends Activity {
 		});
 	}
 
+	public void databaseMaintainance() {
+		// Perform clear on database
+		SearchCache cache = new SearchCache(this.getApplicationContext());
+		cache.open();
+		cache.clearOldEntries();
+		cache.close();
+
+		/*autocomplete = new AutoCompleteDB(this.getApplicationContext());
+		autocomplete.open();
+		autocomplete.resetTables();
+		autocomplete.close();
+		autocomplete.open();
+		if (autocomplete.updatesNeeded()) {
+			new AutocompleteQuery().execute("lala");
+		} */
+	}
+
 	public void onEnterButtonClick(View v) {
 		// Check whether the search term entered was a dept or a course (ends in a number)
 		// TODO does not yet account for instructor, will update after auto-complete implemented
@@ -69,5 +92,24 @@ public class SearchPage extends Activity {
 	public void onClearButtonClick(View v) {
 		EditText search = (EditText)findViewById(R.id.search_term);
 		search.setText("");
+	}
+
+	class AutocompleteQuery extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... input) {
+			if (input == null || input.length != 1) {
+				Log.w("Parser", "given input is more than one string");
+				return null;
+			}
+
+			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
+			autocomplete.addEntries(result);
+			
+			return "COMPLETE"; // CHANGE
+		}
+
+		protected void onPostExecute(String result) {
+		}
 	}
 }

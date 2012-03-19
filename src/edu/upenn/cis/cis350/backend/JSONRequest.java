@@ -21,10 +21,11 @@ public class JSONRequest {
 			String line;
 			StringBuilder builder = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			Log.w("WTF?", "IN BUF READER");
 			while ((line = reader.readLine()) != null) {
 				builder.append(line);
 			}
-			Log.v("Length",builder.toString());
+			Log.v("Length", builder.toString());
 
 			return new JSONObject(builder.toString());
 		}

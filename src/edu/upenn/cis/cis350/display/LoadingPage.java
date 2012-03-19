@@ -10,16 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ProgressBar;
-import edu.upenn.cis.cis350.backend.KeywordMap.Type;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
-import edu.upenn.cis.cis350.backend.SearchCache;
+import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class LoadingPage extends Activity {
-	
-	public static final int ACTIVITY_DisplayReviewsForCourse = 1;
-	public static final int ACTIVITY_DisplayReviewsForDept = 2;
 	
     ProgressBar mProgress;
     int mProgressStatus = 0;
@@ -41,23 +38,28 @@ public class LoadingPage extends Activity {
 		
 		searchTerm = Normalizer.normalize(searchTerm);
 
+		if (!checkCache())
+			new ServerQuery().execute(searchTerm);
+	}	
+	
+	public boolean checkCache() {
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		if (cache.ifExistsInDB(searchTerm)) {
 			cache.close();
 			proceed(Type.COURSE); // TODO: Change
+			return true;
 		}
 		cache.close();
-		
-		new ServerQuery().execute(searchTerm);
-	}	
+		return false;
+	}
 	
 	public void proceed(Type type) {
 		if (type == Type.COURSE) {
 			Intent i = new Intent(this, DisplayReviewsForCourse.class);
 			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
 			
-			startActivityForResult(i, LoadingPage.ACTIVITY_DisplayReviewsForCourse);
+			startActivity(i);
 		}
 	}
 	
@@ -111,5 +113,4 @@ public class LoadingPage extends Activity {
 			publishProgress(90);
 		}
 	}
-	
 }

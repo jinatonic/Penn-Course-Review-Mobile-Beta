@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.backend;
+package edu.upenn.cis.cis350.database;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -34,7 +35,7 @@ public class SearchCache {
 	private static final int DATABASE_VERSION = 2;
 	
 	/* Query strings */
-	private static final String COURSE_TABLE_CREATE = "CREATE table IF NOT EXISTS " + COURSE_TABLE + " (" +
+	private static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
 			"name char(50) NOT NULL," +
 			"course_alias char(20) NOT NULL," +
 			"description char(500)," +
@@ -101,6 +102,7 @@ public class SearchCache {
 		Log.w(TAG, "Opening SearchCache");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
+		mDb.execSQL(COURSE_TABLE_CREATE);
 		return this;
 	}
 	
@@ -187,7 +189,13 @@ public class SearchCache {
 		}
 	}
 	
+	/**
+	 * Checks if a given keyword exists in the table (matches either professor name or course id)
+	 * @param keyword
+	 * @return true if matched something in db, false otherwise
+	 */
 	public boolean ifExistsInDB(String keyword) {
+		Log.w("SearchCache", "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
 		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
 						keyword + "')";

@@ -15,7 +15,8 @@ import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
-import edu.upenn.cis.cis350.backend.SearchCache;
+import edu.upenn.cis.cis350.database.SearchCache;
+
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
@@ -38,9 +39,9 @@ public class DisplayReviewsForDept extends Activity {
 
 		searchTerm = Normalizer.normalize(searchTerm);
 		
-		//ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
-		ArrayList<CourseAverage> courseAvgs = null;
 		Department dept = null;
+		ArrayList<CourseAverage> courseAvgs = dept.getCourseAverages();
+		
 		
 		/* TODO FIX */
 		

@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.backend;
+package edu.upenn.cis.cis350.objects;
 
 public class KeywordMap {
 	private String path;
@@ -6,8 +6,8 @@ public class KeywordMap {
 	private String course_id;
 	private Type t;
 	
-	public enum Type{
-		COURSE, INSTRUCTOR, DEPARTMENT;
+	public enum Type {
+		COURSE, INSTRUCTOR, DEPARTMENT;		// ids 0, 1, and 2, respectively
 	}
 	
 	public KeywordMap(String _path, String _name, String _course_id, Type _t){

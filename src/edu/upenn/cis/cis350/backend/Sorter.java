@@ -79,8 +79,7 @@ public class Sorter {
 				sortedCourses.add(pairs[i].getCourse());
 			}
 		}
-		return sortedCourses;
-		
+		return sortedCourses;		
 	}
 	
 	

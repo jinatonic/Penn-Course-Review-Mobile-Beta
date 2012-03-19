@@ -8,17 +8,24 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.SearchCache;
 
 import edu.upenn.cis.cis350.objects.Course;
 
 /* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Activity {
+
+	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
+		CQ_DES, IQ_ASC, IQ_DES, DIFFICULTY_ASC, DIFFICULTY_DES }
+	Sort sortingField;
+	ArrayList<Course> courseReviews;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,14 +42,14 @@ public class DisplayReviewsForCourse extends Activity {
 		// Search database first
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
-		ArrayList<Course> courseReviews = cache.getCourse(searchTerm);
+		courseReviews = cache.getCourse(searchTerm);
 		cache.close();
-		
+
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);
-		
+
 		// Top half of page under PCR header
 		TextView number = (TextView)findViewById(R.id.course_number);
 		number.setTypeface(timesNewRoman);
@@ -58,10 +65,22 @@ public class DisplayReviewsForCourse extends Activity {
 		name.setTypeface(timesNewRoman);
 		TextView description = (TextView)findViewById(R.id.course_description);
 		description.setText(courseReviews.get(0).getDescription());
-		
+
+		// Set instructor name to be thing its sorted by first
+		// TODO(cymai): see if you should change default
+		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);
+		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
+		sortingField = Sort.DIFFICULTY_ASC;
+
+		printReviews();
+
+	}
+
+	public void printReviews() {
 		// Iterate through reviews for course and fill table cells
 		Iterator<Course> iter = courseReviews.iterator();
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
+		tl.removeAllViews();
 		while(iter.hasNext()) {
 			Course curCourse = iter.next();
 
@@ -143,5 +162,49 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT));
 		}
+		tl.invalidate();
+	}
+
+	public void onClickSort(View v) {
+		Sorter s = new Sorter();
+		if(v.getId() == R.id.instructor_tab) {
+			if (sortingField == Sort.INSTRUCTOR_ASC) {
+				courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
+				sortingField = Sort.INSTRUCTOR_DES;
+			} else {
+				courseReviews = s.sortByRating(courseReviews, "difficulty", 0);
+				sortingField = Sort.INSTRUCTOR_ASC;
+			}
+		} else if(v.getId() == R.id.course_quality_tab) {
+			if (sortingField == Sort.CQ_ASC) {
+				courseReviews = s.sortByRating(courseReviews, "courseQuality", 1);
+				sortingField = Sort.CQ_DES;
+			} else {
+				courseReviews = s.sortByRating(courseReviews, "courseQuality", 0);
+				sortingField = Sort.CQ_ASC;
+			}
+		} else if(v.getId() == R.id.instructor_quality_tab) {
+			if (sortingField == Sort.IQ_ASC) {
+				courseReviews = s.sortByRating(courseReviews, "instructorQuality", 1);
+				sortingField = Sort.IQ_DES;
+			} else {
+				courseReviews = s.sortByRating(courseReviews, "instructorQuality", 0);
+				sortingField = Sort.IQ_ASC;
+			}
+		} else if(v.getId() == R.id.difficulty_tab) {
+			if (sortingField == Sort.DIFFICULTY_ASC) {
+				courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
+				sortingField = Sort.DIFFICULTY_DES;
+			} else {
+				courseReviews = s.sortByRating(courseReviews, "difficulty", 0);
+				sortingField = Sort.DIFFICULTY_ASC;
+			}
+		}
+		findViewById(R.id.instructor_tab).setBackgroundColor(0);
+		findViewById(R.id.course_quality_tab).setBackgroundColor(0);
+		findViewById(R.id.instructor_quality_tab).setBackgroundColor(0);
+		findViewById(R.id.difficulty_tab).setBackgroundColor(0);
+		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
+		printReviews();
 	}
 }

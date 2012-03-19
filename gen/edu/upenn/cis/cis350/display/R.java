@@ -12,29 +12,34 @@ public final class R {
     }
     public static final class color {
         public static final int bg_blue=0x7f050000;
-        public static final int black=0x7f050004;
-        public static final int text_gray=0x7f050002;
-        public static final int text_navy=0x7f050001;
-        public static final int white=0x7f050003;
+        public static final int black=0x7f050005;
+        public static final int highlight_blue=0x7f050001;
+        public static final int text_gray=0x7f050003;
+        public static final int text_navy=0x7f050002;
+        public static final int white=0x7f050004;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int clear=0x7f06000d;
+        public static final int clear=0x7f060011;
         public static final int course_description=0x7f060003;
         public static final int course_name=0x7f060002;
         public static final int course_number=0x7f060001;
-        public static final int dept_name=0x7f060006;
-        public static final int dept_note=0x7f060007;
-        public static final int dept_number=0x7f060005;
-        public static final int enter=0x7f06000c;
+        public static final int course_quality_tab=0x7f060005;
+        public static final int dept_name=0x7f06000a;
+        public static final int dept_note=0x7f06000b;
+        public static final int dept_number=0x7f060009;
+        public static final int difficulty_tab=0x7f060007;
+        public static final int enter=0x7f060010;
         public static final int header=0x7f060000;
-        public static final int loading_page_progress=0x7f060008;
-        public static final int reviews=0x7f060004;
-        public static final int search_comment=0x7f06000b;
-        public static final int search_pcr=0x7f060009;
-        public static final int search_term=0x7f06000a;
+        public static final int instructor_quality_tab=0x7f060006;
+        public static final int instructor_tab=0x7f060004;
+        public static final int loading_page_progress=0x7f06000c;
+        public static final int reviews=0x7f060008;
+        public static final int search_comment=0x7f06000f;
+        public static final int search_pcr=0x7f06000d;
+        public static final int search_term=0x7f06000e;
     }
     public static final class layout {
         public static final int bg_gradient=0x7f030000;

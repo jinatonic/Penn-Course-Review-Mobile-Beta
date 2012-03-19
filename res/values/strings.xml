@@ -5,7 +5,7 @@
     <string name="enter">Enter</string>
     <string name="clear">Clear</string>
     <string name="pcr">PennCourseReview</string>
-    <string name="search_text">Search for a class or a professor</string>
+    <string name="search_text">Search for a class, professor, or department</string>
     <string name="SEARCH_TERM">Search Term</string>
     <string name="instructor">Instructor</string>
     <string name="course_quality">Course Quality</string>
@@ -15,6 +15,7 @@
     <string name="dept_note">*Ratings listed here are averaged over all past course offerings in the department.</string>
 
     <color name="bg_blue">#D7D7EB</color>
+    <color name="highlight_blue">#EEEFFF</color>
     <color name="text_navy">#191967</color>
     <color name="text_gray">#5E5E5E</color>
     <color name="white">#FFFFFF</color>

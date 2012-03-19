@@ -82,6 +82,8 @@ public class DisplayReviewsForDept extends Activity {
 			courseId.setTextSize((float)9.5);
 			courseId.setTextColor(getResources().getColor(R.color.text_gray));
 			courseId.setText(curCourseAvg.getId());
+			courseId.setBackgroundResource(R.layout.cell_gridline);
+			courseId.setClickable(true);
 			LayoutParams insParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -97,6 +99,8 @@ public class DisplayReviewsForDept extends Activity {
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			courseQuality.setText(((Double)curRatings.getCourseQuality()).toString());
+			courseQuality.setBackgroundResource(R.layout.cell_gridline);
+			courseQuality.setClickable(true);
 			LayoutParams courseParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -112,6 +116,8 @@ public class DisplayReviewsForDept extends Activity {
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
 			instructorQuality.setText(((Double)curRatings.getInstructorQuality()).toString());
+			instructorQuality.setBackgroundResource(R.layout.cell_gridline);
+			instructorQuality.setClickable(true);
 			LayoutParams insQualParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -127,6 +133,8 @@ public class DisplayReviewsForDept extends Activity {
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
 			difficulty.setText(((Double)curRatings.getDifficulty()).toString());
+			difficulty.setBackgroundResource(R.layout.cell_gridline);
+			difficulty.setClickable(true);
 			LayoutParams diffParams = new LayoutParams(
 					LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);

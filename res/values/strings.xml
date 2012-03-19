@@ -12,6 +12,7 @@
     <string name="instructor_quality">Instructor Quality</string>
     <string name="difficulty">Difficulty</string>
     <string name="course_id">Course ID</string>
+    <string name="dept_note">*Ratings listed here are averaged over all past course offerings in the department.</string>
 
     <color name="bg_blue">#D7D7EB</color>
     <color name="text_navy">#191967</color>

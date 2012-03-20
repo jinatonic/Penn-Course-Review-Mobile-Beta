@@ -71,7 +71,7 @@ public class SearchPage extends Activity {
 
 		/* autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
-		autocomplete.resetTables();
+		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		autocomplete.close();
 		autocomplete.open();
 		if (autocomplete.updatesNeeded()) {

@@ -25,7 +25,7 @@ public class JSONRequest {
 				builder.append(line);
 			}
 			Log.v("Length", builder.toString());
-
+			reader.close();
 			return new JSONObject(builder.toString());
 		}
 		catch(IOException e) {

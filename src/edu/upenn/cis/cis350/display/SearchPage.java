@@ -69,7 +69,7 @@ public class SearchPage extends Activity {
 		cache.clearOldEntries();
 		cache.close();
 
-		/* autocomplete = new AutoCompleteDB(this.getApplicationContext());
+		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
 		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		autocomplete.close();
@@ -77,7 +77,7 @@ public class SearchPage extends Activity {
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 
-		UNCOMMENT FOR AUTOCOMPLETE */
+		//UNCOMMENT FOR AUTOCOMPLETE 
 	}
 
 	public void onEnterButtonClick(View v) {
@@ -107,17 +107,17 @@ public class SearchPage extends Activity {
 				return null;
 			}
 
-			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteForInstructor();
+			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
 			autocomplete.addEntries(result);
 			
-			JSONArray json = AutoComplete.getJSONArrayForDept();
+			/*JSONArray json = AutoComplete.getJSONArrayForDept();
 			for (int i=0; i<json.length(); i++) {
 				try {
 					result = AutoComplete.getAutoCompleteForCourse(json.getJSONObject(i));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 			
 			return "COMPLETE"; // CHANGE
 		}

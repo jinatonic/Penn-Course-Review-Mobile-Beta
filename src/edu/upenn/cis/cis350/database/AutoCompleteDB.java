@@ -114,10 +114,14 @@ public class AutoCompleteDB {
 	 * @param keyword
 	 */
 	public void checkAutocomplete(String keyword) {
-		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE name LIKE '%" +
-						keyword + "%' OR course_id LIKE '%" + keyword + "%' LIMIT 10";
+		keyword = keyword.toLowerCase();
+		Log.w("AutocompleteDB", "Search DB for " + keyword);
+		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" +
+						keyword + "%' OR LOWER(course_id) LIKE '%" + keyword + "%' LIMIT 10";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
+		if (c.getCount() == 0)
+			return;
 		do {
 			String name = c.getString(c.getColumnIndex("name"));
 			String course_id = c.getString(c.getColumnIndex("course_id"));

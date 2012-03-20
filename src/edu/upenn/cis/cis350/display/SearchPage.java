@@ -57,6 +57,13 @@ public class SearchPage extends Activity {
 					onEnterButtonClick(v);
 					return true;
 				}
+				else if (event.getAction() == KeyEvent.ACTION_UP) {
+					autocomplete.open();
+					EditText search = (EditText)findViewById(R.id.search_term);
+					autocomplete.checkAutocomplete(search.getText().toString());
+					autocomplete.close();
+					return true;
+				}
 				return false;
 			}
 		});
@@ -68,16 +75,19 @@ public class SearchPage extends Activity {
 		cache.open();
 		cache.clearOldEntries();
 		cache.close();
-
+/*
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
-		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		autocomplete.close();
 		autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 
+		autocomplete.close();
 		//UNCOMMENT FOR AUTOCOMPLETE 
+		 * 
+		 */
 	}
 
 	public void onEnterButtonClick(View v) {
@@ -109,7 +119,7 @@ public class SearchPage extends Activity {
 
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
 			autocomplete.addEntries(result);
-			
+
 			/*JSONArray json = AutoComplete.getJSONArrayForDept();
 			for (int i=0; i<json.length(); i++) {
 				try {
@@ -118,7 +128,7 @@ public class SearchPage extends Activity {
 					e.printStackTrace();
 				}
 			}*/
-			
+
 			return "COMPLETE"; // CHANGE
 		}
 

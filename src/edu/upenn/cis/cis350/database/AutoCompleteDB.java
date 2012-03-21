@@ -36,6 +36,7 @@ public class AutoCompleteDB {
 			"path char(50)," +
 			"name char(50)," +
 			"course_id char(50)," +
+			"course_id_norm char(50)," +
 			"type int NOT NULL," +		// 0 - course, 1 - instructor, 2 - department
 			"year int NOT NULL)";	
 	
@@ -97,10 +98,15 @@ public class AutoCompleteDB {
 			
 			// First we add to the course table 
 			ContentValues values = new ContentValues();
+			String course_id = keyword.getAlias();
+			String course_id_norm = null;
+			if (course_id != null)
+				course_id_norm = course_id.replace("-", "").toLowerCase();
 			
 			values.put("path", keyword.getPath());
 			values.put("name", keyword.getName());
-			values.put("course_id", keyword.getAlias());
+			values.put("course_id", course_id);
+			values.put("course_id_norm", course_id_norm);
 			values.put("type", (keyword.getType() == Type.COURSE) ? 0 : (keyword.getType() == Type.INSTRUCTOR) ? 1 : 2);
 			values.put("year", Calendar.getInstance().get(Calendar.YEAR));
 			
@@ -113,20 +119,34 @@ public class AutoCompleteDB {
 	 * Queries and tries to complete the given keyword based on current table
 	 * @param keyword
 	 */
-	public void checkAutocomplete(String keyword) {
-		keyword = keyword.toLowerCase();
+	public String[] checkAutocomplete(String keyword) {
+		keyword = keyword.toLowerCase().replace("-", "");
 		Log.w("AutocompleteDB", "Search DB for " + keyword);
 		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" +
-						keyword + "%' OR LOWER(course_id) LIKE '%" + keyword + "%' LIMIT 10";
+						keyword + "%' OR course_id_norm LIKE '" + keyword + "%'";
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
-		if (c.getCount() == 0)
-			return;
-		do {
-			String name = c.getString(c.getColumnIndex("name"));
-			String course_id = c.getString(c.getColumnIndex("course_id"));
-			Log.w("AUTOCOMPLETE", "Found " + course_id + " - " + name);
-		} while (c.moveToNext());
+		if (c.getCount() > 0) {
+			int course_id_index = c.getColumnIndex("course_id");
+			int name_index = c.getColumnIndex("name");
+			do {
+				String course_id;
+				String name = c.getString(name_index);
+				if ((course_id = c.getString(course_id_index)) != null) {
+					Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
+					result.add(course_id + " - " + name);
+				}
+				else {
+					Log.w("AUTOCOMPLETE", "Found instructor " + name);
+					result.add(name);
+				}
+			} while (c.moveToNext());
+		}
+		
+		return (String[])result.toArray();
 	}
 	
 	/**

@@ -2,9 +2,6 @@ package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,9 +12,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap;
@@ -25,9 +25,8 @@ import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class SearchPage extends Activity {
 
-	public static final int ACTIVITY_LOADING_PAGE = 1;
-
 	private AutoCompleteDB autocomplete;
+	private SearchPage searchPage;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,6 +35,7 @@ public class SearchPage extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		databaseMaintainance();
+		searchPage = this;
 
 		setContentView(R.layout.search_page);
 
@@ -47,7 +47,7 @@ public class SearchPage extends Activity {
 		searchCommentView.setTypeface(timesNewRoman);
 
 		// Handle user pushing enter after typing search term
-		EditText search = (EditText)findViewById(R.id.search_term);
+		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// If event is key-down event on "enter" button
@@ -58,11 +58,21 @@ public class SearchPage extends Activity {
 					return true;
 				}
 				else if (event.getAction() == KeyEvent.ACTION_UP) {
-					autocomplete.open();
-					EditText search = (EditText)findViewById(R.id.search_term);
-					autocomplete.checkAutocomplete(search.getText().toString());
-					autocomplete.close();
-					return true;
+					AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
+					String term = search.getText().toString();
+					if (term.length() >= 2) {
+						// Check database for autocomplete key terms
+						autocomplete.open();
+						String[] result = autocomplete.checkAutocomplete(term);
+						autocomplete.close();
+						
+						// Set autocomplete rows
+						ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(searchPage,
+				                android.R.layout.simple_dropdown_item_1line, result);
+						search.setAdapter(auto_adapter);
+						
+						return true;
+					}
 				}
 				return false;
 			}
@@ -75,19 +85,16 @@ public class SearchPage extends Activity {
 		cache.open();
 		cache.clearOldEntries();
 		cache.close();
-/*
+
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
-		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		autocomplete.close();
 		autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 
 		autocomplete.close();
-		//UNCOMMENT FOR AUTOCOMPLETE 
-		 * 
-		 */
 	}
 
 	public void onEnterButtonClick(View v) {
@@ -99,7 +106,7 @@ public class SearchPage extends Activity {
 		// Add the search term as an extra to this Intent
 		i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivityForResult(i, SearchPage.ACTIVITY_LOADING_PAGE);
+		startActivityForResult(i, Constants.ACTIVITY_LOADING_PAGE);
 	}
 
 	// Clear search term on clear button click
@@ -118,16 +125,9 @@ public class SearchPage extends Activity {
 			}
 
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
+			autocomplete.open();
 			autocomplete.addEntries(result);
-
-			/*JSONArray json = AutoComplete.getJSONArrayForDept();
-			for (int i=0; i<json.length(); i++) {
-				try {
-					result = AutoComplete.getAutoCompleteForCourse(json.getJSONObject(i));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}*/
+			autocomplete.close();
 
 			return "COMPLETE"; // CHANGE
 		}

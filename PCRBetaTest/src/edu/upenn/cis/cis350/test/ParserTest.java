@@ -1,7 +1,6 @@
 package edu.upenn.cis.cis350.test;
 
 import android.test.AndroidTestCase;
-import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.SearchCache;
 
 public class ParserTest extends AndroidTestCase {

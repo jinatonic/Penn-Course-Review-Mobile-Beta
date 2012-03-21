@@ -38,7 +38,7 @@
         android:padding="10dp" >
 
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/search_term"
             android:inputType="text"
             android:layout_width="0dp"

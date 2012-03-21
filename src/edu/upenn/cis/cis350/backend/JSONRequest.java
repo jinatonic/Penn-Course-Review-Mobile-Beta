@@ -15,10 +15,10 @@ public class JSONRequest {
 
 	public static JSONObject retrieveJSONObject(String path){
 		int count = 0;
-		while(count < 3){
-
+		
+		while(count < Constants.MAX_ATTEMPTS_FOR_CONNECTION) {
+			
 			try{
-
 				URL url = new URL(path);
 				Log.w("Parser: retrieveJSONObject", "url=" + url);
 				URLConnection connection = url.openConnection();
@@ -38,13 +38,12 @@ public class JSONRequest {
 				return null;
 			} catch (JSONException e) {
 				Log.w("Parser: retrieveJSONObject", "JSONException: mis-formatted JSON");
-				e.printStackTrace();
 				count++;
+				Log.w("JSONRequest", "reconnecting: attempt #" + count);
 				continue;
-
 			}
+			
 		}
 		return null;
 	}
-	
 }

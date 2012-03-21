@@ -42,6 +42,13 @@ public class LoadingPage extends Activity {
 		else if (!checkCache())
 			new ServerQuery().execute(searchTerm);
 	}	
+	
+	/**
+	 * Skip this page when user navigates back (goes straight to SearchPage)
+	 */
+	public void onResume() {
+		this.finish();
+	}
 
 	public boolean checkCache() {
 		SearchCache cache = new SearchCache(this.getApplicationContext());

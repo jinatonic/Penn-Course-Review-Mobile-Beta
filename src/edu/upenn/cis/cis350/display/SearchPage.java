@@ -27,6 +27,7 @@ public class SearchPage extends Activity {
 
 	private AutoCompleteDB autocomplete;
 	private SearchPage searchPage;
+	private String search_term;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,6 +37,7 @@ public class SearchPage extends Activity {
 
 		databaseMaintainance();
 		searchPage = this;
+		search_term = "";
 
 		setContentView(R.layout.search_page);
 
@@ -60,11 +62,16 @@ public class SearchPage extends Activity {
 				else if (event.getAction() == KeyEvent.ACTION_UP) {
 					AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 					String term = search.getText().toString();
-					if (term.length() >= 2) {
+					if (term.length() >= 2 && !search_term.equals(term)) {
+						// Store last search_term
+						search_term = term;
+						
 						// Check database for autocomplete key terms
 						autocomplete.open();
 						String[] result = autocomplete.checkAutocomplete(term);
 						autocomplete.close();
+						
+						Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 						
 						// Set autocomplete rows
 						ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(searchPage,
@@ -88,9 +95,9 @@ public class SearchPage extends Activity {
 
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
-		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		autocomplete.close();
-		autocomplete.open();
+		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		//autocomplete.close();
+		//autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 

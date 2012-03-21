@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.database;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -10,6 +11,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
@@ -77,6 +79,11 @@ public class AutoCompleteDB {
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(AUTOCOMPLETE_TABLE_CREATE);
+		
+		// DEBUG get size
+		long size = new File(mDb.getPath()).length();
+		Log.w("AutocompleteDB", "Size of db is " + size);
+		
 		return this;
 	}
 	
@@ -94,7 +101,10 @@ public class AutoCompleteDB {
 	 */
 	public void addEntries(ArrayList<KeywordMap> keywords) {
 		for (KeywordMap keyword : keywords) {
-			Log.w(TAG, "adding course " + keyword.getAlias() + " to database");
+			if (keyword.getAlias() == null)
+				Log.w(TAG, "adding instructor " + keyword.getName() + " to database");
+			else
+				Log.w(TAG, "adding course " + keyword.getAlias() + " - " + keyword.getName() + " to database");
 			
 			// First we add to the course table 
 			ContentValues values = new ContentValues();
@@ -127,26 +137,63 @@ public class AutoCompleteDB {
 		
 		ArrayList<String> result = new ArrayList<String>();
 		
+		// We query for department first, then courses, then instructors, assuming that instructors will be least common query
+		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm = '" + keyword + "' AND type=2";
 		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		if (c.getCount() == 1) {
+			String course_id = c.getString(c.getColumnIndex("course_id"));
+			String name = c.getString(c.getColumnIndex("name"));
+			Log.w("AUTOCOMPLETE", "Found department " + course_id + " - " + name);
+			result.add(course_id + " - " + name);
+		}
+		
+		// Then we query for courses
+		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm LIKE '" + keyword + "%' AND type=0 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+		c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		if (c.getCount() > 0) {
 			int course_id_index = c.getColumnIndex("course_id");
 			int name_index = c.getColumnIndex("name");
 			do {
-				String course_id;
+				String course_id = c.getString(course_id_index);
 				String name = c.getString(name_index);
-				if ((course_id = c.getString(course_id_index)) != null) {
-					Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
-					result.add(course_id + " - " + name);
-				}
-				else {
-					Log.w("AUTOCOMPLETE", "Found instructor " + name);
-					result.add(name);
-				}
+				Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
+				result.add(course_id + " - " + name);
 			} while (c.moveToNext());
 		}
 		
-		return (String[])result.toArray();
+		// Then we query for instructor (if and only if we didn't find enough course/departments
+		if (result.size() < Constants.MAX_AUTOCOMPLETE_RESULT) {
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + keyword + "%' AND type != 2 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+			c = mDb.rawQuery(query, null);
+			c.moveToFirst();
+			if (c.getCount() > 0) {
+				int course_id_index = c.getColumnIndex("course_id");
+				int name_index = c.getColumnIndex("name");
+				int type_index = c.getColumnIndex("type");
+				
+				do {
+					int type = c.getInt(type_index);
+					// If it's instructor
+					if (type == 1) {
+						String name = c.getString(name_index);
+						Log.w("AUTOCOMPLETE", "Found instructor " + name);
+						result.add(name);
+					}
+					// If it's course (matched based on course name)
+					else {
+						String name = c.getString(name_index);
+						String course_id = c.getString(course_id_index);
+						Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
+						result.add(course_id + " - " + name);
+					}
+				} while (c.moveToNext());
+			}
+		}
+		
+		String[] result_array = new String[result.size()];
+		return result.toArray(result_array);
 	}
 	
 	/**

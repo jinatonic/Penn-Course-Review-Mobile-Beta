@@ -73,7 +73,10 @@ public class DisplayReviewsForCourse extends Activity {
 		sortingField = Sort.DIFFICULTY_ASC;
 
 		printReviews();
-
+	}
+	
+	public void showDetails() {
+		
 	}
 
 	public void printReviews() {
@@ -91,74 +94,19 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.WRAP_CONTENT));
 
 			/* Create a TextView for Instructor to be the row-content. */
-			TextView instructor = new TextView(this);
-			instructor.setHeight(35);
-			instructor.setWidth(165);
-			instructor.setTextSize((float)9.5);
-			instructor.setTextColor(getResources().getColor(R.color.text_gray));
-			instructor.setText(curCourse.getInstructor().getName());
-			instructor.setBackgroundResource(R.layout.cell_gridline);
-			instructor.setClickable(true);
-			LayoutParams insParams = new LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			insParams.column = 1;
-			instructor.setLayoutParams(insParams);
-			/* Add TextView to row. */
+			TextView instructor = createRow(165, Gravity.LEFT, curCourse.getInstructor().getName(), 1);
 			tr.addView(instructor);
 
 			/* Create a TextView for Course Quality to be the row-content. */
-			TextView courseQuality = new TextView(this);
-			courseQuality.setHeight(35);
-			courseQuality.setWidth(89);
-			courseQuality.setTextSize((float)9.5);
-			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
-			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
-			courseQuality.setText(((Double)curCourse.getRatings().getCourseQuality()).toString());
-			courseQuality.setBackgroundResource(R.layout.cell_gridline);
-			courseQuality.setClickable(true);
-			LayoutParams courseParams = new LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			courseParams.column = 2;
-			courseQuality.setLayoutParams(courseParams);
-			/* Add TextView to row. */
+			TextView courseQuality = createRow(89, Gravity.CENTER_HORIZONTAL, ((Double)curCourse.getRatings().getCourseQuality()).toString(), 2);
 			tr.addView(courseQuality);
 
 			/* Create a TextView for Instructor Quality to be the row-content. */
-			TextView instructorQuality = new TextView(this);
-			instructorQuality.setHeight(35);
-			instructorQuality.setWidth(89);
-			instructorQuality.setTextSize((float)9.5);
-			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
-			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
-			instructorQuality.setText(((Double)curCourse.getRatings().getInstructorQuality()).toString());
-			instructorQuality.setBackgroundResource(R.layout.cell_gridline);
-			instructorQuality.setClickable(true);
-			LayoutParams insQualParams = new LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			insQualParams.column = 3;
-			instructorQuality.setLayoutParams(insQualParams);
-			/* Add TextView to row. */
+			TextView instructorQuality = createRow(89, Gravity.CENTER_HORIZONTAL, ((Double)curCourse.getRatings().getInstructorQuality()).toString(), 3);
 			tr.addView(instructorQuality);
 
 			/* Create a TextView for Difficulty to be the row-content. */
-			TextView difficulty = new TextView(this);
-			difficulty.setHeight(35);
-			difficulty.setWidth(89);
-			difficulty.setTextSize((float)9.5);
-			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
-			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
-			difficulty.setText(((Double)curCourse.getRatings().getDifficulty()).toString());
-			difficulty.setBackgroundResource(R.layout.cell_gridline);
-			difficulty.setClickable(true);
-			LayoutParams diffParams = new LayoutParams(
-					LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			diffParams.column = 4;
-			difficulty.setLayoutParams(diffParams);
-			/* Add TextView to row. */
+			TextView difficulty = createRow(89, Gravity.CENTER_HORIZONTAL, ((Double)curCourse.getRatings().getDifficulty()).toString(), 4);
 			tr.addView(difficulty);
 
 			/* Add row to TableLayout. */
@@ -211,5 +159,23 @@ public class DisplayReviewsForCourse extends Activity {
 		findViewById(R.id.difficulty_tab).setBackgroundColor(0);
 		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		printReviews();
+	}
+	
+	TextView createRow(int width, int gravity, String text, int colNum) {
+		TextView row = new TextView(this);
+		row.setHeight(35);
+		row.setWidth(width);
+		row.setTextSize((float)9.5);
+		row.setTextColor(getResources().getColor(R.color.text_gray));
+		row.setGravity(gravity);
+		row.setText(text);
+		row.setBackgroundResource(R.layout.cell_gridline);
+		row.setClickable(true);
+		LayoutParams diffParams = new LayoutParams(
+				LayoutParams.FILL_PARENT,
+				LayoutParams.WRAP_CONTENT);
+		diffParams.column = colNum;
+		row.setLayoutParams(diffParams);
+		return row;
 	}
 }

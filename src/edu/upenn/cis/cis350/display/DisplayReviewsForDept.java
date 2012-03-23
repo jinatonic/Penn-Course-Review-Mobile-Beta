@@ -154,4 +154,5 @@ public class DisplayReviewsForDept extends Activity {
 					LayoutParams.WRAP_CONTENT));
 		}
 	}
+	
 }

@@ -93,6 +93,7 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView for Instructor to be the row-content. */
 			TextView instructor = new TextView(this);
 			instructor.setHeight(35);
+			instructor.setWidth(165);
 			instructor.setTextSize((float)9.5);
 			instructor.setTextColor(getResources().getColor(R.color.text_gray));
 			instructor.setText(curCourse.getInstructor().getName());
@@ -109,6 +110,7 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView for Course Quality to be the row-content. */
 			TextView courseQuality = new TextView(this);
 			courseQuality.setHeight(35);
+			courseQuality.setWidth(89);
 			courseQuality.setTextSize((float)9.5);
 			courseQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			courseQuality.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -126,6 +128,7 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView for Instructor Quality to be the row-content. */
 			TextView instructorQuality = new TextView(this);
 			instructorQuality.setHeight(35);
+			instructorQuality.setWidth(89);
 			instructorQuality.setTextSize((float)9.5);
 			instructorQuality.setTextColor(getResources().getColor(R.color.text_gray));
 			instructorQuality.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -143,6 +146,7 @@ public class DisplayReviewsForCourse extends Activity {
 			/* Create a TextView for Difficulty to be the row-content. */
 			TextView difficulty = new TextView(this);
 			difficulty.setHeight(35);
+			difficulty.setWidth(89);
 			difficulty.setTextSize((float)9.5);
 			difficulty.setTextColor(getResources().getColor(R.color.text_gray));
 			difficulty.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -169,6 +173,7 @@ public class DisplayReviewsForCourse extends Activity {
 		Sorter s = new Sorter();
 		if(v.getId() == R.id.instructor_tab) {
 			if (sortingField == Sort.INSTRUCTOR_ASC) {
+				// TODO(cymai): change to instructor
 				courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
 				sortingField = Sort.INSTRUCTOR_DES;
 			} else {

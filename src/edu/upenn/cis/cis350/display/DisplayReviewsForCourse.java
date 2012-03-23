@@ -169,6 +169,7 @@ public class DisplayReviewsForCourse extends Activity {
 		Sorter s = new Sorter();
 		if(v.getId() == R.id.instructor_tab) {
 			if (sortingField == Sort.INSTRUCTOR_ASC) {
+				// TODO(cymai): change to instructor
 				courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
 				sortingField = Sort.INSTRUCTOR_DES;
 			} else {

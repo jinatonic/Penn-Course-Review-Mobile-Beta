@@ -219,8 +219,8 @@ public class AutoCompleteDB {
 	 * Delete all entries from table
 	 */
 	public void resetTables() {
-		//Log.w(TAG, "Resetting the AutoComplete table");
-		//mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
-		//mDb.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
+		Log.w(TAG, "Resetting the AutoComplete table");
+		mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
 	}
 }

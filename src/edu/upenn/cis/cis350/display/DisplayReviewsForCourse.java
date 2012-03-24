@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -74,9 +75,10 @@ public class DisplayReviewsForCourse extends Activity {
 
 		printReviews();
 	}
-	
+
 	public void showDetails() {
-		
+		int x = 0;
+		x++;
 	}
 
 	public void printReviews() {
@@ -84,6 +86,7 @@ public class DisplayReviewsForCourse extends Activity {
 		Iterator<Course> iter = courseReviews.iterator();
 		TableLayout tl = (TableLayout)findViewById(R.id.reviews);
 		tl.removeAllViews();
+		
 		while(iter.hasNext()) {
 			Course curCourse = iter.next();
 
@@ -115,6 +118,19 @@ public class DisplayReviewsForCourse extends Activity {
 					LayoutParams.WRAP_CONTENT));
 		}
 		tl.invalidate();
+		
+		tl.setOnLongClickListener(new OnLongClickListener() {
+			public boolean onLongClick(View view) {
+				android.app.Dialog dialog = new android.app.Dialog(DisplayReviewsForCourse.this);
+				dialog.setContentView(R.layout.main_dialog);
+			
+				dialog.setCancelable(true);
+
+				dialog.show();
+				return true;
+			}
+		});
+		
 	}
 
 	public void onClickSort(View v) {
@@ -160,7 +176,7 @@ public class DisplayReviewsForCourse extends Activity {
 		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		printReviews();
 	}
-	
+
 	TextView createRow(int width, int gravity, String text, int colNum) {
 		TextView row = new TextView(this);
 		row.setHeight(35);

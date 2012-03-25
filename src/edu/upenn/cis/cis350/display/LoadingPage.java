@@ -47,6 +47,7 @@ public class LoadingPage extends Activity {
 	 * Skip this page when user navigates back (goes straight to SearchPage)
 	 */
 	public void onResume() {
+		super.onResume();
 		this.finish();
 	}
 

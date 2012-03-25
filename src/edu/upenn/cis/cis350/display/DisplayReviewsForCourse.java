@@ -76,10 +76,12 @@ public class DisplayReviewsForCourse extends Activity {
 		printReviews();
 	}
 
+	/* GUYS, DAFUQ IS THIS?????
 	public void showDetails() {
 		int x = 0;
 		x++;
 	}
+	*/
 
 	public void printReviews() {
 		// Iterate through reviews for course and fill table cells

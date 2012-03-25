@@ -50,6 +50,7 @@ public class SearchPage extends Activity {
 
 		// Handle user pushing enter after typing search term
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
+		search.setAdapter(new ArrayAdapter<String>(searchPage, android.R.layout.simple_dropdown_item_1line, new String[0]));
 		search.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// If event is key-down event on "enter" button
@@ -77,6 +78,7 @@ public class SearchPage extends Activity {
 						ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(searchPage,
 				                android.R.layout.simple_dropdown_item_1line, result);
 						search.setAdapter(auto_adapter);
+						search.showDropDown();
 						
 						return true;
 					}

@@ -137,6 +137,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@android:color/transparent"
+                android:clickable="true"
+                android:onClick="onClickPick"
                 android:stretchColumns="4" >
 
                 <TableRow>

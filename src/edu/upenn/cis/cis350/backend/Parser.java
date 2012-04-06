@@ -19,14 +19,18 @@ public class Parser {
 	public static final String baseURL = "http://api.penncoursereview.com/v1";
 	public static final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
-	public Department getReviewsForDept(String dept) {
-		if(dept == null) return null;
+
+	public Department getReviewsForDept(KeywordMap dept_map) {
+		String dept_name = dept_map.getName();
+		String dept_id =  dept_map.getAlias();
+		String dept_path = dept_map.getPath();
+		/*if(dept == null) return null;
 		dept = dept.trim().toUpperCase();
-		Department department = null;
+
 		//change this stuff once autocomplete works to get dept name, id
 		try{
 			JSONObject all_dept = JSONRequest.retrieveJSONObject(baseURL + "/depts" + token);
-		
+
 		JSONArray dept_array = all_dept.getJSONObject("result").getJSONArray("values");
 		String dept_name = "";
 		String dept_id = "";
@@ -36,22 +40,24 @@ public class Parser {
 				dept_id = dept_array.getJSONObject(h).getString("id");
 				break;
 			}
-				
-		}
-		System.out.println(dept);
-		String path = "/depts/"+dept;
-		String url = baseURL + path + token;
 
-		JSONObject json = JSONRequest.retrieveJSONObject(url);
-		if (json == null) {
-			return null;
 		}
-		System.out.println(url);
-	
-		ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
-		JSONObject result = null;
-		if (json.has("result")) {
-			try {
+
+		System.out.println(dept);
+		String path = "/depts/"+dept;*/
+		Department department = null;
+		String url = baseURL + dept_path + token;
+		try{
+			JSONObject json = JSONRequest.retrieveJSONObject(url);
+			if (json == null) {
+				return null;
+			}
+			System.out.println(url);
+
+			ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
+			JSONObject result = null;
+			if (json.has("result")) {
+				//try {
 				result = json.getJSONObject("result");
 				JSONArray coursehistories = null;
 				if (result.has("coursehistories")) {
@@ -71,35 +77,38 @@ public class Parser {
 							courseAverages.add(a);
 						}
 					}
-					department = new Department(dept_name, dept_id, path, courseAverages);
-					
+					department = new Department(dept_name, dept_id, dept_path, courseAverages);
+
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-				return null;
+				//} catch (JSONException e) {
+				//e.printStackTrace();
+				//	return null;
 			}
-		}	
-		
-		return  department;
+
+
+			return  department;
 		}catch(JSONException e) { e.printStackTrace(); return department;}
 	}
-	
+
 	//path is of form: "/instructors/1-DONALD-D-FITTS
-	public ArrayList<Course> getReviewsForInstructor(String path){
+	public ArrayList<Course> getReviewsForInstructor(KeywordMap instructor_map){
+		String instructor_name = instructor_map.getName();
+		String path = instructor_map.getPath();
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		if(path == null) return null;
 		String reviewpath = path + "/reviews";
-		String instructor_name = "GET NAME FROM DATABASE"; //TBD
+		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
 		try{
-		reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
+			reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { e.printStackTrace(); }
 		return reviews;
 	}
 
-	public ArrayList<Course> getReviewsForCourse(String course) {
-		if (course == null) return null;
+	public ArrayList<Course> getReviewsForCourse(KeywordMap course_map) {
+		if (course_path == null) return null;
+		String course_path = course_map.getPath();
 
-		String dept = course.substring(0, course.indexOf('-'));
+		/*String dept = course.substring(0, course.indexOf('-'));
 
 		String url = baseURL + "/depts/"+ dept + token;
 
@@ -149,10 +158,10 @@ public class Parser {
 				return null;
 			}
 		}
-
-		System.out.println(path);
+		*/
+		System.out.println(course_path);
 		ArrayList<Course> reviews = new ArrayList<Course>();
-		reviews = storeReviews(path);
+		reviews = storeReviews(course_path);
 
 		System.out.println(reviews.size());
 
@@ -304,17 +313,17 @@ public class Parser {
 
 					r = new Ratings(
 							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-							rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-							rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-							rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-							rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-							rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-							rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-							rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-							rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-							rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-						);
+									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+							);
 				}
 				JSONObject section = null;
 				Section s = null;

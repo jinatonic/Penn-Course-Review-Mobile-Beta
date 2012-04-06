@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis350.backend;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import edu.upenn.cis.cis350.objects.*;
 
@@ -25,6 +26,35 @@ public class Sorter {
 			else
 				return -1;
 		}
+	}
+	
+	// sort list by instructor, order = 0 is alphabetical, 1 is reverse
+	public ArrayList<Course> sortByInstructor(ArrayList<Course> courses, int order) {
+		Pair [] pairs = new Pair[courses.size()];
+		int count = 0;
+		for(Course c: courses){
+			String s = c.getInstructor().getName();
+			double d = s.hashCode();
+			if(s.charAt(4) == 'B')
+				d = d + .5;
+			Pair p = new Pair(d,c);
+			pairs[count] = p;
+			count++;
+		}
+		
+		Arrays.sort(pairs);
+		ArrayList<Course> sortedCourses = new ArrayList<Course>();
+		if(order == 0){
+		for(int i = 0; i < pairs.length; i++){
+			sortedCourses.add(pairs[i].getCourse());
+		}
+		}
+		else{
+			for(int i = pairs.length-1; i >= 0; i--){
+				sortedCourses.add(pairs[i].getCourse());
+			}
+		}
+		return sortedCourses;
 	}
 	
 	//sort list by semester, order = 0 is increasing, 1 is decreasing

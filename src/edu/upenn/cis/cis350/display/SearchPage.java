@@ -26,7 +26,7 @@ import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
-import edu.upenn.cis.cis350.database.SearchCache;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
@@ -167,9 +167,12 @@ public class SearchPage extends Activity {
 					auto.close();
 					
 					// Backup check in case result wasn't generated correctly
-					if (keywordmap == null)
+					if (keywordmap == null) {
+						// TODO: display dialog
 						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
-					
+						return;
+					}
+						
 					// Run async task in background and display some type of loading icon
 					new ServerQuery().execute(keywordmap);
 					
@@ -185,7 +188,7 @@ public class SearchPage extends Activity {
 	 */
 	public void databaseMaintainance() {
 		// Perform clear on database
-		SearchCache cache = new SearchCache(this.getApplicationContext());
+		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
 		cache.clearOldEntries();
 		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
@@ -216,9 +219,14 @@ public class SearchPage extends Activity {
 		
 		AutoCompleteDB auto = new AutoCompleteDB(context);
 		auto.open();
-		KeywordMap result = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
+		keywordmap = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
 		auto.close();
-		new ServerQuery().execute(result);
+		if (keywordmap == null) {
+			// TODO: display dialog
+			Log.w("SearchPage", "enter pressed, no data found");
+			return;
+		}
+		new ServerQuery().execute(keywordmap);
 	}
 
 	/**
@@ -262,7 +270,7 @@ public class SearchPage extends Activity {
 	 * @return
 	 */
 	public boolean checkCache(String keyword, Type type) {
-		SearchCache cache = new SearchCache(this.getApplicationContext());
+		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
 		if (cache.ifExistsInDB(keyword)) {
 			cache.close();
@@ -277,7 +285,10 @@ public class SearchPage extends Activity {
 	 * @param type
 	 */
 	public void proceed() {
-		if (keywordmap == null) return;
+		if (keywordmap == null) {
+			Log.w("SearchPage", "ERROR: in proceed, keywordmap is null");
+			return;
+		}
 		
 		Type type = keywordmap.getType();
 		if (type == Type.COURSE) {
@@ -337,12 +348,13 @@ public class SearchPage extends Activity {
 					return;
 				}
 	
-				SearchCache cache = new SearchCache(context);
+				CourseSearchCache cache = new CourseSearchCache(context);
 				cache.open();
 				cache.addCourse(courses);
 				cache.close();
 			}
 			else if (input.getType() == Type.UNKNOWN) {
+				Log.w("ServerQuery", "Running ServerQuery with unknown type, keyword " + input.getAlias());
 			}
 			else {
 				

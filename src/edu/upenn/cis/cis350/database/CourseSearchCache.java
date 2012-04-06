@@ -10,7 +10,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -23,7 +22,7 @@ import edu.upenn.cis.cis350.objects.Section;
  *
  */
 
-public class SearchCache {
+public class CourseSearchCache {
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
@@ -89,7 +88,7 @@ public class SearchCache {
         }
     }
 	
-	public SearchCache(Context ctx) {
+	public CourseSearchCache(Context ctx) {
 		this.mCtx = ctx;
 	}
 	
@@ -98,7 +97,7 @@ public class SearchCache {
 	 * @return SearchCache with the database opened
 	 * @throws SQLException
 	 */
-	public SearchCache open() throws SQLException {
+	public CourseSearchCache open() throws SQLException {
 		Log.w(TAG, "Opening SearchCache");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();

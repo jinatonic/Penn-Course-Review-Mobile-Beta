@@ -218,13 +218,18 @@ public class AutoCompleteDB {
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
+		if (c.getCount() == 0) 
+			return null;
+		
 		String path = c.getString(c.getColumnIndex("path"));
 		String name = c.getString(c.getColumnIndex("name"));
 		String course_id = c.getString(c.getColumnIndex("course_id"));
+		int dbtype = c.getInt(c.getColumnIndex("type"));
+		Type convertedType = (dbtype == 0) ? Type.COURSE : (dbtype == 1) ? Type.INSTRUCTOR : (dbtype == 2) ? Type.DEPARTMENT : Type.UNKNOWN;
 		
 		Log.w("AutocompleteDB", "result, path: " + path + " name: " + name + " course_id: " + course_id);
 		
-		return new KeywordMap(path, name, course_id, type);
+		return new KeywordMap(path, name, course_id, convertedType);
 	}
 	
 	/**

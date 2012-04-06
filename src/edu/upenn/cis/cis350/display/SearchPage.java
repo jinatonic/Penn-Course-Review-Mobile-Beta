@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -93,12 +92,13 @@ public class SearchPage extends Activity {
 					autocompleteTimer.schedule(new TimerTask() {
 						@Override
 						public void run() {
-							Looper.prepare();
 							SearchPage.this.runOnUiThread(new Runnable() {
+								
 								@Override
 								public void run() {
 									setAutocomplete();
 								}
+								
 							});
 							autocompleteTimer = null;
 						}

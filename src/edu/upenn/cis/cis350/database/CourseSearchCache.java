@@ -66,7 +66,7 @@ public class CourseSearchCache {
 			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
 	/* TAG for logging purposes */
-	private static final String TAG = "SearchCache";
+	private static final String TAG = "CourseSearchCache";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -98,7 +98,7 @@ public class CourseSearchCache {
 	 * @throws SQLException
 	 */
 	public CourseSearchCache open() throws SQLException {
-		Log.w(TAG, "Opening SearchCache");
+		Log.w(TAG, "Opening CourseSearchCache");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(COURSE_TABLE_CREATE);

@@ -20,5 +20,6 @@
     <color name="text_gray">#5E5E5E</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <string name="semester">Semester</string>
 
 </resources>

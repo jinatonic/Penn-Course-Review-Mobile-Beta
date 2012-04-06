@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.SearchCache;
+import edu.upenn.cis.cis350.objects.KeywordMap;
+import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 /* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Display {
@@ -33,7 +35,7 @@ public class DisplayReviewsForCourse extends Display {
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);
 
-		// Top half of page under PCR header
+		// Top half of page under PCR header - check if course found
 		TextView number = (TextView)findViewById(R.id.course_number);
 		number.setTypeface(timesNewRoman);
 		if (courseReviews == null || courseReviews.size() == 0) {
@@ -55,7 +57,7 @@ public class DisplayReviewsForCourse extends Display {
 		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		sortingField = Sort.DIFFICULTY_ASC;
 
-		printReviews();
+		printReviews(Type.COURSE);
 	}
 
 }

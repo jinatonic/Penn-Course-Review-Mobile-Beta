@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="190dip"
         android:background="@color/bg_blue"
         android:orientation="vertical"
         android:padding="10dp" >
@@ -25,7 +25,7 @@
         <TextView
             android:id="@+id/course_number"
             android:layout_width="fill_parent"
-            android:layout_height="25dip"
+            android:layout_height="wrap_content"
             android:textColor="@color/text_navy"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -33,18 +33,26 @@
         <TextView
             android:id="@+id/course_name"
             android:layout_width="fill_parent"
-            android:layout_height="25dip"
+            android:layout_height="wrap_content"
             android:textColor="@color/text_gray"
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/course_description"
+        <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="2sp"
-            android:textColor="@color/black"
-            android:textSize="9sp" />
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_marginTop="7dip"
+            android:scrollbars="none" >
+
+            <TextView
+                android:id="@+id/course_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2sp"
+                android:textColor="@color/black"
+                android:textSize="9sp" />
+        </ScrollView>
     </LinearLayout>
 
     <View
@@ -71,6 +79,7 @@
                 android:layout_column="1"
                 android:clickable="true"
                 android:onClick="onClickSort"
+                android:shrinkColumns="*"
                 android:text="@string/instructor"
                 android:textColor="@color/text_navy"
                 android:textSize="9sp"

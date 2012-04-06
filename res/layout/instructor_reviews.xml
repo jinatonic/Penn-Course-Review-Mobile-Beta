@@ -25,7 +25,7 @@
         <TextView
             android:id="@+id/instructor_name"
             android:layout_width="fill_parent"
-            android:layout_height="25dip"
+            android:layout_height="wrap_content"
             android:textColor="@color/text_navy"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -55,20 +55,20 @@
                 android:layout_column="1"
                 android:clickable="true"
                 android:onClick="onClickSort"
-                android:text="@string/instructor"
+                android:text="@string/course_id"
                 android:textColor="@color/text_navy"
                 android:textSize="9sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/course_quality_tab"
+                android:id="@+id/semester_tab"
                 android:layout_width="58dip"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
                 android:clickable="true"
                 android:onClick="onClickSort"
                 android:padding="6dip"
-                android:text="@string/course_quality"
+                android:text="@string/semester"
                 android:textColor="@color/text_navy"
                 android:textSize="9sp"
                 android:textStyle="bold" />

@@ -1,24 +1,11 @@
 package edu.upenn.cis.cis350.display;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.Window;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.SearchCache;
-
-import edu.upenn.cis.cis350.objects.Course;
 
 /* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Display {

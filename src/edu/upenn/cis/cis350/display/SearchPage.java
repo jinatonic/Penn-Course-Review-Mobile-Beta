@@ -1,10 +1,12 @@
 package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -15,15 +17,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
+import edu.upenn.cis.cis350.backend.Normalizer;
+import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.SearchCache;
+import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.KeywordMap;
+import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
@@ -33,6 +40,10 @@ public class SearchPage extends Activity {
 	
 	// Timer for autocomplete
 	Timer autocompleteTimer;
+	
+	Context context;
+	String searchTerm;
+	boolean selectedFromAutocomplete;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +53,7 @@ public class SearchPage extends Activity {
 
 		databaseMaintainance();
 		search_term = "";
+		context = this.getApplicationContext();
 
 		setContentView(R.layout.search_page);
 
@@ -55,7 +67,11 @@ public class SearchPage extends Activity {
 		// Handle user pushing enter after typing search term
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setAdapter(new ArrayAdapter<String>(SearchPage.this, android.R.layout.simple_dropdown_item_1line, new String[0]));
+		
+		// Set the on-key listener to listen to textview input
 		search.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// If event is key-down event on "enter" button
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -65,6 +81,7 @@ public class SearchPage extends Activity {
 					return true;
 				}
 				else if (event.getAction() == KeyEvent.ACTION_UP) {
+					selectedFromAutocomplete = false;
 					// Cancel timer
 					if (autocompleteTimer != null)
 						autocompleteTimer.cancel();
@@ -83,7 +100,7 @@ public class SearchPage extends Activity {
 							});
 							autocompleteTimer = null;
 						}
-					}, 500);
+					}, Constants.AUTOCOMPLETE_WAIT_TIME);
 					return true;
 				}
 				return false;
@@ -113,6 +130,51 @@ public class SearchPage extends Activity {
 	                android.R.layout.simple_dropdown_item_1line, result);
 			search.setAdapter(auto_adapter);
 			search.showDropDown();
+			
+			// Set the on-click listener for when user clicks on an item
+			// Only thing it does is set the flag for selectedFromAutocomplete to true
+			search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> adapter, View view,
+						int position, long rowId) {
+					String selectedItem = adapter.getItemAtPosition((int) rowId).toString();
+					
+					// Normalize the string and find the type
+					String type = selectedItem.substring(0, 3);
+					selectedItem = selectedItem.substring(3);
+					selectedItem = Normalizer.normalize(selectedItem, 
+							(type.equals("I: ")) ? Type.INSTRUCTOR : (type.equals("C: ")) ? Type.COURSE : Type.DEPARTMENT);
+					
+					AutoCompleteDB auto = new AutoCompleteDB(context);
+					auto.open();
+					KeywordMap result = null;
+					
+					if (type.equals("C: ")) {
+						result = auto.getInfoForParser(selectedItem,  Type.COURSE);
+					}
+					else if (type.equals("I: ")) {
+						result = auto.getInfoForParser(selectedItem,  Type.INSTRUCTOR);
+					}
+					else if (type.equals("D: ")) {
+						result = auto.getInfoForParser(selectedItem,  Type.DEPARTMENT);
+					}
+					else {
+						Log.w("SearchPage: setAutocomplete", "Autocomplete onitemclick type not recognized");
+					}
+					
+					auto.close();
+					
+					// Backup check in case result wasn't generated correctly
+					if (result == null)
+						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
+					
+					// Run async task in background and display some type of loading icon
+					new ServerQuery().execute(result);
+					
+					// TODO: ADD LOADING ICON
+				}
+			});
 		}
 	}
 
@@ -133,9 +195,12 @@ public class SearchPage extends Activity {
 		//autocomplete.close();
 		//autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
+			autocomplete.close();
 			new AutocompleteQuery().execute("lala");
+			// TODO: add loading bar
 		} 
-		autocomplete.close();
+		else 
+			autocomplete.close();
 	}
 
 	/**
@@ -145,13 +210,17 @@ public class SearchPage extends Activity {
 	public void onEnterButtonClick(View v) {
 		// Check whether the search term entered was a dept or a course (ends in a number)
 		// TODO does not yet account for instructor, will update after auto-complete implemented
-		String searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
-		// Create an Intent using the current Activity and the Class to be created
-		Intent i = new Intent(this, LoadingPage.class);
-		// Add the search term as an extra to this Intent
-		i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
-		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivityForResult(i, Constants.ACTIVITY_LOADING_PAGE);
+		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
+		
+		// TODO: normalize? CHANGE 
+		if (!searchTerm.contains("-"))
+			proceed(Type.DEPARTMENT);
+		else if (!checkCache()) {
+			AutoCompleteDB auto = new AutoCompleteDB(context);
+			auto.open();
+			KeywordMap result = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
+			new ServerQuery().execute(result);
+		}
 	}
 
 	/**
@@ -161,6 +230,7 @@ public class SearchPage extends Activity {
 	public void onClearButtonClick(View v) {
 		EditText search = (EditText)findViewById(R.id.search_term);
 		search.setText("");
+		selectedFromAutocomplete = false;
 	}
 
 	/**
@@ -172,7 +242,7 @@ public class SearchPage extends Activity {
 
 		@Override
 		protected String doInBackground(String... input) {
-			if (input == null || input.length != 1) {
+			if (input == null || input.length != 5) {
 				Log.w("Parser", "given input is more than one string");
 				return null;
 			}
@@ -186,6 +256,87 @@ public class SearchPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
+		}
+	}
+	
+	/**
+	 * Helper function to check if the given searchTerm exists in the database
+	 * @return
+	 */
+	public boolean checkCache() {
+		SearchCache cache = new SearchCache(this.getApplicationContext());
+		cache.open();
+		if (cache.ifExistsInDB(searchTerm)) {
+			cache.close();
+			proceed(Type.COURSE); // TODO: Change
+			return true;
+		}
+		cache.close();
+		return false;
+	}
+
+	/** 
+	 * Helper function to launch new result activity once all the data are done loading
+	 * @param type
+	 */
+	public void proceed(Type type) {
+		if (type == Type.COURSE) {
+			Intent i = new Intent(this, DisplayReviewsForCourse.class);
+			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
+
+			startActivity(i);
+		}
+		else if (type == Type.DEPARTMENT) {
+			Intent i = new Intent(this, DisplayReviewsForDept.class);
+			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
+
+			startActivity(i);
+		}
+	}
+
+	class ServerQuery extends AsyncTask<KeywordMap, Integer, String> {
+
+		/**
+		 * Inputs are: path, name, course_id, type
+		 * Recall: type: course-0, instructor-1, department-2
+		 */
+		@Override
+		protected String doInBackground(KeywordMap... input) {
+			if (input == null || input.length != 1) {
+				Log.w("SearchPage: ServerQuery", "Too many arguments provided to AsyncTask");
+				return null;
+			}
+
+			// Run the parser
+			runParser(input[0]);
+
+			return "COMPLETE"; // CHANGE
+		}
+
+		protected void onPostExecute(String result) {
+			proceed(Type.COURSE);	// TODO fix
+		}
+
+		public void runParser(KeywordMap input) {
+			Log.w("Parser", "Running parser with " + input.getName());
+
+			Parser parser = new Parser();
+
+			// TODO FIX
+			ArrayList<Course> courses = parser.getReviewsForCourse(input);
+
+			// Add the resulting courses into cache
+			if (courses == null) {
+				Log.w("Parser", "getReviewsForCourse returned null");
+				return;
+			}
+
+			SearchCache cache = new SearchCache(context);
+			cache.open();
+			cache.addCourse(courses);
+			cache.close();
+
+			publishProgress(90);
 		}
 	}
 }

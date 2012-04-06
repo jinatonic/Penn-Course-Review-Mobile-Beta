@@ -159,6 +159,22 @@ public class DepartmentSearchCache {
 	}
 
 	/**
+	 * Checks if a given keyword exists in the table
+	 * @param keyword
+	 * @return true if matched something in db, false otherwise
+	 */
+	public boolean ifExistsInDB(String keyword) {
+		Log.w(TAG, "Trying to find " + keyword + " in DB");
+		// First try to match based on course alias
+		keyword = keyword.toLowerCase();
+		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_name)='" + keyword + "'";
+		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		
+		return c.getCount() != 0;
+	}
+	
+	/**
 	 * Get the size of the cache (number of entries)
 	 * @return
 	 */

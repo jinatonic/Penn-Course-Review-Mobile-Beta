@@ -1,39 +1,24 @@
 package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
-import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
-import edu.upenn.cis.cis350.database.SearchCache;
-import edu.upenn.cis.cis350.display.SearchPage.AutocompleteQuery;
 import edu.upenn.cis.cis350.objects.KeywordMap;
+
 public class StartPage extends Activity {
 	private AutoCompleteDB autocomplete;
 	Button btnStartProgress;
 	ProgressDialog progressBar;
-	private int isDone = 0;
 	
 
 	@Override
@@ -74,6 +59,7 @@ public class StartPage extends Activity {
 	}
 	
 	public void goToSearchPage(){
+		progressBar.dismiss();
 		Intent i = new Intent(this, SearchPage.class);
 		
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
@@ -82,20 +68,20 @@ public class StartPage extends Activity {
 	}
 	
 	// file download simulator... a really simple
-	public int downloadAutoComplete() {
+	public void downloadAutoComplete() {
 
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
-		autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		autocomplete.close();
-		autocomplete.open();
+		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		//autocomplete.close();
+		//autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 
-		autocomplete.close();
-
-		return 100;
-
+		else {
+			autocomplete.close();
+			goToSearchPage();
+		}
 	}
 
 	class AutocompleteQuery extends AsyncTask<String, Integer, String> {
@@ -106,7 +92,6 @@ public class StartPage extends Activity {
 				Log.w("Parser", "given input is more than one string");
 				return null;
 			}
-			
 		
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
 			autocomplete.open();
@@ -118,9 +103,6 @@ public class StartPage extends Activity {
 
 		protected void onPostExecute(String result) {
 			goToSearchPage();
-		
-			
-			
 		}
 	}
 }

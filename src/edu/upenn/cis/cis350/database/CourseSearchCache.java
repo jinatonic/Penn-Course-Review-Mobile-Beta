@@ -189,25 +189,17 @@ public class CourseSearchCache {
 	}
 	
 	/**
-	 * Checks if a given keyword exists in the table (matches either professor name or course id)
+	 * Checks if a given keyword exists in the table
 	 * @param keyword
 	 * @return true if matched something in db, false otherwise
 	 */
 	public boolean ifExistsInDB(String keyword) {
-		Log.w("SearchCache", "Trying to find " + keyword + " in DB");
+		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
 		keyword = keyword.toLowerCase();
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" +
-						keyword + "'";
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
-		
-		if (c.getCount() == 0) {
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "'";
-			// if failed, try to match based on professor name
-			c = mDb.rawQuery(query, null);
-			c.moveToFirst();
-		}
 		
 		return c.getCount() != 0;
 	}

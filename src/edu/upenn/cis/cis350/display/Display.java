@@ -59,15 +59,20 @@ public abstract class Display extends Activity {
 		tl.invalidate();
 	}
 
+	public void onClickPick(View v) {
+		int x = 0;
+		x++;
+	}
+	
 	public void onClickSort(View v) {
 		Sorter s = new Sorter();
 		if(v.getId() == R.id.instructor_tab) {
 			if (sortingField == Sort.INSTRUCTOR_ASC) {
 				// TODO(cymai): change to instructor
-				courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
+				courseReviews = s.sortByInstructor(courseReviews, 1);
 				sortingField = Sort.INSTRUCTOR_DES;
 			} else {
-				courseReviews = s.sortByRating(courseReviews, "difficulty", 0);
+				courseReviews = s.sortByInstructor(courseReviews, 0);
 				sortingField = Sort.INSTRUCTOR_ASC;
 			}
 		} else if(v.getId() == R.id.course_quality_tab) {

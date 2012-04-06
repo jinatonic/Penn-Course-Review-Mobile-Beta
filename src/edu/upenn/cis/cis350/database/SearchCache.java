@@ -197,13 +197,14 @@ public class SearchCache {
 	public boolean ifExistsInDB(String keyword) {
 		Log.w("SearchCache", "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
-						keyword + "')";
+		keyword = keyword.toLowerCase();
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" +
+						keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
 		if (c.getCount() == 0) {
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "'";
 			// if failed, try to match based on professor name
 			c = mDb.rawQuery(query, null);
 			c.moveToFirst();

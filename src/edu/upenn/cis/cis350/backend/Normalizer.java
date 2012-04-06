@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.backend;
 
+import android.util.Log;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class Normalizer {
@@ -9,23 +10,28 @@ public class Normalizer {
 	 * @return normalized string if works, null if input is invalid
 	 */
 	public static String normalize(String input, Type type) {
+		String output = null;
 		switch (type) {
 		case INSTRUCTOR:
-			return input.toLowerCase();
+			output = input.toLowerCase();
+			break;
 		case COURSE:
 		case DEPARTMENT: 
-			int secondIndex = input.substring(input.indexOf('-')+1).indexOf('-');
+			String temp = input.substring(input.indexOf('-')+1);
+			int secondIndex = temp.indexOf('-') + input.length() - temp.length();
 			// If there are two '-' characters
 			// remove everything after second '-'
-			input = input.substring(0, secondIndex);
-			input = input.trim();
+			output = input.substring(0, secondIndex);
+			output = output.trim();
 			// remove first '-'
-			input = input.replace("-", "");
-			return input.toLowerCase(); 
+			output = output.replace("-", "");
+			output = output.toLowerCase(); 
+			break;
 		default:
 			break;
 		}
 		
-		return null;
+		Log.w("Normalizer", "input is " + input + " output is " + output);
+		return output;
 	}
 }

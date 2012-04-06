@@ -202,8 +202,29 @@ public class AutoCompleteDB {
 	}
 	
 	public KeywordMap getInfoForParser(String keyword, Type type) {
+		keyword = keyword.toLowerCase();
+		String query = null;
+		if (type == Type.COURSE || type == Type.DEPARTMENT) 
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword + "%' LIMIT 1";
+		else if (type == Type.INSTRUCTOR) 
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
+		else {
+			// UNKNOWN type, find best match
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword +"%' OR LOWER(name) LIKE '%" + keyword + "%' LIMIT 1";
+		}
 		
-		return null;
+		Log.w("AutocompleteDB", "Getting info for parser, keyword: " + keyword + " query: " + query);
+		
+		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		
+		String path = c.getString(c.getColumnIndex("path"));
+		String name = c.getString(c.getColumnIndex("name"));
+		String course_id = c.getString(c.getColumnIndex("course_id"));
+		
+		Log.w("AutocompleteDB", "result, path: " + path + " name: " + name + " course_id: " + course_id);
+		
+		return new KeywordMap(path, name, course_id, type);
 	}
 	
 	/**

@@ -19,7 +19,7 @@ public class KeywordMap {
 	
 	public String getPath() { return path;	}
 	public String getName() { return name; }
-	public String getAlias() {return course_id; }
+	public String getAlias() { return course_id; }
 	public Type getType() { return t; }
 
 }

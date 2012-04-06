@@ -1,7 +1,6 @@
 package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,6 +43,9 @@ public class SearchPage extends Activity {
 	Context context;
 	String searchTerm;
 	boolean selectedFromAutocomplete;
+	
+	// KeywordMap object that we are currently searching for
+	KeywordMap keywordmap;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -148,16 +150,15 @@ public class SearchPage extends Activity {
 					
 					AutoCompleteDB auto = new AutoCompleteDB(context);
 					auto.open();
-					KeywordMap result = null;
 					
 					if (type.equals("C: ")) {
-						result = auto.getInfoForParser(selectedItem,  Type.COURSE);
+						keywordmap = auto.getInfoForParser(selectedItem,  Type.COURSE);
 					}
 					else if (type.equals("I: ")) {
-						result = auto.getInfoForParser(selectedItem,  Type.INSTRUCTOR);
+						keywordmap = auto.getInfoForParser(selectedItem,  Type.INSTRUCTOR);
 					}
 					else if (type.equals("D: ")) {
-						result = auto.getInfoForParser(selectedItem,  Type.DEPARTMENT);
+						keywordmap = auto.getInfoForParser(selectedItem,  Type.DEPARTMENT);
 					}
 					else {
 						Log.w("SearchPage: setAutocomplete", "Autocomplete onitemclick type not recognized");
@@ -166,11 +167,11 @@ public class SearchPage extends Activity {
 					auto.close();
 					
 					// Backup check in case result wasn't generated correctly
-					if (result == null)
+					if (keywordmap == null)
 						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
 					
 					// Run async task in background and display some type of loading icon
-					new ServerQuery().execute(result);
+					new ServerQuery().execute(keywordmap);
 					
 					// TODO: ADD LOADING ICON
 				}
@@ -187,6 +188,7 @@ public class SearchPage extends Activity {
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		cache.clearOldEntries();
+		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
 
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
@@ -212,15 +214,11 @@ public class SearchPage extends Activity {
 		// TODO does not yet account for instructor, will update after auto-complete implemented
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
 		
-		// TODO: normalize? CHANGE 
-		if (!searchTerm.contains("-"))
-			proceed(Type.DEPARTMENT);
-		else if (!checkCache()) {
-			AutoCompleteDB auto = new AutoCompleteDB(context);
-			auto.open();
-			KeywordMap result = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
-			new ServerQuery().execute(result);
-		}
+		AutoCompleteDB auto = new AutoCompleteDB(context);
+		auto.open();
+		KeywordMap result = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
+		auto.close();
+		new ServerQuery().execute(result);
 	}
 
 	/**
@@ -263,15 +261,14 @@ public class SearchPage extends Activity {
 	 * Helper function to check if the given searchTerm exists in the database
 	 * @return
 	 */
-	public boolean checkCache() {
+	public boolean checkCache(String keyword, Type type) {
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
-		if (cache.ifExistsInDB(searchTerm)) {
+		if (cache.ifExistsInDB(keyword)) {
 			cache.close();
-			proceed(Type.COURSE); // TODO: Change
 			return true;
 		}
-		cache.close();
+		else cache.close();
 		return false;
 	}
 
@@ -279,10 +276,13 @@ public class SearchPage extends Activity {
 	 * Helper function to launch new result activity once all the data are done loading
 	 * @param type
 	 */
-	public void proceed(Type type) {
+	public void proceed() {
+		if (keywordmap == null) return;
+		
+		Type type = keywordmap.getType();
 		if (type == Type.COURSE) {
 			Intent i = new Intent(this, DisplayReviewsForCourse.class);
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
+			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getAlias());
 
 			startActivity(i);
 		}
@@ -298,7 +298,7 @@ public class SearchPage extends Activity {
 
 		/**
 		 * Inputs are: path, name, course_id, type
-		 * Recall: type: course-0, instructor-1, department-2
+		 * Recall: type: course-0, instructor-1, department-2, UNKNOWN-3
 		 */
 		@Override
 		protected String doInBackground(KeywordMap... input) {
@@ -314,29 +314,39 @@ public class SearchPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
-			proceed(Type.COURSE);	// TODO fix
+			proceed();	// TODO fix
 		}
 
 		public void runParser(KeywordMap input) {
-			Log.w("Parser", "Running parser with " + input.getName());
+			Log.w("Parser", "Running parser with " + input.getAlias());
 
 			Parser parser = new Parser();
 
-			// TODO FIX
-			ArrayList<Course> courses = parser.getReviewsForCourse(input);
-
-			// Add the resulting courses into cache
-			if (courses == null) {
-				Log.w("Parser", "getReviewsForCourse returned null");
-				return;
+			if (input.getType() == Type.COURSE) {
+				// Check cache first, if exists, proceed
+				if (checkCache(input.getAlias(), Type.COURSE)) {
+					Log.w("runParser", "Course " + input.getAlias() + " is found in SearchCache");
+					return;
+				}
+				
+				ArrayList<Course> courses = parser.getReviewsForCourse(input);
+	
+				// Add the resulting courses into cache
+				if (courses == null) {
+					Log.w("Parser", "getReviewsForCourse returned null");
+					return;
+				}
+	
+				SearchCache cache = new SearchCache(context);
+				cache.open();
+				cache.addCourse(courses);
+				cache.close();
 			}
-
-			SearchCache cache = new SearchCache(context);
-			cache.open();
-			cache.addCourse(courses);
-			cache.close();
-
-			publishProgress(90);
+			else if (input.getType() == Type.UNKNOWN) {
+			}
+			else {
+				
+			}
 		}
 	}
 }

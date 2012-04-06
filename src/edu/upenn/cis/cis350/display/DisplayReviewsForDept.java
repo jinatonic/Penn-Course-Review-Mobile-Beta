@@ -38,7 +38,7 @@ public class DisplayReviewsForDept extends Activity {
 		SearchCache cache = new SearchCache(this.getApplicationContext());
 		cache.open();
 		Parser p = new Parser();
-		Department dept = p.getReviewsForDept(searchTerm);
+		Department dept = p.getReviewsForDept(null);
 		// Always close DB after using it!
 		cache.close();
 

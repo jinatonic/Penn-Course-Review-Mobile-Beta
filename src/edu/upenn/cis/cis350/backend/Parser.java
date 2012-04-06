@@ -10,6 +10,7 @@ import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Instructor;
+import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
@@ -105,7 +106,7 @@ public class Parser {
 	}
 
 	public ArrayList<Course> getReviewsForCourse(KeywordMap course_map) {
-		if (course_path == null) return null;
+		if (course_map == null) return null;
 		String course_path = course_map.getPath();
 
 		/*String dept = course.substring(0, course.indexOf('-'));

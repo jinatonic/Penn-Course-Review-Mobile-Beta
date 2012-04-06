@@ -22,6 +22,7 @@
             android:name="DisplayReviewsForCourse" />
         <activity android:name="DisplayReviewsForDept"></activity>
         <activity android:name="LoadingPage"></activity>
+        <activity android:name="DisplayReviewsForInstructor"></activity>
     </application>
 
 </manifest>

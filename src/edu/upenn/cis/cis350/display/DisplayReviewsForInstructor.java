@@ -7,16 +7,14 @@ import android.view.Window;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.SearchCache;
 
-/* Display all reviews for a specific course */
-public class DisplayReviewsForCourse extends Display {
-
+public class DisplayReviewsForInstructor extends Display {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		setContentView(R.layout.course_reviews);
+		setContentView(R.layout.instructor_reviews);
 
 		// Get course reviews for the search term
 		Intent i = getIntent();
@@ -37,7 +35,7 @@ public class DisplayReviewsForCourse extends Display {
 		TextView number = (TextView)findViewById(R.id.course_number);
 		number.setTypeface(timesNewRoman);
 		if (courseReviews == null || courseReviews.size() == 0) {
-			number.setText("No reviews found for this course.");
+			number.setText("No reviews found for this instructor.");
 			return;
 		}
 
@@ -57,5 +55,6 @@ public class DisplayReviewsForCourse extends Display {
 
 		printReviews();
 	}
+
 
 }

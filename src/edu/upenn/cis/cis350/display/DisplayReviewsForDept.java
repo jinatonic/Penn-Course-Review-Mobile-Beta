@@ -3,7 +3,6 @@ package edu.upenn.cis.cis350.display;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Ratings;
 
 /* Display all reviews for a specific dept */
-public class DisplayReviewsForDept extends Activity {
+public class DisplayReviewsForDept extends Display {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

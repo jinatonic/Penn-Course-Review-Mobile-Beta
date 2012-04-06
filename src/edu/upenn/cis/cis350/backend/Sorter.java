@@ -1,9 +1,8 @@
 package edu.upenn.cis.cis350.backend;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
-import edu.upenn.cis.cis350.objects.*;
+import edu.upenn.cis.cis350.objects.Course;
 
 public class Sorter {
 	

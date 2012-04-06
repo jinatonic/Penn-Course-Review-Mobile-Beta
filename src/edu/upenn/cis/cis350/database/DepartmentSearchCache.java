@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.database;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.ContentValues;
@@ -12,7 +13,6 @@ import android.util.Log;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Ratings;
-import edu.upenn.cis.cis350.objects.Section;
 
 /**
  * Helper class to access Android SQLite database and store the recently searched data for fast access
@@ -169,9 +169,71 @@ public class DepartmentSearchCache {
 		keyword = keyword.toLowerCase();
 		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_name)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
-		c.moveToFirst();
 		
 		return c.getCount() != 0;
+	}
+	
+	/**
+	 * Returns the department object associated with the keyword
+	 */
+	public Department getDepartment(String keyword) {
+		Log.w(TAG, "Searching database for department " + keyword);
+		keyword = keyword.toLowerCase();
+		
+		// First try to match based on course alias
+		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_name)='" + keyword + "'";
+		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		
+		// If cached data found, recreate object and return it
+		if (c.getCount() > 0) {
+			Log.w(TAG, "getDepartment: department found, number of courses in department is " + c.getCount());
+			String dept_name = c.getString(c.getColumnIndex("dept_name"));
+			String dept_id = c.getString(c.getColumnIndex("dept_id"));
+			String dept_path = c.getString(c.getColumnIndex("dept_path"));
+			ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
+			
+			int AL = c.getColumnIndex("ratings_amountLearned");
+			int CA = c.getColumnIndex("ratings_commAbility");
+			int CQ = c.getColumnIndex("ratings_courseQuality");
+			int D = c.getColumnIndex("ratings_difficulty");
+			int IA = c.getColumnIndex("ratings_instructorAccess");
+			int IQ = c.getColumnIndex("ratings_instructorQuality");
+			int RV = c.getColumnIndex("ratings_readingsValue");
+			int RM = c.getColumnIndex("ratings_recommendMajor");
+			int RNM = c.getColumnIndex("ratings_recommendNonMajor");
+			int SI = c.getColumnIndex("ratings_stimulateInterest");
+			int WR = c.getColumnIndex("ratings_workRequired");
+			
+			int course_name_index = c.getColumnIndex("course_name");
+			int course_id_index = c.getColumnIndex("course_id");
+			int course_path_index = c.getColumnIndex("course_path_index");
+			
+			do {
+				String course_name = c.getString(course_name_index);
+				String course_id = c.getString(course_id_index);
+				String course_path = c.getString(course_path_index);
+				Ratings tRate = new Ratings(
+						c.getDouble(AL),
+						c.getDouble(CA),
+						c.getDouble(CQ),
+						c.getDouble(D),
+						c.getDouble(IA),
+						c.getDouble(IQ),
+						c.getDouble(RV),
+						c.getDouble(RM),
+						c.getDouble(RNM),
+						c.getDouble(SI),
+						c.getDouble(WR)
+				   );
+				
+				courseAverages.add(new CourseAverage(course_name, course_id, course_path, tRate));
+			} while (c.moveToNext());
+			
+			return new Department(dept_name, dept_id, dept_path, courseAverages);
+		}
+		
+		return null;
 	}
 	
 	/**

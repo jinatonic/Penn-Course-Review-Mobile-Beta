@@ -14,6 +14,13 @@ public class CourseAverage {
 		id = _id;
 		ratings = computeAverageRatings(courses);
 	}
+	
+	public CourseAverage(String _name, String _id, String _path, Ratings rating) {
+		path = _path;
+		name = _name;
+		id = _id;
+		ratings = rating;
+	}
 
 	public Ratings getRatings() {
 		return ratings;

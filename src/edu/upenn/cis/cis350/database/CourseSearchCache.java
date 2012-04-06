@@ -199,7 +199,6 @@ public class CourseSearchCache {
 		keyword = keyword.toLowerCase();
 		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
-		c.moveToFirst();
 		
 		return c.getCount() != 0;
 	}
@@ -211,20 +210,13 @@ public class CourseSearchCache {
 	 */
 	public ArrayList<Course> getCourse(String keyword) {
 		Log.w(TAG, "Searching database for course " + keyword);
+		keyword = keyword.toLowerCase();
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
-						keyword + "')";
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
-		
-		if (c.getCount() == 0) {
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
-			// if failed, try to match based on professor name
-			c = mDb.rawQuery(query, null);
-			c.moveToFirst();
-		}
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {

@@ -152,6 +152,8 @@ public class DepartmentSearchCache {
 			
 			values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
 
+			Log.w(TAG, "Inserting course " + c.getId() + " for department " + dept_name);
+			
 			// insert the given course into the database
 			if (mDb.insert(DEPARTMENT_TABLE, null, values) == -1) 
 				Log.w(TAG, "Failed to insert new course into table");
@@ -167,7 +169,7 @@ public class DepartmentSearchCache {
 		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
 		keyword = keyword.toLowerCase();
-		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_name)='" + keyword + "'";
+		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_id)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		
 		return c.getCount() != 0;
@@ -181,7 +183,7 @@ public class DepartmentSearchCache {
 		keyword = keyword.toLowerCase();
 		
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_name)='" + keyword + "'";
+		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_id)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
@@ -207,7 +209,7 @@ public class DepartmentSearchCache {
 			
 			int course_name_index = c.getColumnIndex("course_name");
 			int course_id_index = c.getColumnIndex("course_id");
-			int course_path_index = c.getColumnIndex("course_path_index");
+			int course_path_index = c.getColumnIndex("course_path");
 			
 			do {
 				String course_name = c.getString(course_name_index);

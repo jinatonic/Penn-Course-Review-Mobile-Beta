@@ -26,7 +26,9 @@ import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
+import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
@@ -270,14 +272,31 @@ public class SearchPage extends Activity {
 	 * @return
 	 */
 	public boolean checkCache(String keyword, Type type) {
-		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
-		cache.open();
-		if (cache.ifExistsInDB(keyword)) {
-			cache.close();
-			return true;
+		switch (type) {
+		case COURSE:
+			CourseSearchCache course_cache = new CourseSearchCache(this.getApplicationContext());
+			course_cache.open();
+			if (course_cache.ifExistsInDB(keyword)) {
+				course_cache.close();
+				return true;
+			}
+			else course_cache.close();
+			return false;
+		case DEPARTMENT:
+			DepartmentSearchCache dept_cache = new DepartmentSearchCache(this.getApplicationContext());
+			dept_cache.open();
+			if (dept_cache.ifExistsInDB(keyword)) {
+				dept_cache.close();
+				return true;
+			}
+			else dept_cache.close();
+			return false;
+		case INSTRUCTOR:
+		case UNKNOWN:
+		default:
+			return false;
 		}
-		else cache.close();
-		return false;
+		
 	}
 
 	/** 
@@ -299,7 +318,7 @@ public class SearchPage extends Activity {
 		}
 		else if (type == Type.DEPARTMENT) {
 			Intent i = new Intent(this, DisplayReviewsForDept.class);
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), searchTerm);
+			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getAlias());
 
 			startActivity(i);
 		}
@@ -336,7 +355,7 @@ public class SearchPage extends Activity {
 			if (input.getType() == Type.COURSE) {
 				// Check cache first, if exists, proceed
 				if (checkCache(input.getAlias(), Type.COURSE)) {
-					Log.w("runParser", "Course " + input.getAlias() + " is found in SearchCache");
+					Log.w("runParser", "Course " + input.getAlias() + " is found in CourseSearchCache");
 					return;
 				}
 				
@@ -351,6 +370,25 @@ public class SearchPage extends Activity {
 				CourseSearchCache cache = new CourseSearchCache(context);
 				cache.open();
 				cache.addCourse(courses);
+				cache.close();
+			}
+			else if (input.getType() == Type.DEPARTMENT) {
+				// Check department cache first
+				if (checkCache(input.getAlias(), Type.DEPARTMENT)) {
+					Log.w("runParser", "Department " + input.getAlias() + " is found in DepartmentSearchCache");
+					return;
+				}
+
+				Department department = parser.getReviewsForDept(input);
+				
+				if (department == null) {
+					Log.w("Parser", "getReviewsForDept returned null");
+					return;
+				}
+				
+				DepartmentSearchCache cache = new DepartmentSearchCache(context);
+				cache.open();
+				cache.addDepartment(department);
 				cache.close();
 			}
 			else if (input.getType() == Type.UNKNOWN) {

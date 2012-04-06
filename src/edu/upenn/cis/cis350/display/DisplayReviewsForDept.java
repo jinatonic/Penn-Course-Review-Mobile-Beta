@@ -13,8 +13,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.Parser;
-import edu.upenn.cis.cis350.database.CourseSearchCache;
+import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -35,10 +34,9 @@ public class DisplayReviewsForDept extends Activity {
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
 		// Initialize cache so parser can use it
-		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
+		DepartmentSearchCache cache = new DepartmentSearchCache(this.getApplicationContext());
 		cache.open();
-		Parser p = new Parser();
-		Department dept = p.getReviewsForDept(null); // TODO CHANGE
+		Department dept = cache.getDepartment(searchTerm); // TODO CHANGE
 		// Always close DB after using it!
 		cache.close();
 

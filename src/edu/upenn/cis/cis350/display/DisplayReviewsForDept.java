@@ -1,23 +1,12 @@
 package edu.upenn.cis.cis350.display;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Window;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.Parser;
-import edu.upenn.cis.cis350.database.SearchCache;
-import edu.upenn.cis.cis350.display.Display.Sort;
-import edu.upenn.cis.cis350.objects.CourseAverage;
+import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.Department;
-import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 /* Display all reviews for a specific dept */
@@ -36,10 +25,9 @@ public class DisplayReviewsForDept extends Display {
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
 		// Initialize cache so parser can use it
-		SearchCache cache = new SearchCache(this.getApplicationContext());
+		DepartmentSearchCache cache = new DepartmentSearchCache(this.getApplicationContext());
 		cache.open();
-		Parser p = new Parser();
-		Department dept = p.getReviewsForDept(searchTerm);
+		Department dept = cache.getDepartment(searchTerm); // TODO CHANGE
 		// Always close DB after using it!
 		cache.close();
 

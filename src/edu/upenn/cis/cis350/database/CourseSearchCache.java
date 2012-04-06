@@ -10,7 +10,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import edu.upenn.cis.cis350.database.SearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -23,7 +22,7 @@ import edu.upenn.cis.cis350.objects.Section;
  *
  */
 
-public class SearchCache {
+public class CourseSearchCache {
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
@@ -67,7 +66,7 @@ public class SearchCache {
 			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
 	/* TAG for logging purposes */
-	private static final String TAG = "SearchCache";
+	private static final String TAG = "CourseSearchCache";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -89,7 +88,7 @@ public class SearchCache {
         }
     }
 	
-	public SearchCache(Context ctx) {
+	public CourseSearchCache(Context ctx) {
 		this.mCtx = ctx;
 	}
 	
@@ -98,8 +97,8 @@ public class SearchCache {
 	 * @return SearchCache with the database opened
 	 * @throws SQLException
 	 */
-	public SearchCache open() throws SQLException {
-		Log.w(TAG, "Opening SearchCache");
+	public CourseSearchCache open() throws SQLException {
+		Log.w(TAG, "Opening CourseSearchCache");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(COURSE_TABLE_CREATE);
@@ -190,24 +189,16 @@ public class SearchCache {
 	}
 	
 	/**
-	 * Checks if a given keyword exists in the table (matches either professor name or course id)
+	 * Checks if a given keyword exists in the table
 	 * @param keyword
 	 * @return true if matched something in db, false otherwise
 	 */
 	public boolean ifExistsInDB(String keyword) {
-		Log.w("SearchCache", "Trying to find " + keyword + " in DB");
+		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
-						keyword + "')";
+		keyword = keyword.toLowerCase();
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
-		c.moveToFirst();
-		
-		if (c.getCount() == 0) {
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
-			// if failed, try to match based on professor name
-			c = mDb.rawQuery(query, null);
-			c.moveToFirst();
-		}
 		
 		return c.getCount() != 0;
 	}
@@ -219,20 +210,13 @@ public class SearchCache {
 	 */
 	public ArrayList<Course> getCourse(String keyword) {
 		Log.w(TAG, "Searching database for course " + keyword);
+		keyword = keyword.toLowerCase();
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)=LOWER('" +
-						keyword + "')";
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
-		
-		if (c.getCount() == 0) {
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)=LOWER('" + keyword + "')";
-			// if failed, try to match based on professor name
-			c = mDb.rawQuery(query, null);
-			c.moveToFirst();
-		}
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {

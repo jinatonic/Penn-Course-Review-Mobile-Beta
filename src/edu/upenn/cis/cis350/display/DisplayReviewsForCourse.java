@@ -5,8 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.database.SearchCache;
-import edu.upenn.cis.cis350.objects.KeywordMap;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 /* Display all reviews for a specific course */
@@ -25,7 +24,7 @@ public class DisplayReviewsForCourse extends Display {
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
 		// Search database first
-		SearchCache cache = new SearchCache(this.getApplicationContext());
+		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
 		courseReviews = cache.getCourse(searchTerm);
 		cache.close();

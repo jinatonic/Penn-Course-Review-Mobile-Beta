@@ -5,10 +5,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.Parser;
-import edu.upenn.cis.cis350.database.SearchCache;
-import edu.upenn.cis.cis350.objects.Department;
-import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class DisplayReviewsForInstructor extends Display {
@@ -25,10 +21,10 @@ public class DisplayReviewsForInstructor extends Display {
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
 		// Search database first
-		SearchCache cache = new SearchCache(this.getApplicationContext());
-		cache.open();
-		courseReviews = cache.getCourse(searchTerm); // TODO change for instructor?
-		cache.close();
+		//SearchCache cache = new SearchCache(this.getApplicationContext());
+		//cache.open();
+		//courseReviews = cache.getCourse(searchTerm); // TODO change for instructor?
+		//cache.close();
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");

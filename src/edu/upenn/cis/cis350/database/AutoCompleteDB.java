@@ -150,7 +150,7 @@ public class AutoCompleteDB {
 			String course_id = c.getString(c.getColumnIndex("course_id"));
 			String name = c.getString(c.getColumnIndex("name"));
 			Log.w("AUTOCOMPLETE", "Found department " + course_id + " - " + name);
-			result.add(course_id + " - " + name);
+			result.add("D: " + course_id + " - " + name);
 		}
 		
 		// Then we query for courses
@@ -164,7 +164,7 @@ public class AutoCompleteDB {
 				String course_id = c.getString(course_id_index);
 				String name = c.getString(name_index);
 				Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
-				result.add(course_id + " - " + name);
+				result.add("C: " + course_id + " - " + name);
 			} while (c.moveToNext());
 		}
 		
@@ -184,14 +184,14 @@ public class AutoCompleteDB {
 					if (type == 1) {
 						String name = c.getString(name_index);
 						Log.w("AUTOCOMPLETE", "Found instructor " + name);
-						result.add(name);
+						result.add("I: " + name);
 					}
 					// If it's course (matched based on course name)
 					else {
 						String name = c.getString(name_index);
 						String course_id = c.getString(course_id_index);
 						Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
-						result.add(course_id + " - " + name);
+						result.add("C: " + course_id + " - " + name);
 					}
 				} while (c.moveToNext());
 			}
@@ -199,6 +199,37 @@ public class AutoCompleteDB {
 		
 		String[] result_array = new String[result.size()];
 		return result.toArray(result_array);
+	}
+	
+	public KeywordMap getInfoForParser(String keyword, Type type) {
+		keyword = keyword.toLowerCase();
+		String query = null;
+		if (type == Type.COURSE || type == Type.DEPARTMENT) 
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword + "%' LIMIT 1";
+		else if (type == Type.INSTRUCTOR) 
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
+		else {
+			// UNKNOWN type, find best match
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword +"%' OR LOWER(name) LIKE '%" + keyword + "%' LIMIT 1";
+		}
+		
+		Log.w("AutocompleteDB", "Getting info for parser, keyword: " + keyword + " query: " + query);
+		
+		Cursor c = mDb.rawQuery(query, null);
+		c.moveToFirst();
+		
+		if (c.getCount() == 0) 
+			return null;
+		
+		String path = c.getString(c.getColumnIndex("path"));
+		String name = c.getString(c.getColumnIndex("name"));
+		String course_id = c.getString(c.getColumnIndex("course_id"));
+		int dbtype = c.getInt(c.getColumnIndex("type"));
+		Type convertedType = (dbtype == 0) ? Type.COURSE : (dbtype == 1) ? Type.INSTRUCTOR : (dbtype == 2) ? Type.DEPARTMENT : Type.UNKNOWN;
+		
+		Log.w("AutocompleteDB", "result, path: " + path + " name: " + name + " course_id: " + course_id);
+		
+		return new KeywordMap(path, name, course_id, convertedType);
 	}
 	
 	/**

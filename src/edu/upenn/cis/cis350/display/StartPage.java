@@ -17,8 +17,8 @@ import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends Activity {
 	private AutoCompleteDB autocomplete;
-	Button btnStartProgress;
-	ProgressDialog progressBar;
+	private Button btnStartProgress;
+	private ProgressDialog progressBar;
 	
 
 	@Override

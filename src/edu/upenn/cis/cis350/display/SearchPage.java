@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -32,7 +33,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
-
+	private ProgressDialog progressBar;
 	private AutoCompleteDB autocomplete;
 	private String search_term;
 	
@@ -48,7 +49,7 @@ public class SearchPage extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -110,6 +111,13 @@ public class SearchPage extends Activity {
 		});
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
+		search.setText("");
+	}
+	
 	/**
 	 * Helper function to find the appropriate keywords for autocomplete and fill in the
 	 * autocomplete drop-down menu
@@ -129,7 +137,7 @@ public class SearchPage extends Activity {
 			Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 			// Set autocomplete rows
 			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(SearchPage.this,
-	                android.R.layout.simple_dropdown_item_1line, result);
+	                R.layout.item_list, result);
 			search.setAdapter(auto_adapter);
 			search.showDropDown();
 			
@@ -172,11 +180,22 @@ public class SearchPage extends Activity {
 						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
 						return;
 					}
-						
-					// Run async task in background and display some type of loading icon
-					new ServerQuery().execute(keywordmap);
+					progressBar = new ProgressDialog(view.getContext());
+					progressBar.setCancelable(true);
+					progressBar.setIndeterminate(true);
+					progressBar.setMessage("Retrieving Reviews...");
+					progressBar.show();
 					
-					// TODO: ADD LOADING ICON
+				
+					SearchPage.this.runOnUiThread(new Runnable() {
+						public void run() {
+							new ServerQuery().execute(keywordmap);
+							
+						}
+
+					});
+						
+				
 				}
 			});
 		}
@@ -194,18 +213,7 @@ public class SearchPage extends Activity {
 		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
 
-		autocomplete = new AutoCompleteDB(this.getApplicationContext());
-		autocomplete.open();
-		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		//autocomplete.close();
-		//autocomplete.open();
-		if (autocomplete.updatesNeeded()) {
-			autocomplete.close();
-			new AutocompleteQuery().execute("lala");
-			// TODO: add loading bar
-		} 
-		else 
-			autocomplete.close();
+		
 	}
 
 	/**
@@ -217,7 +225,7 @@ public class SearchPage extends Activity {
 		// TODO does not yet account for instructor, will update after auto-complete implemented
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
 		
-		AutoCompleteDB auto = new AutoCompleteDB(context);
+		AutoCompleteDB auto = new AutoCompleteDB(v.getContext());
 		auto.open();
 		keywordmap = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
 		auto.close();
@@ -226,7 +234,22 @@ public class SearchPage extends Activity {
 			Log.w("SearchPage", "enter pressed, no data found");
 			return;
 		}
-		new ServerQuery().execute(keywordmap);
+		
+		progressBar = new ProgressDialog(v.getContext());
+		progressBar.setCancelable(true);
+		progressBar.setIndeterminate(true);
+		progressBar.setMessage("Retrieving Reviews...");
+		progressBar.show();
+		
+	
+		SearchPage.this.runOnUiThread(new Runnable() {
+			public void run() {
+				new ServerQuery().execute(keywordmap);
+				
+			}
+
+		});
+		
 	}
 
 	/**
@@ -239,31 +262,6 @@ public class SearchPage extends Activity {
 		selectedFromAutocomplete = false;
 	}
 
-	/**
-	 * Async task that queries the database for data for the text autocompletion
-	 * @author Jinyan
-	 *
-	 */
-	class AutocompleteQuery extends AsyncTask<String, Integer, String> {
-
-		@Override
-		protected String doInBackground(String... input) {
-			if (input == null || input.length != 5) {
-				Log.w("Parser", "given input is more than one string");
-				return null;
-			}
-
-			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
-			autocomplete.open();
-			autocomplete.addEntries(result);
-			autocomplete.close();
-
-			return "COMPLETE"; // CHANGE
-		}
-
-		protected void onPostExecute(String result) {
-		}
-	}
 	
 	/**
 	 * Helper function to check if the given searchTerm exists in the database
@@ -326,6 +324,7 @@ public class SearchPage extends Activity {
 
 		protected void onPostExecute(String result) {
 			proceed();	// TODO fix
+			progressBar.dismiss();
 		}
 
 		public void runParser(KeywordMap input) {

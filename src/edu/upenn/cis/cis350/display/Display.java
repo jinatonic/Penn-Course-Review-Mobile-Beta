@@ -15,8 +15,6 @@ import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
-import edu.upenn.cis.cis350.objects.Instructor;
-import edu.upenn.cis.cis350.objects.Section;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 

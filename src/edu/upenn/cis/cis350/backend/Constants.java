@@ -9,4 +9,8 @@ public class Constants {
 	public static final int MAX_AUTOCOMPLETE_RESULT = 10;
 	
 	public static final int AUTOCOMPLETE_WAIT_TIME = 300;	// milliseconds
+	
+	public static final String COURSE_TAG = "[C] ";
+	public static final String INSTRUCTOR_TAG = "[I] ";
+	public static final String DEPARTMENT_TAG = "[D] ";
 }

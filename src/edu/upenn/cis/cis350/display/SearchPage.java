@@ -215,18 +215,18 @@ public class SearchPage extends Activity {
 					String type = selectedItem.substring(0, 3);
 					selectedItem = selectedItem.substring(3);
 					selectedItem = Normalizer.normalize(selectedItem, 
-							(type.equals("I: ")) ? Type.INSTRUCTOR : (type.equals("C: ")) ? Type.COURSE : Type.DEPARTMENT);
+							(type.equals(Constants.INSTRUCTOR_TAG)) ? Type.INSTRUCTOR : (type.equals(Constants.COURSE_TAG)) ? Type.COURSE : Type.DEPARTMENT);
 					
 					AutoCompleteDB auto = new AutoCompleteDB(context);
 					auto.open();
 					
-					if (type.equals("C: ")) {
+					if (type.equals(Constants.COURSE_TAG)) {
 						keywordmap = auto.getInfoForParser(selectedItem,  Type.COURSE);
 					}
-					else if (type.equals("I: ")) {
+					else if (type.equals(Constants.INSTRUCTOR_TAG)) {
 						keywordmap = auto.getInfoForParser(selectedItem,  Type.INSTRUCTOR);
 					}
-					else if (type.equals("D: ")) {
+					else if (type.equals(Constants.DEPARTMENT_TAG)) {
 						keywordmap = auto.getInfoForParser(selectedItem,  Type.DEPARTMENT);
 					}
 					else {

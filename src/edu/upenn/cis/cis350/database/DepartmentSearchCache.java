@@ -35,6 +35,7 @@ public class DepartmentSearchCache {
 
 	/* Query strings */
 	private static final String DEPARTMENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + DEPARTMENT_TABLE + " (" +
+			"d_id integer PRIMARY KEY AUTOINCREMENT," +
 			"dept_name char(50) NOT NULL," +
 			"dept_id char(20) NOT NULL," +
 			"dept_path char(50)," +
@@ -108,6 +109,7 @@ public class DepartmentSearchCache {
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
 		mDb.execSQL("DELETE FROM " + DEPARTMENT_TABLE + " WHERE course_id > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS " + DEPARTMENT_TABLE);
 	}
 
 	/** 

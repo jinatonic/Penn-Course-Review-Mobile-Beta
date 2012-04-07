@@ -36,6 +36,7 @@ public class CourseSearchCache {
 	
 	/* Query strings */
 	private static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
+			"p_id integer PRIMARY KEY AUTOINCREMENT," +
 			"name char(50) NOT NULL," +
 			"course_alias char(20) NOT NULL DEFAULT ''," +
 			"description char(700)," +

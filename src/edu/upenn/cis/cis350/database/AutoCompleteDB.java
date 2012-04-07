@@ -150,7 +150,7 @@ public class AutoCompleteDB {
 			String course_id = c.getString(c.getColumnIndex("course_id"));
 			String name = c.getString(c.getColumnIndex("name"));
 			Log.w("AUTOCOMPLETE", "Found department " + course_id + " - " + name);
-			result.add("D: " + course_id + " - " + name);
+			result.add(Constants.DEPARTMENT_TAG + course_id + " - " + name);
 		}
 		
 		// Then we query for courses
@@ -164,7 +164,7 @@ public class AutoCompleteDB {
 				String course_id = c.getString(course_id_index);
 				String name = c.getString(name_index);
 				Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
-				result.add("C: " + course_id + " - " + name);
+				result.add(Constants.COURSE_TAG + course_id + " - " + name);
 			} while (c.moveToNext());
 		}
 		
@@ -184,14 +184,14 @@ public class AutoCompleteDB {
 					if (type == 1) {
 						String name = c.getString(name_index);
 						Log.w("AUTOCOMPLETE", "Found instructor " + name);
-						result.add("I: " + name);
+						result.add(Constants.INSTRUCTOR_TAG + name);
 					}
 					// If it's course (matched based on course name)
 					else {
 						String name = c.getString(name_index);
 						String course_id = c.getString(course_id_index);
 						Log.w("AUTOCOMPLETE", "Found course " + course_id + " - " + name);
-						result.add("C: " + course_id + " - " + name);
+						result.add(Constants.COURSE_TAG + course_id + " - " + name);
 					}
 				} while (c.moveToNext());
 			}

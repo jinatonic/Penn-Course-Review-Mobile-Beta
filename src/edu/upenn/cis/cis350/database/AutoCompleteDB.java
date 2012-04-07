@@ -80,10 +80,6 @@ public class AutoCompleteDB {
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(AUTOCOMPLETE_TABLE_CREATE);
 		
-		// DEBUG get size
-		long size = new File(mDb.getPath()).length();
-		Log.w("AutocompleteDB", "Size of db is " + size);
-		
 		return this;
 	}
 	
@@ -132,6 +128,10 @@ public class AutoCompleteDB {
 	public String[] checkAutocomplete(String keyword) {
 		keyword = keyword.toLowerCase().replace("-", "");
 		Log.w("AutocompleteDB", "Search DB for " + keyword);
+
+		long size = new File(mDb.getPath()).length();
+		Log.w("AutocompleteDB", "Size of db is " + size);
+		
 		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" +
 						keyword + "%' OR course_id_norm LIKE '" + keyword + "%'";
 		

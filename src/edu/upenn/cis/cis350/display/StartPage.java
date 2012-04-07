@@ -28,9 +28,8 @@ public class StartPage extends Activity {
 		
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
-
 	}
-
+	
 	public void addListenerOnButton() {
 		btnStartProgress = (Button) findViewById(R.id.btnStartProgress);
 		btnStartProgress.setOnClickListener(
@@ -60,8 +59,13 @@ public class StartPage extends Activity {
 		Intent i = new Intent(this, SearchPage.class);
 		
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivity(i);
-
+		startActivityForResult(i, 0);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.w("StartPage", "Returning to startpage, quitting");
+		this.finish();
 	}
 	
 	// file download simulator... a really simple

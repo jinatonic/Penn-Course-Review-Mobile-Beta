@@ -264,11 +264,6 @@ public class Parser {
 					if(instructor.has("path"))
 						i_path = instructor.getString("path");
 					i = new Instructor(i_id, i_name, i_path);
-					
-					// Check edge cases where different instructor names pop up in result
-					if (!i_name.toLowerCase().equals(name.toLowerCase())) {
-						continue;
-					}
 				}
 				JSONObject ratings = null;
 				Ratings r = null;

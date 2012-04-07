@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.database;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -97,7 +98,7 @@ public class DepartmentSearchCache {
 	 * Close all associated database tables
 	 */
 	public void close() {
-		Log.w(TAG, "Closing SearchCache");
+		Log.w(TAG, "Closing DepartmentSearchCache");
 		mDbHelper.close();
 	}
 
@@ -180,6 +181,10 @@ public class DepartmentSearchCache {
 	 */
 	public Department getDepartment(String keyword) {
 		Log.w(TAG, "Searching database for department " + keyword);
+
+		long size = new File(mDb.getPath()).length();
+		Log.w("DepartmentSearchCache", "Size of db is " + size);
+		
 		keyword = keyword.toLowerCase();
 		
 		// First try to match based on course alias

@@ -50,6 +50,8 @@ public class SearchPage extends Activity {
 	
 	private static final int NO_MATCH_FOUND_DIALOG = 1;
 	
+	AsyncTask<KeywordMap, Integer, String> currentTask;
+	
 	// KeywordMap object that we are currently searching for
 	KeywordMap keywordmap;
 
@@ -124,6 +126,26 @@ public class SearchPage extends Activity {
 		search.setText("");
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	// Cancel current task and progress bar if they are active
+			if (currentTask != null) {
+				Log.w("SearchPage", "Back button is pressed, trying cancel current task");
+				currentTask.cancel(true);
+				if (progressBar != null) {
+					progressBar.setCancelable(true);
+					progressBar.dismiss();
+				}
+				AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
+				search.setText("");
+			}
+			else
+				this.finish();
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+	
 	/**
 	 * Helper function to find the appropriate keywords for autocomplete and fill in the
 	 * autocomplete drop-down menu
@@ -157,8 +179,9 @@ public class SearchPage extends Activity {
 					// Show progress bar first
 					progressBar = new ProgressDialog(view.getContext());
 					progressBar.setCancelable(true);
+					progressBar.setCanceledOnTouchOutside(false);
 					progressBar.setIndeterminate(true);
-					progressBar.setMessage("Retrieving Reviews...");
+					progressBar.setMessage("Retrieving Reviews...\nNote: Departments take a long time to search");
 					progressBar.show();
 					
 					String selectedItem = adapter.getItemAtPosition((int) rowId).toString();
@@ -200,7 +223,7 @@ public class SearchPage extends Activity {
 					
 					SearchPage.this.runOnUiThread(new Runnable() {
 						public void run() {
-							new ServerQuery().execute(keywordmap);
+							currentTask = new ServerQuery().execute(keywordmap);
 						}
 					});
 				}
@@ -237,8 +260,9 @@ public class SearchPage extends Activity {
 		
 		progressBar = new ProgressDialog(v.getContext());
 		progressBar.setCancelable(true);
+		progressBar.setCanceledOnTouchOutside(false);
 		progressBar.setIndeterminate(true);
-		progressBar.setMessage("Retrieving Reviews...");
+		progressBar.setMessage("Retrieving Reviews...\nNote: Departments take a long time to search");
 		progressBar.show();
 		
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
@@ -259,7 +283,7 @@ public class SearchPage extends Activity {
 	
 		SearchPage.this.runOnUiThread(new Runnable() {
 			public void run() {
-				new ServerQuery().execute(keywordmap);
+				currentTask = new ServerQuery().execute(keywordmap);
 			}
 		});
 	}

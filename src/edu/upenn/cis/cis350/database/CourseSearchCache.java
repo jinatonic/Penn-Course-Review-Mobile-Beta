@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis350.database;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -110,7 +111,7 @@ public class CourseSearchCache {
 	 * Close all associated database tables
 	 */
 	public void close() {
-		Log.w(TAG, "Closing SearchCache");
+		Log.w(TAG, "Closing CourseSearchCache");
 		mDbHelper.close();
 	}
 	
@@ -138,6 +139,11 @@ public class CourseSearchCache {
 	 * @param type - 0 for course 1 for instructor
 	 */
 	public void addCourse(ArrayList<Course> courses, int type) {
+		if (type == 0) 
+			Log.w(TAG, "Starting to add list of courses, size " + courses.size());
+		else
+			Log.w(TAG, "Starting to add list of departments, size " + courses.size());
+		
 		for (Course course : courses) {
 			Log.w(TAG, "adding course " + course.getAlias() + " " + course.getName() + " to database");
 
@@ -210,6 +216,10 @@ public class CourseSearchCache {
 	 */
 	public ArrayList<Course> getCourse(String keyword, int type) {
 		Log.w(TAG, "Searching database for course " + keyword);
+
+		long size = new File(mDb.getPath()).length();
+		Log.w("CourseSearchCache", "Size of db is " + size);
+		
 		keyword = keyword.toLowerCase();
 		ArrayList<Course> rs = new ArrayList<Course>();
 		

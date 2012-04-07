@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class Sorter {
 
-	private class Pair implements Comparable<Pair>{
+	private class Pair implements Comparable<Pair> {
 		double d;
 		Course c;
 		public Pair(double d, Course c){
@@ -71,50 +72,50 @@ public class Sorter {
 	public ArrayList<Course> sortAlphabetically(ArrayList<Course> courses, Type sortType, int order) {
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
 		switch (sortType) {
-			case INSTRUCTOR:
-				ArrayList<InstructorCourse> unsortedInstructorCourses = new ArrayList<InstructorCourse>(); 
-				for(Course c: courses) {
-					unsortedInstructorCourses.add(new InstructorCourse(c));
+		case INSTRUCTOR:
+			ArrayList<InstructorCourse> unsortedInstructorCourses = new ArrayList<InstructorCourse>(); 
+			for(Course c: courses) {
+				unsortedInstructorCourses.add(new InstructorCourse(c));
+			}
+			// Sort alphabetically by instructor name
+			Collections.sort(unsortedInstructorCourses);
+
+			// Populate into ArrayList of courses in ascending order
+			if (order == 0) {
+				for (int i = 0; i < unsortedInstructorCourses.size(); i++){
+					sortedCourses.add(unsortedInstructorCourses.get(i).getCourse());
 				}
-				// Sort alphabetically by instructor name
-				Collections.sort(unsortedInstructorCourses);
-				
-				// Populate into ArrayList of courses in ascending order
-				if (order == 0) {
-					for (int i = 0; i < unsortedInstructorCourses.size(); i++){
-						sortedCourses.add(unsortedInstructorCourses.get(i).getCourse());
-					}
+			}
+			// Populate into ArrayList of courses in descending order
+			else {
+				for (int i = unsortedInstructorCourses.size()-1; i >= 0; i--){
+					sortedCourses.add(unsortedInstructorCourses.get(i).getCourse());
 				}
-				// Populate into ArrayList of courses in descending order
-				else {
-					for (int i = unsortedInstructorCourses.size()-1; i >= 0; i--){
-						sortedCourses.add(unsortedInstructorCourses.get(i).getCourse());
-					}
+			}
+			break;
+		case COURSE:
+			ArrayList<IdCourse> unsortedIdCourses = new ArrayList<IdCourse>(); 
+			for(Course c: courses) {
+				unsortedIdCourses.add(new IdCourse(c));
+			}
+			// Sort alphabetically by course Id
+			Collections.sort(unsortedIdCourses);
+
+			// Populate into ArrayList of courses in ascending order
+			if (order == 0) {
+				for (int i = 0; i < unsortedIdCourses.size(); i++){
+					sortedCourses.add(unsortedIdCourses.get(i).getCourse());
 				}
-				break;
-			case COURSE:
-				ArrayList<IdCourse> unsortedIdCourses = new ArrayList<IdCourse>(); 
-				for(Course c: courses) {
-					unsortedIdCourses.add(new IdCourse(c));
+			}
+			// Populate into ArrayList of courses in descending order
+			else {
+				for (int i = unsortedIdCourses.size()-1; i >= 0; i--){
+					sortedCourses.add(unsortedIdCourses.get(i).getCourse());
 				}
-				// Sort alphabetically by course Id
-				Collections.sort(unsortedIdCourses);
-				
-				// Populate into ArrayList of courses in ascending order
-				if (order == 0) {
-					for (int i = 0; i < unsortedIdCourses.size(); i++){
-						sortedCourses.add(unsortedIdCourses.get(i).getCourse());
-					}
-				}
-				// Populate into ArrayList of courses in descending order
-				else {
-					for (int i = unsortedIdCourses.size()-1; i >= 0; i--){
-						sortedCourses.add(unsortedIdCourses.get(i).getCourse());
-					}
-				}
-				break;
-			default:
-				break;
+			}
+			break;
+		default:
+			break;
 		}
 		return sortedCourses;
 	}
@@ -140,7 +141,7 @@ public class Sorter {
 				sortedCourses.add(pairs[i].getCourse());
 			}
 		}
-		else{
+		else {
 			for(int i = pairs.length-1; i >= 0; i--){
 				sortedCourses.add(pairs[i].getCourse());
 			}
@@ -148,11 +149,12 @@ public class Sorter {
 		return sortedCourses;
 
 	}
-	//sort array according to a specified rating, rRating, and order (0 = increasing, 1 = decreasing)
-	public ArrayList<Course> sortByRating(ArrayList<Course> courses, String rRating, int order){
+
+	// Sort array according to a specified rating, rRating, and order (0 = increasing, 1 = decreasing)
+	public ArrayList<Course> sortByRating(ArrayList<Course> courses, String rRating, int order) {
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;
-		for(Course c: courses){
+		for (Course c: courses) {
 			Double d = new Double(c.getRatings().getRating(rRating));
 			Pair p = new Pair(d,c);
 			pairs[count] = p;
@@ -161,19 +163,16 @@ public class Sorter {
 
 		Arrays.sort(pairs);
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
-		if(order == 0){
+		if (order == 0) {
 			for(int i = 0; i < pairs.length; i++){
 				sortedCourses.add(pairs[i].getCourse());
 			}
 		}
-		else{
-			for(int i = pairs.length-1; i >= 0; i--){
+		else {
+			for (int i = pairs.length-1; i >= 0; i--) {
 				sortedCourses.add(pairs[i].getCourse());
 			}
 		}
 		return sortedCourses;		
 	}
-
-
-
 }

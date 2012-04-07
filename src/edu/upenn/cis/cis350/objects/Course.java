@@ -17,6 +17,7 @@ public class Course {
 	
 	public Course(String _alias, String _name, String _description, String _semester, String _comments, String _id, Instructor _instructor, int _num_reviewers,
 			int _num_students, String _path, Ratings _ratings, Section _section) {
+		
 		this.alias = _alias;
 		this.name = _name;
 		this.description = _description;

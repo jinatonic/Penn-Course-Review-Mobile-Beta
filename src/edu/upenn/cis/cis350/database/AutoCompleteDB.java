@@ -210,7 +210,7 @@ public class AutoCompleteDB {
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
 		else {
 			// UNKNOWN type, find best match
-			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword +"%' OR LOWER(name) LIKE '%" + keyword + "%' LIMIT 1";
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm)='" + keyword +"' OR LOWER(name)='" + keyword + "' LIMIT 1";
 		}
 		
 		Log.w("AutocompleteDB", "Getting info for parser, keyword: " + keyword + " query: " + query);
@@ -250,8 +250,7 @@ public class AutoCompleteDB {
 	 * Delete all entries from table
 	 */
 	public void resetTables() {
-		//Log.w(TAG, "Resetting the AutoComplete table");
-		//mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
-		//mDb.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
+		Log.w(TAG, "Resetting the AutoComplete table");
+		mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
 	}
 }

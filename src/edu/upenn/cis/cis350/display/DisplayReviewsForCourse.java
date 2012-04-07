@@ -26,7 +26,7 @@ public class DisplayReviewsForCourse extends Display {
 		// Search database first
 		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
-		courseReviews = cache.getCourse(searchTerm);
+		courseReviews = cache.getCourse(searchTerm, 0);
 		cache.close();
 
 		// Set font to Times New Roman

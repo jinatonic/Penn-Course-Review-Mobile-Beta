@@ -63,6 +63,7 @@ public class CourseSearchCache {
 			"section_path char(50) NOT NULL," +
 			"section_name char(50) NOT NULL," +
 			"section_number char(20) NOT NULL," +
+			"type int NOT NULL," + // 0 for course, 1 for instructor
 			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
 	/* TAG for logging purposes */
@@ -134,8 +135,9 @@ public class CourseSearchCache {
 	/**
 	 * Takes a given course and store the information in the database (if not exists)
 	 * @param course given course to be added to the database
+	 * @param type - 0 for course 1 for instructor
 	 */
-	public void addCourse(ArrayList<Course> courses) {
+	public void addCourse(ArrayList<Course> courses, int type) {
 		for (Course course : courses) {
 			Log.w(TAG, "adding course " + course.getAlias() + " to database");
 			// First we check that the course doesn't already exist in the database
@@ -180,6 +182,7 @@ public class CourseSearchCache {
 			values.put("section_path", section.getPath());
 			values.put("section_name", section.getName());
 			values.put("section_number", section.getSectionNum());
+			values.put("type", type);
 			
 			values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
 			
@@ -191,13 +194,14 @@ public class CourseSearchCache {
 	/**
 	 * Checks if a given keyword exists in the table
 	 * @param keyword
+	 * @param type - 0 to search course, 1 to search instructor
 	 * @return true if matched something in db, false otherwise
 	 */
-	public boolean ifExistsInDB(String keyword) {
+	public boolean ifExistsInDB(String keyword, int type) {
 		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
 		keyword = keyword.toLowerCase();
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + type;
 		Cursor c = mDb.rawQuery(query, null);
 		
 		return c.getCount() != 0;
@@ -206,21 +210,22 @@ public class CourseSearchCache {
 	/**
 	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
 	 * @param keyword can be either course-alias (normalized) or professor's name
+	 * @param type - 0 to search course, 1 to search instructor
 	 * @return ArrayList of courses, or empty ArrayList if no data is found
 	 */
-	public ArrayList<Course> getCourse(String keyword) {
+	public ArrayList<Course> getCourse(String keyword, int type) {
 		Log.w(TAG, "Searching database for course " + keyword);
 		keyword = keyword.toLowerCase();
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "'";
+		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + type;
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
-			Log.w(TAG, "getCourse: course found, number is " + c.getCount());
+			Log.w(TAG, "getCourse: courses found, number is " + c.getCount());
 			do {
 				Section tSection = new Section(	
 												c.getString(c.getColumnIndex("section_alias")),

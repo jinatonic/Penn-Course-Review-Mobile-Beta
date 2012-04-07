@@ -21,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
-import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
@@ -214,8 +213,6 @@ public class SearchPage extends Activity {
 		cache.clearOldEntries();
 		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
-
-		
 	}
 
 	/**
@@ -242,16 +239,12 @@ public class SearchPage extends Activity {
 		progressBar.setIndeterminate(true);
 		progressBar.setMessage("Retrieving Reviews...");
 		progressBar.show();
-		
 	
 		SearchPage.this.runOnUiThread(new Runnable() {
 			public void run() {
 				new ServerQuery().execute(keywordmap);
-				
 			}
-
 		});
-		
 	}
 
 	/**
@@ -274,7 +267,7 @@ public class SearchPage extends Activity {
 		case COURSE:
 			CourseSearchCache course_cache = new CourseSearchCache(this.getApplicationContext());
 			course_cache.open();
-			if (course_cache.ifExistsInDB(keyword)) {
+			if (course_cache.ifExistsInDB(keyword, 0)) {
 				course_cache.close();
 				return true;
 			}
@@ -290,11 +283,18 @@ public class SearchPage extends Activity {
 			else dept_cache.close();
 			return false;
 		case INSTRUCTOR:
+			CourseSearchCache ins_cache = new CourseSearchCache(this.getApplicationContext());
+			ins_cache.open();
+			if (ins_cache.ifExistsInDB(keyword, 1)) {
+				ins_cache.close();
+				return true;
+			}
+			else ins_cache.close();
+			return false;
 		case UNKNOWN:
 		default:
 			return false;
 		}
-		
 	}
 
 	/** 
@@ -318,6 +318,12 @@ public class SearchPage extends Activity {
 			Intent i = new Intent(this, DisplayReviewsForDept.class);
 			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getAlias());
 
+			startActivity(i);
+		}
+		else if (type == Type.INSTRUCTOR) {
+			Intent i = new Intent(this, DisplayReviewsForInstructor.class);
+			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getName());
+			
 			startActivity(i);
 		}
 	}
@@ -368,7 +374,7 @@ public class SearchPage extends Activity {
 	
 				CourseSearchCache cache = new CourseSearchCache(context);
 				cache.open();
-				cache.addCourse(courses);
+				cache.addCourse(courses, 0);
 				cache.close();
 			}
 			else if (input.getType() == Type.DEPARTMENT) {
@@ -390,11 +396,28 @@ public class SearchPage extends Activity {
 				cache.addDepartment(department);
 				cache.close();
 			}
-			else if (input.getType() == Type.UNKNOWN) {
-				Log.w("ServerQuery", "Running ServerQuery with unknown type, keyword " + input.getAlias());
+			else if (input.getType() == Type.INSTRUCTOR) {
+				// Check cache first, if exists, proceed
+				if (checkCache(input.getAlias(), Type.INSTRUCTOR)) {
+					Log.w("runParser", "Instructor " + input.getName() + " is found in CourseSearchCache");
+					return;
+				}
+				
+				ArrayList<Course> courses = parser.getReviewsForInstructor(input);
+	
+				// Add the resulting courses into cache
+				if (courses == null) {
+					Log.w("Parser", "getReviewsForInstructor returned null");
+					return;
+				}
+	
+				CourseSearchCache cache = new CourseSearchCache(context);
+				cache.open();
+				cache.addCourse(courses, 1);
+				cache.close();
 			}
 			else {
-				
+				Log.w("ServerQuery", "Running ServerQuery with unknown type, keyword " + input.getAlias());
 			}
 		}
 	}

@@ -48,12 +48,9 @@ public class StartPage extends Activity {
 					
 						StartPage.this.runOnUiThread(new Runnable() {
 							public void run() {
-							downloadAutoComplete();
-								
+								downloadAutoComplete();
 							}
-
 						});
-						
 					}
 				});
 	}

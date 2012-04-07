@@ -36,11 +36,11 @@ public class CourseSearchCache {
 	/* Query strings */
 	private static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
 			"name char(50) NOT NULL," +
-			"course_alias char(20) NOT NULL," +
-			"description char(500)," +
-			"semester char(50) NOT NULL," +
+			"course_alias char(20) NOT NULL DEFAULT ''," +
+			"description char(700)," +
+			"semester char(50)," +
 			"course_id char(50) NOT NULL," +
-			"comments char(100)," +
+			"comments char(300)," +
 			"instructor_id char(50) NOT NULL," +
 			"instructor_name char(50) NOT NULL," +
 			"instructor_path char(50) NOT NULL," +
@@ -139,13 +139,8 @@ public class CourseSearchCache {
 	 */
 	public void addCourse(ArrayList<Course> courses, int type) {
 		for (Course course : courses) {
-			Log.w(TAG, "adding course " + course.getAlias() + " to database");
-			// First we check that the course doesn't already exist in the database
-			Cursor c = mDb.rawQuery("SELECT course_id FROM " + COURSE_TABLE + " WHERE course_id='" + course.getID() + "' and section_id='" + course.getSection().getID() + "'", null);
-			c.moveToFirst();
-			if (c.getCount() > 0)
-				return;
-			
+			Log.w(TAG, "adding course " + course.getAlias() + " " + course.getName() + " to database");
+
 			String id = course.getID();
 			
 			// First we add to the course table 
@@ -219,7 +214,12 @@ public class CourseSearchCache {
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + type;
+		String query = null;
+		if (type == 0)
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + 0;
+		else
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(name)='" + keyword + "' AND type=" + 1;
+		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		

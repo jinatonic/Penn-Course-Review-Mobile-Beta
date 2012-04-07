@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
@@ -100,6 +101,8 @@ public class Parser {
 		String reviewpath = path + "/reviews";
 		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
 		try{
+			Log.w("PATH", reviewpath);
+			Log.w("NAME", instructor_name);
 			reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { e.printStackTrace(); }
 		return reviews;
@@ -238,7 +241,7 @@ public class Parser {
 		return courseReviews;
 	}
 
-	public ArrayList<Course> createCourseReview(String path,String[] course_aliases,String name, String description, String semester) throws JSONException {
+	public ArrayList<Course> createCourseReview(String path, String[] course_aliases, String name, String description, String semester) throws JSONException {
 		ArrayList<Course> course_list = new ArrayList<Course>();
 		JSONObject json = JSONRequest.retrieveJSONObject(baseURL + path + token);
 		JSONArray courses = null;
@@ -261,6 +264,11 @@ public class Parser {
 					if(instructor.has("path"))
 						i_path = instructor.getString("path");
 					i = new Instructor(i_id, i_name, i_path);
+					
+					// Check edge cases where different instructor names pop up in result
+					if (!i_name.toLowerCase().equals(name.toLowerCase())) {
+						continue;
+					}
 				}
 				JSONObject ratings = null;
 				Ratings r = null;
@@ -313,18 +321,18 @@ public class Parser {
 					}
 
 					r = new Ratings(
-							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-							);
+								rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
+								rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+								rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+								rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+								rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+								rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+								rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+								rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+								rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+								rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+								rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+					);
 				}
 				JSONObject section = null;
 				Section s = null;

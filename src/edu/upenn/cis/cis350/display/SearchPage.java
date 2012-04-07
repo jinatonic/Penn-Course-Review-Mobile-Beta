@@ -5,8 +5,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -44,6 +47,8 @@ public class SearchPage extends Activity {
 	Context context;
 	String searchTerm;
 	boolean selectedFromAutocomplete;
+	
+	private static final int NO_MATCH_FOUND_DIALOG = 1;
 	
 	// KeywordMap object that we are currently searching for
 	KeywordMap keywordmap;
@@ -149,6 +154,13 @@ public class SearchPage extends Activity {
 				@Override
 				public void onItemClick(AdapterView<?> adapter, View view,
 						int position, long rowId) {
+					// Show progress bar first
+					progressBar = new ProgressDialog(view.getContext());
+					progressBar.setCancelable(true);
+					progressBar.setIndeterminate(true);
+					progressBar.setMessage("Retrieving Reviews...");
+					progressBar.show();
+					
 					String selectedItem = adapter.getItemAtPosition((int) rowId).toString();
 					
 					// Normalize the string and find the type
@@ -175,28 +187,22 @@ public class SearchPage extends Activity {
 					
 					auto.close();
 					
+					Log.w("AutocompleteClick", "Item clicked is " + keywordmap.getAlias() + " " + keywordmap.getName());
+					
 					// Backup check in case result wasn't generated correctly
 					if (keywordmap == null) {
 						// TODO: display dialog
 						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
+						showDialog(NO_MATCH_FOUND_DIALOG);
+						progressBar.dismiss();
 						return;
 					}
-					progressBar = new ProgressDialog(view.getContext());
-					progressBar.setCancelable(true);
-					progressBar.setIndeterminate(true);
-					progressBar.setMessage("Retrieving Reviews...");
-					progressBar.show();
 					
-				
 					SearchPage.this.runOnUiThread(new Runnable() {
 						public void run() {
 							new ServerQuery().execute(keywordmap);
-							
 						}
-
 					});
-						
-				
 				}
 			});
 		}
@@ -213,6 +219,12 @@ public class SearchPage extends Activity {
 		cache.clearOldEntries();
 		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
+		
+		DepartmentSearchCache dept_cache = new DepartmentSearchCache(this.getApplicationContext());
+		dept_cache.open();
+		dept_cache.clearOldEntries();
+		dept_cache.resetTables();
+		dept_cache.close();
 	}
 
 	/**
@@ -222,6 +234,13 @@ public class SearchPage extends Activity {
 	public void onEnterButtonClick(View v) {
 		// Check whether the search term entered was a dept or a course (ends in a number)
 		// TODO does not yet account for instructor, will update after auto-complete implemented
+		
+		progressBar = new ProgressDialog(v.getContext());
+		progressBar.setCancelable(true);
+		progressBar.setIndeterminate(true);
+		progressBar.setMessage("Retrieving Reviews...");
+		progressBar.show();
+		
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
 		
 		AutoCompleteDB auto = new AutoCompleteDB(v.getContext());
@@ -231,14 +250,12 @@ public class SearchPage extends Activity {
 		if (keywordmap == null) {
 			// TODO: display dialog
 			Log.w("SearchPage", "enter pressed, no data found");
+			progressBar.dismiss();
+			
+			showDialog(NO_MATCH_FOUND_DIALOG);
+			
 			return;
 		}
-		
-		progressBar = new ProgressDialog(v.getContext());
-		progressBar.setCancelable(true);
-		progressBar.setIndeterminate(true);
-		progressBar.setMessage("Retrieving Reviews...");
-		progressBar.show();
 	
 		SearchPage.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -256,8 +273,26 @@ public class SearchPage extends Activity {
 		search.setText("");
 		selectedFromAutocomplete = false;
 	}
-
 	
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch (id) {
+		case NO_MATCH_FOUND_DIALOG:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Search term had no results")
+			       .setCancelable(false)
+			       .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			           }
+			       });
+			dialog = builder.create();
+			return dialog;
+		default:
+			return null;
+		}
+	}
+
 	/**
 	 * Helper function to check if the given searchTerm exists in the database
 	 * @return
@@ -398,7 +433,7 @@ public class SearchPage extends Activity {
 			}
 			else if (input.getType() == Type.INSTRUCTOR) {
 				// Check cache first, if exists, proceed
-				if (checkCache(input.getAlias(), Type.INSTRUCTOR)) {
+				if (checkCache(input.getName(), Type.INSTRUCTOR)) {
 					Log.w("runParser", "Instructor " + input.getName() + " is found in CourseSearchCache");
 					return;
 				}

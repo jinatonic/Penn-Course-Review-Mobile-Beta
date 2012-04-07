@@ -204,13 +204,15 @@ public class AutoCompleteDB {
 	public KeywordMap getInfoForParser(String keyword, Type type) {
 		keyword = keyword.toLowerCase();
 		String query = null;
+		String backup_query = null;
 		if (type == Type.COURSE || type == Type.DEPARTMENT) 
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword + "%' LIMIT 1";
 		else if (type == Type.INSTRUCTOR) 
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
 		else {
 			// UNKNOWN type, find best match
-			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm)='" + keyword +"' OR LOWER(name)='" + keyword + "' LIMIT 1";
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm)='" + keyword +"' LIMIT 1";
+			backup_query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + keyword + "%' LIMIT 1";
 		}
 		
 		Log.w("AutocompleteDB", "Getting info for parser, keyword: " + keyword + " query: " + query);
@@ -218,8 +220,16 @@ public class AutoCompleteDB {
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
-		if (c.getCount() == 0) 
-			return null;
+		if (c.getCount() == 0) {
+			if (type == Type.UNKNOWN) {
+				c = mDb.rawQuery(backup_query, null);
+				c.moveToFirst();
+				if (c.getCount() == 0)
+					return null;
+			}
+			else 
+				return null;
+		}
 		
 		String path = c.getString(c.getColumnIndex("path"));
 		String name = c.getString(c.getColumnIndex("name"));

@@ -3,8 +3,10 @@ package edu.upenn.cis.cis350.display;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class DisplayReviewsForInstructor extends Display {
@@ -20,11 +22,13 @@ public class DisplayReviewsForInstructor extends Display {
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
+		Log.w("DisplayReviewsForInstructor", "Displaying information for " + searchTerm);
+		
 		// Search database first
-		//SearchCache cache = new SearchCache(this.getApplicationContext());
-		//cache.open();
-		//courseReviews = cache.getCourse(searchTerm); // TODO change for instructor?
-		//cache.close();
+		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
+		cache.open();
+		courseReviews = cache.getCourse(searchTerm, 1);
+		cache.close();
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");

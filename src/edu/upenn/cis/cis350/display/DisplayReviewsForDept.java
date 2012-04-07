@@ -3,6 +3,7 @@ package edu.upenn.cis.cis350.display;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
@@ -24,6 +25,8 @@ public class DisplayReviewsForDept extends Display {
 		Intent i = getIntent();
 		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
 
+		Log.w("DisplayReviewsForDepartment", "Displaying information for " + searchTerm);
+		
 		// Initialize cache so parser can use it
 		DepartmentSearchCache cache = new DepartmentSearchCache(this.getApplicationContext());
 		cache.open();

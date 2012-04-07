@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -80,40 +82,61 @@ public class SearchPage extends Activity {
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setAdapter(new ArrayAdapter<String>(SearchPage.this, android.R.layout.simple_dropdown_item_1line, new String[0]));
 		
+		// Used for soft/virtual keyboards (they do not register with the onKeyListener)
+		search.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				selectedFromAutocomplete = false;
+				// Cancel timer
+				if (autocompleteTimer != null)
+					autocompleteTimer.cancel();
+				// Initialize new timer
+				autocompleteTimer = new Timer();
+				// Reschedule
+				autocompleteTimer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						SearchPage.this.runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								setAutocomplete();
+							}
+							
+						});
+						autocompleteTimer = null;
+					}
+				}, Constants.AUTOCOMPLETE_WAIT_TIME);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
 		// Set the on-key listener to listen to textview input
 		search.setOnKeyListener(new OnKeyListener() {
 			
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				Log.w("AUTOCOMPLETE", "KEY PRESSED");
 				// If event is key-down event on "enter" button
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 						(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					// Perform action on key press
 					onEnterButtonClick(v);
-					return true;
-				}
-				else if (event.getAction() == KeyEvent.ACTION_UP) {
-					selectedFromAutocomplete = false;
-					// Cancel timer
-					if (autocompleteTimer != null)
-						autocompleteTimer.cancel();
-					// Initialize new timer
-					autocompleteTimer = new Timer();
-					// Reschedule
-					autocompleteTimer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							SearchPage.this.runOnUiThread(new Runnable() {
-								
-								@Override
-								public void run() {
-									setAutocomplete();
-								}
-								
-							});
-							autocompleteTimer = null;
-						}
-					}, Constants.AUTOCOMPLETE_WAIT_TIME);
 					return true;
 				}
 				return false;

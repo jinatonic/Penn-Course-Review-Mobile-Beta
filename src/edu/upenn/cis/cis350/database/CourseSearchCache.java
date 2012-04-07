@@ -121,6 +121,7 @@ public class CourseSearchCache {
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
 		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE course_id > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS "+ COURSE_TABLE);
 	}
 	
 	/** 
@@ -142,7 +143,7 @@ public class CourseSearchCache {
 		if (type == 0) 
 			Log.w(TAG, "Starting to add list of courses, size " + courses.size());
 		else
-			Log.w(TAG, "Starting to add list of departments, size " + courses.size());
+			Log.w(TAG, "Starting to add list of courses for instructor, size " + courses.size());
 		
 		for (Course course : courses) {
 			Log.w(TAG, "adding course " + course.getAlias() + " " + course.getName() + " to database");
@@ -228,7 +229,7 @@ public class CourseSearchCache {
 		if (type == 0)
 			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + 0;
 		else
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(name)='" + keyword + "' AND type=" + 1;
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + 1;
 		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
@@ -278,6 +279,9 @@ public class CourseSearchCache {
 										   );
 				rs.add(tCourse);
 			} while (c.moveToNext());
+		}
+		else {
+			Log.w(TAG, "No results found!");
 		}
 		
 		return rs;

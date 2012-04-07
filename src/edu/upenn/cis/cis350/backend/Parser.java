@@ -98,17 +98,19 @@ public class Parser {
 		String path = instructor_map.getPath();
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		if(path == null) return null;
-		String reviewpath = path + "/reviews";
+		//String reviewpath = path + "/reviews";
 		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
 		try{
-			Log.w("PATH", reviewpath);
-			Log.w("NAME", instructor_name);
+			//Log.w("PATH", reviewpath);
+			
 			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
 			for(int i = 0; i < values.length(); i++){
 				JSONObject section = values.getJSONObject(i);
 				String section_path = section.getJSONObject("section").getString("path");
-				JSONObject section_result = JSONRequest.retrieveJSONObject(baseURL + section_path + token);
+				Log.w("section_path", section_path);
+				JSONObject section_result = JSONRequest.retrieveJSONObject(baseURL + section_path + token).getJSONObject("result");
+				//section path = courses/11706/sections/001
 				JSONObject course_info = section_result.getJSONObject("courses");
 				JSONArray alias = course_info.getJSONArray("aliases");
 				String [] aliases = new String[alias.length()];

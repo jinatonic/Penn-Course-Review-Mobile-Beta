@@ -60,6 +60,8 @@ public class SearchPage extends Activity {
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		
 
 		databaseMaintainance();
 		search_term = "";

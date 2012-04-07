@@ -74,8 +74,6 @@ public class StartPage extends Activity {
 		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		autocomplete.open();
 		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		//autocomplete.close();
-		//autocomplete.open();
 		if (autocomplete.updatesNeeded()) {
 			new AutocompleteQuery().execute("lala");
 		} 
@@ -95,6 +93,8 @@ public class StartPage extends Activity {
 			}
 		
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
+			
+			
 			autocomplete.open();
 			autocomplete.addEntries(result);
 			autocomplete.close();

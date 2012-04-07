@@ -103,7 +103,26 @@ public class Parser {
 		try{
 			Log.w("PATH", reviewpath);
 			Log.w("NAME", instructor_name);
-			reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
+			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
+			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
+			for(int i = 0; i < values.length(); i++){
+				JSONObject section = values.getJSONObject(i);
+				String section_path = section.getJSONObject("section").getString("path");
+				JSONObject section_result = JSONRequest.retrieveJSONObject(baseURL + section_path + token);
+				JSONObject course_info = section_result.getJSONObject("courses");
+				JSONArray alias = course_info.getJSONArray("aliases");
+				String [] aliases = new String[alias.length()];
+				for(int j = 0; j < alias.length(); j++)
+					aliases[j] = alias.getString(j);
+				
+				String semester = course_info.getString("semester");
+				String name = course_info.getString("name");
+				String course_path = section_result.getJSONObject("reviews").getString("path");
+				reviews.addAll(createCourseReview(course_path, aliases, name, null, semester));
+				
+			}
+			
+			//reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { e.printStackTrace(); }
 		return reviews;
 	}
@@ -182,7 +201,7 @@ public class Parser {
 	public ArrayList<Course> storeReviews(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
-
+		
 		String[] course_aliases = null;
 
 		if (js.has("result")) {

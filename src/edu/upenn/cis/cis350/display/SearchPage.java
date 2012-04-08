@@ -44,7 +44,6 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
-	private Dialog progressBar;
 	private AutoCompleteDB autocomplete;
 	private String search_term;
 	
@@ -154,6 +153,9 @@ public class SearchPage extends Activity {
 		super.onResume();
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setText("");
+		
+		// dismiss any remaining dialog that might be open
+		removeDialog(RECENT_DIALOG);
 	}
 	
 	@Override
@@ -163,10 +165,8 @@ public class SearchPage extends Activity {
 			if (currentTask != null) {
 				Log.w("SearchPage", "Back button is pressed, trying cancel current task");
 				currentTask.cancel(true);
-				if (progressBar != null) {
-					progressBar.setCancelable(true);
-					progressBar.dismiss();
-				}
+				removeDialog(PROGRESS_BAR);
+				
 				AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 				search.setText("");
 			}
@@ -328,6 +328,7 @@ public class SearchPage extends Activity {
 		selectedFromAutocomplete = false;
 	}
 	
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
 		switch (id) {
@@ -379,7 +380,6 @@ public class SearchPage extends Activity {
 			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
-			progressBar = dialog;
 			return dialog;
 		default:
 			return null;
@@ -476,8 +476,8 @@ public class SearchPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
+			removeDialog(PROGRESS_BAR);
 			proceed();	// TODO fix
-			progressBar.dismiss();
 		}
 
 		public void runParser(KeywordMap input) {

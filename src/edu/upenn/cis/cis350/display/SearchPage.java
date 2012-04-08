@@ -243,18 +243,18 @@ public class SearchPage extends Activity {
 		CourseSearchCache cache = new CourseSearchCache(context);
 		cache.open();
 		cache.clearOldEntries();
-		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
+		//cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
 		
 		DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
 		dept_cache.open();
 		dept_cache.clearOldEntries();
-		dept_cache.resetTables();
+		//dept_cache.resetTables();
 		dept_cache.close();
 		
 		RecentSearches rs = new RecentSearches(context);
 		rs.open();
-		rs.resetTables();
+		//rs.resetTables();
 		rs.close();
 	}
 

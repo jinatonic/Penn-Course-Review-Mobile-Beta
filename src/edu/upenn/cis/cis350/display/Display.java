@@ -297,9 +297,9 @@ public abstract class Display extends Activity {
 
 	TextView createRow(int width, int gravity, String text, int colNum) {
 		TextView row = new TextView(this);
-		row.setHeight(35);
+		row.setHeight(70);
 		row.setWidth(width);
-		row.setTextSize((float)9.5);
+		row.setTextSize((float)11);
 		row.setTextColor(getResources().getColor(R.color.text_gray));
 		row.setGravity(gravity);
 		row.setText(text);

@@ -18,6 +18,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.Window;
@@ -25,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
@@ -32,6 +36,7 @@ import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
+import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap;
@@ -39,7 +44,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
-	private ProgressDialog progressBar;
+	private Dialog progressBar;
 	private AutoCompleteDB autocomplete;
 	private String search_term;
 	
@@ -51,6 +56,8 @@ public class SearchPage extends Activity {
 	boolean selectedFromAutocomplete;
 	
 	private static final int NO_MATCH_FOUND_DIALOG = 1;
+	private static final int RECENT_DIALOG = 2;
+	private static final int PROGRESS_BAR = 3;
 	
 	AsyncTask<KeywordMap, Integer, String> currentTask;
 	
@@ -131,7 +138,6 @@ public class SearchPage extends Activity {
 			
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				Log.w("AUTOCOMPLETE", "KEY PRESSED");
 				// If event is key-down event on "enter" button
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 						(keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -171,6 +177,27 @@ public class SearchPage extends Activity {
 	    return super.onKeyDown(keyCode, event);
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.search_page_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_recent:
+			showDialog(RECENT_DIALOG);
+			return true;
+		case R.id.menu_quit:
+			this.finish();
+			return true;
+		default: 
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	/**
 	 * Helper function to find the appropriate keywords for autocomplete and fill in the
 	 * autocomplete drop-down menu
@@ -201,56 +228,8 @@ public class SearchPage extends Activity {
 				@Override
 				public void onItemClick(AdapterView<?> adapter, View view,
 						int position, long rowId) {
-					// Show progress bar first
-					progressBar = new ProgressDialog(view.getContext());
-					progressBar.setCancelable(true);
-					progressBar.setCanceledOnTouchOutside(false);
-					progressBar.setIndeterminate(true);
-					progressBar.setMessage("Retrieving Reviews...\nNote: Departments take a long time to search");
-					progressBar.show();
-					
-					String selectedItem = adapter.getItemAtPosition((int) rowId).toString();
-					
-					// Normalize the string and find the type
-					String type = selectedItem.substring(0, 3);
-					selectedItem = selectedItem.substring(3);
-					selectedItem = Normalizer.normalize(selectedItem, 
-							(type.equals(Constants.INSTRUCTOR_TAG)) ? Type.INSTRUCTOR : (type.equals(Constants.COURSE_TAG)) ? Type.COURSE : Type.DEPARTMENT);
-					
-					AutoCompleteDB auto = new AutoCompleteDB(context);
-					auto.open();
-					
-					if (type.equals(Constants.COURSE_TAG)) {
-						keywordmap = auto.getInfoForParser(selectedItem,  Type.COURSE);
-					}
-					else if (type.equals(Constants.INSTRUCTOR_TAG)) {
-						keywordmap = auto.getInfoForParser(selectedItem,  Type.INSTRUCTOR);
-					}
-					else if (type.equals(Constants.DEPARTMENT_TAG)) {
-						keywordmap = auto.getInfoForParser(selectedItem,  Type.DEPARTMENT);
-					}
-					else {
-						Log.w("SearchPage: setAutocomplete", "Autocomplete onitemclick type not recognized");
-					}
-					
-					auto.close();
-					
-					Log.w("AutocompleteClick", "Item clicked is " + keywordmap.getAlias() + " " + keywordmap.getName());
-					
-					// Backup check in case result wasn't generated correctly
-					if (keywordmap == null) {
-						// TODO: display dialog
-						Log.w("SearchPage", "ERROR, onItemClick returned NULL KeywordMap");
-						showDialog(NO_MATCH_FOUND_DIALOG);
-						progressBar.dismiss();
-						return;
-					}
-					
-					SearchPage.this.runOnUiThread(new Runnable() {
-						public void run() {
-							currentTask = new ServerQuery().execute(keywordmap);
-						}
-					});
+					searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
+					preProcessForNextPage(searchTerm, true);
 				}
 			});
 		}
@@ -280,39 +259,61 @@ public class SearchPage extends Activity {
 	 * @param v
 	 */
 	public void onEnterButtonClick(View v) {
-		// Check whether the search term entered was a dept or a course (ends in a number)
-		// TODO does not yet account for instructor, will update after auto-complete implemented
-		
-		progressBar = new ProgressDialog(v.getContext());
-		progressBar.setCancelable(true);
-		progressBar.setCanceledOnTouchOutside(false);
-		progressBar.setIndeterminate(true);
-		progressBar.setMessage("Retrieving Reviews...\nNote: Departments take a long time to search");
-		progressBar.show();
-		
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
+		preProcessForNextPage(searchTerm, false);
+	}
+	
+	/**
+	 * Helper function to process going to next page and getting the correct info
+	 */
+	private void preProcessForNextPage(String searchTerm, boolean fromAuto) {
+		Type type = Type.UNKNOWN;	// Default to UNKNOWN type
 		
-		AutoCompleteDB auto = new AutoCompleteDB(v.getContext());
+		if (fromAuto) {
+			// Normalize the string and find the type
+			String type_enum = searchTerm.substring(0, 4);
+			// Re-set the type if we know it from autocomplete
+			type = (type_enum.equals(Constants.INSTRUCTOR_TAG)) ? Type.INSTRUCTOR :
+				(type_enum.equals(Constants.COURSE_TAG)) ? Type.COURSE : Type.DEPARTMENT;
+			searchTerm = searchTerm.substring(4);
+			searchTerm = Normalizer.normalize(searchTerm, type);
+		}
+		
+		AutoCompleteDB auto = new AutoCompleteDB(context);
 		auto.open();
-		keywordmap = auto.getInfoForParser(searchTerm, Type.UNKNOWN);
+		
+		// Call the function with appropriate Type field
+		keywordmap = auto.getInfoForParser(searchTerm,  type);
+
 		auto.close();
+		
+		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
 			// TODO: display dialog
 			Log.w("SearchPage", "enter pressed, no data found");
-			progressBar.dismiss();
 			
 			showDialog(NO_MATCH_FOUND_DIALOG);
 			
 			return;
 		}
+		
+		showDialog(PROGRESS_BAR);
+
+		// Add the keywordmap into RecentSearches
+		RecentSearches rs = new RecentSearches(context);
+		rs.open();
+		rs.addKeyword(keywordmap);
+		rs.close();
 	
+		// Run async thread to get the correct information for the keywordmap
 		SearchPage.this.runOnUiThread(new Runnable() {
 			public void run() {
 				currentTask = new ServerQuery().execute(keywordmap);
 			}
 		});
+		
 	}
-
+	
 	/**
 	 * Button listener for clear button, erases all texts in AutocompleteTextView
 	 * @param v
@@ -336,6 +337,52 @@ public class SearchPage extends Activity {
 			           }
 			       });
 			dialog = builder.create();
+			return dialog;
+		case RECENT_DIALOG: 
+			// Get the data from RecentSearches
+			RecentSearches rs = new RecentSearches(context);
+			rs.open();
+			final String[] result = rs.getKeywords();
+			rs.close();
+			
+			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
+			ListView recentList = new ListView(this);
+			
+			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(SearchPage.this,
+	                R.layout.item_list, result);
+			
+			recentList.setAdapter(auto_adapter);
+			bDialog.setView(recentList);
+			bDialog.setInverseBackgroundForced(true);
+			
+			// Set item listener
+			bDialog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int pos, long arg3) {
+					String searchTerm = result[pos];
+					Log.w("SearchPage Menu", "Item selected from recent is " + searchTerm);
+					preProcessForNextPage(searchTerm, true);
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+				}
+				
+			});
+			
+			dialog = bDialog.create();
+			return dialog;
+		case PROGRESS_BAR:
+			String message = "Retrieving Reviews...\n";
+			if (keywordmap.getType() == Type.DEPARTMENT)
+				message = message + "Note: Departments may take a long time to search";
+			dialog = ProgressDialog.show(SearchPage.this, "", 
+                    message, true);
+			dialog.setCancelable(true);
+			dialog.setCanceledOnTouchOutside(false);
+			progressBar = dialog;
 			return dialog;
 		default:
 			return null;

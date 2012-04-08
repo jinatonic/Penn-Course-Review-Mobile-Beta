@@ -36,35 +36,35 @@ public class CourseSearchCache {
 	
 	/* Query strings */
 	private static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
-			"p_id integer PRIMARY KEY AUTOINCREMENT," +
-			"name char(50) NOT NULL," +
-			"course_alias char(20) NOT NULL DEFAULT ''," +
-			"description char(700)," +
-			"semester char(50)," +
-			"course_id char(50) NOT NULL," +
-			"comments char(300)," +
-			"instructor_id char(50) NOT NULL," +
-			"instructor_name char(50) NOT NULL," +
-			"instructor_path char(50) NOT NULL," +
-			"num_reviewers integer NOT NULL DEFAULT 0," +
-			"num_students integer NOT NULL DEFAULT 0," +
-			"course_path char(50) NOT NULL," +
-			"ratings_amountLearned float," +
-			"ratings_commAbility float," +
-			"ratings_courseQuality float," +
-			"ratings_difficulty float," +
-			"ratings_instructorAccess float," +
-			"ratings_instructorQuality float," +
-			"ratings_readingsValue float," +
-			"ratings_recommendMajor float," +
-			"ratings_recommendNonMajor float," +
-			"ratings_stimulateInterest float," +
-			"ratings_workRequired float," +
-			"section_id char(50) NOT NULL," +
-			"section_alias char(50) NOT NULL," +
-			"section_path char(50) NOT NULL," +
-			"section_name char(50) NOT NULL," +
-			"section_number char(20) NOT NULL," +
+			"p_id integer PRIMARY KEY AUTOINCREMENT," +		// 0
+			"name char(50) NOT NULL," +						// 1
+			"course_alias char(20) NOT NULL DEFAULT ''," +	// 2
+			"description char(700)," +						// 3
+			"semester char(50)," +							// 4
+			"course_id char(50) NOT NULL," +				// 5
+			"comments char(300)," +							// 6
+			"instructor_id char(50) NOT NULL," +			// 7
+			"instructor_name char(50) NOT NULL," +			// 8
+			"instructor_path char(50) NOT NULL," +			// 9
+			"num_reviewers integer NOT NULL DEFAULT 0," +	// 10
+			"num_students integer NOT NULL DEFAULT 0," +	// 11
+			"course_path char(50) NOT NULL," +				// 12
+			"ratings_amountLearned float," +				// 13
+			"ratings_commAbility float," +					// 14
+			"ratings_courseQuality float," +				// 15
+			"ratings_difficulty float," +					// 16
+			"ratings_instructorAccess float," +				// 17
+			"ratings_instructorQuality float," +			// 18
+			"ratings_readingsValue float," +				// 19
+			"ratings_recommendMajor float," +				// 20
+			"ratings_recommendNonMajor float," +			// 21
+			"ratings_stimulateInterest float," +			// 22
+			"ratings_workRequired float," +					// 23
+			"section_id char(50) NOT NULL," +				// 24
+			"section_alias char(50) NOT NULL," +			// 25
+			"section_path char(50) NOT NULL," +				// 26
+			"section_name char(50) NOT NULL," +				// 27
+			"section_number char(20) NOT NULL," +			// 28		NOTE: DO NOT TOUCHED NUMBERED COLUMNS
 			"type int NOT NULL," + // 0 for course, 1 for instructor
 			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
@@ -240,41 +240,41 @@ public class CourseSearchCache {
 			Log.w(TAG, "getCourse: courses found, number is " + c.getCount());
 			do {
 				Section tSection = new Section(	
-												c.getString(c.getColumnIndex("section_alias")),
-												c.getString(c.getColumnIndex("section_id")),
-												c.getString(c.getColumnIndex("section_path")),
-												c.getString(c.getColumnIndex("section_name")),
-												c.getString(c.getColumnIndex("section_number"))
+												c.getString(25),
+												c.getString(24),
+												c.getString(26),
+												c.getString(27),
+												c.getString(28)
 											  );
 				Ratings tRate = new Ratings(
-												c.getDouble(c.getColumnIndex("ratings_amountLearned")),
-												c.getDouble(c.getColumnIndex("ratings_commAbility")),
-												c.getDouble(c.getColumnIndex("ratings_courseQuality")),
-												c.getDouble(c.getColumnIndex("ratings_difficulty")),
-												c.getDouble(c.getColumnIndex("ratings_instructorAccess")),
-												c.getDouble(c.getColumnIndex("ratings_instructorQuality")),
-												c.getDouble(c.getColumnIndex("ratings_readingsValue")),
-												c.getDouble(c.getColumnIndex("ratings_recommendMajor")),
-												c.getDouble(c.getColumnIndex("ratings_recommendNonMajor")),
-												c.getDouble(c.getColumnIndex("ratings_stimulateInterest")),
-												c.getDouble(c.getColumnIndex("ratings_workRequired"))
+												c.getDouble(13),
+												c.getDouble(14),
+												c.getDouble(15),
+												c.getDouble(16),
+												c.getDouble(17),
+												c.getDouble(18),
+												c.getDouble(19),
+												c.getDouble(20),
+												c.getDouble(21),
+												c.getDouble(22),
+												c.getDouble(23)
 										   );
 				Instructor tIns = new Instructor(
-												c.getString(c.getColumnIndex("instructor_id")),
-												c.getString(c.getColumnIndex("instructor_name")),
-												c.getString(c.getColumnIndex("instructor_path"))
+												c.getString(7),
+												c.getString(8),
+												c.getString(8)
 												);
 				Course tCourse = new Course(
-												c.getString(c.getColumnIndex("course_alias")),
-												c.getString(c.getColumnIndex("name")),
-												c.getString(c.getColumnIndex("description")),
-												c.getString(c.getColumnIndex("semester")),
-												c.getString(c.getColumnIndex("comments")),
-												c.getString(c.getColumnIndex("course_id")),
+												c.getString(2),
+												c.getString(1),
+												c.getString(3),
+												c.getString(4),
+												c.getString(6),
+												c.getString(5),
 												tIns,
-												c.getInt(c.getColumnIndex("num_reviewers")),
-												c.getInt(c.getColumnIndex("num_students")),
-												c.getString(c.getColumnIndex("course_path")),
+												c.getInt(10),
+												c.getInt(11),
+												c.getString(12),
 												tRate,
 												tSection
 										   );

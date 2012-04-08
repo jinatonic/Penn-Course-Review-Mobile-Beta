@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
+import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 /**
@@ -126,16 +127,32 @@ public class RecentSearches {
 	 * @param keyword
 	 * @param type
 	 */
-	public void addKeyword(String keyword, Type type) {
-		Log.w(TAG, "Adding " + keyword + " to database");
+	public void addKeyword(KeywordMap keywordmap) {
+		Log.w(TAG, "Adding " + keywordmap.getAlias() + " - " + keywordmap.getName() + " to database");
+		
+		int type;
+		String word;
+		if (keywordmap.getType() == Type.COURSE) {
+			type = 0;
+			word = Constants.COURSE_TAG + keywordmap.getAlias() + " - " + keywordmap.getName();
+		}
+		else if (keywordmap.getType() == Type.DEPARTMENT) {
+			type = 2;
+			word = Constants.DEPARTMENT_TAG + keywordmap.getAlias() + " - " + keywordmap.getName();
+		}
+		else {
+			type = 1;
+			word = Constants.INSTRUCTOR_TAG + keywordmap.getName();
+		}
+		
 		// First try to delete the keyword in DB if already exists in DB
-		deleteIfExistsInDB(keyword);
+		deleteIfExistsInDB(word);
 		int nextpk = getNextPK();
 		
 		ContentValues values = new ContentValues();
 		values.put("s_id", nextpk);
-		values.put("keyword", keyword);
-		values.put("type", (type == Type.COURSE) ? 0 : (type == Type.INSTRUCTOR) ? 1 : 2);
+		values.put("keyword", word);
+		values.put("type", type);
 		
 		if (mDb.insert(SEARCHES_TABLE, null, values) == -1)
 			Log.w(TAG, "Failed to insert new keyword into table");

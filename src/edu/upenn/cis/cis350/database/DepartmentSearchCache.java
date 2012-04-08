@@ -35,24 +35,24 @@ public class DepartmentSearchCache {
 
 	/* Query strings */
 	private static final String DEPARTMENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + DEPARTMENT_TABLE + " (" +
-			"d_id integer PRIMARY KEY AUTOINCREMENT," +
-			"dept_name char(50) NOT NULL," +
-			"dept_id char(20) NOT NULL," +
-			"dept_path char(50)," +
-			"course_name char(50) NOT NULL," +
-			"course_id char(20) NOT NULL," +
-			"course_path char(50) NOT NULL," +
-			"ratings_amountLearned float," +
-			"ratings_commAbility float," +
-			"ratings_courseQuality float," +
-			"ratings_difficulty float," +
-			"ratings_instructorAccess float," +
-			"ratings_instructorQuality float," +
-			"ratings_readingsValue float," +
-			"ratings_recommendMajor float," +
-			"ratings_recommendNonMajor float," +
-			"ratings_stimulateInterest float," +
-			"ratings_workRequired float," +
+			"d_id integer PRIMARY KEY AUTOINCREMENT," +		// 0
+			"dept_name char(50) NOT NULL," +				// 1
+			"dept_id char(20) NOT NULL," +					// 2
+			"dept_path char(50)," +							// 3
+			"course_name char(50) NOT NULL," +				// 4
+			"course_id char(20) NOT NULL," +				// 5
+			"course_path char(50) NOT NULL," +				// 6
+			"ratings_amountLearned float," +				// 7
+			"ratings_commAbility float," +					// 8
+			"ratings_courseQuality float," +				// 9
+			"ratings_difficulty float," +					// 10
+			"ratings_instructorAccess float," +				// 11
+			"ratings_instructorQuality float," +			// 12
+			"ratings_readingsValue float," +				// 13
+			"ratings_recommendMajor float," +				// 14
+			"ratings_recommendNonMajor float," +			// 15
+			"ratings_stimulateInterest float," +			// 16
+			"ratings_workRequired float," +					// 17			// NOTE: DO NOT TOUCH NUMBERED COLUMNS
 			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 
 	/* TAG for logging purposes */
@@ -197,43 +197,27 @@ public class DepartmentSearchCache {
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
 			Log.w(TAG, "getDepartment: department found, number of courses in department is " + c.getCount());
-			String dept_name = c.getString(c.getColumnIndex("dept_name"));
-			String dept_id = c.getString(c.getColumnIndex("dept_id"));
-			String dept_path = c.getString(c.getColumnIndex("dept_path"));
+			String dept_name = c.getString(1);
+			String dept_id = c.getString(2);
+			String dept_path = c.getString(3);
 			ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
 			
-			int AL = c.getColumnIndex("ratings_amountLearned");
-			int CA = c.getColumnIndex("ratings_commAbility");
-			int CQ = c.getColumnIndex("ratings_courseQuality");
-			int D = c.getColumnIndex("ratings_difficulty");
-			int IA = c.getColumnIndex("ratings_instructorAccess");
-			int IQ = c.getColumnIndex("ratings_instructorQuality");
-			int RV = c.getColumnIndex("ratings_readingsValue");
-			int RM = c.getColumnIndex("ratings_recommendMajor");
-			int RNM = c.getColumnIndex("ratings_recommendNonMajor");
-			int SI = c.getColumnIndex("ratings_stimulateInterest");
-			int WR = c.getColumnIndex("ratings_workRequired");
-			
-			int course_name_index = c.getColumnIndex("course_name");
-			int course_id_index = c.getColumnIndex("course_id");
-			int course_path_index = c.getColumnIndex("course_path");
-			
 			do {
-				String course_name = c.getString(course_name_index);
-				String course_id = c.getString(course_id_index);
-				String course_path = c.getString(course_path_index);
+				String course_name = c.getString(4);
+				String course_id = c.getString(5);
+				String course_path = c.getString(6);
 				Ratings tRate = new Ratings(
-						c.getDouble(AL),
-						c.getDouble(CA),
-						c.getDouble(CQ),
-						c.getDouble(D),
-						c.getDouble(IA),
-						c.getDouble(IQ),
-						c.getDouble(RV),
-						c.getDouble(RM),
-						c.getDouble(RNM),
-						c.getDouble(SI),
-						c.getDouble(WR)
+						c.getDouble(7),
+						c.getDouble(8),
+						c.getDouble(9),
+						c.getDouble(10),
+						c.getDouble(11),
+						c.getDouble(12),
+						c.getDouble(13),
+						c.getDouble(14),
+						c.getDouble(15),
+						c.getDouble(16),
+						c.getDouble(17)
 				   );
 				
 				courseAverages.add(new CourseAverage(course_name, course_id, course_path, tRate));

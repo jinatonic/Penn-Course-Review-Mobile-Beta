@@ -70,11 +70,10 @@ public class SearchPage extends Activity {
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		
-
-		databaseMaintainance();
 		search_term = "";
 		context = this.getApplicationContext();
+		
+		databaseMaintainance();
 
 		setContentView(R.layout.search_page);
 
@@ -241,17 +240,22 @@ public class SearchPage extends Activity {
 	 */
 	public void databaseMaintainance() {
 		// Perform clear on database
-		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
+		CourseSearchCache cache = new CourseSearchCache(context);
 		cache.open();
 		cache.clearOldEntries();
 		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
 		cache.close();
 		
-		DepartmentSearchCache dept_cache = new DepartmentSearchCache(this.getApplicationContext());
+		DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
 		dept_cache.open();
 		dept_cache.clearOldEntries();
 		dept_cache.resetTables();
 		dept_cache.close();
+		
+		RecentSearches rs = new RecentSearches(context);
+		rs.open();
+		rs.resetTables();
+		rs.close();
 	}
 
 	/**
@@ -355,19 +359,13 @@ public class SearchPage extends Activity {
 			bDialog.setView(recentList);
 			bDialog.setInverseBackgroundForced(true);
 			
-			// Set item listener
-			bDialog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1,
+				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int pos, long arg3) {
-					String searchTerm = result[pos];
-					Log.w("SearchPage Menu", "Item selected from recent is " + searchTerm);
-					preProcessForNextPage(searchTerm, true);
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
+					Log.w("SearchPage", "Selected " + result[pos] + " from recentlist");
+					preProcessForNextPage(result[pos], true);
 				}
 				
 			});
@@ -375,11 +373,10 @@ public class SearchPage extends Activity {
 			dialog = bDialog.create();
 			return dialog;
 		case PROGRESS_BAR:
-			String message = "Retrieving Reviews...\n";
+			String message = "Retrieving Reviews...";
 			if (keywordmap.getType() == Type.DEPARTMENT)
-				message = message + "Note: Departments may take a long time to search";
-			dialog = ProgressDialog.show(SearchPage.this, "", 
-                    message, true);
+				message = message + "\nNote: Departments may take a long time to search";
+			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
 			progressBar = dialog;

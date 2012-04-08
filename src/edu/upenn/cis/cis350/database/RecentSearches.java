@@ -34,8 +34,7 @@ public class RecentSearches {
 	/* Query strings */
 	private static final String SEARCHES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + SEARCHES_TABLE + " (" +
 			"s_id integer PRIMARY KEY," +
-			"keyword char(50) NOT NULL," +
-			"type int NOT NULL)";
+			"keyword char(50) NOT NULL)";
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "RecentSearches";
@@ -90,7 +89,6 @@ public class RecentSearches {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DELETE FROM " + SEARCHES_TABLE + " WHERE type > -1");
 		mDb.execSQL("DROP TABLE IF EXISTS "+ SEARCHES_TABLE);
 	}
 	
@@ -130,18 +128,14 @@ public class RecentSearches {
 	public void addKeyword(KeywordMap keywordmap) {
 		Log.w(TAG, "Adding " + keywordmap.getAlias() + " - " + keywordmap.getName() + " to database");
 		
-		int type;
 		String word;
 		if (keywordmap.getType() == Type.COURSE) {
-			type = 0;
 			word = Constants.COURSE_TAG + keywordmap.getAlias() + " - " + keywordmap.getName();
 		}
 		else if (keywordmap.getType() == Type.DEPARTMENT) {
-			type = 2;
 			word = Constants.DEPARTMENT_TAG + keywordmap.getAlias() + " - " + keywordmap.getName();
 		}
 		else {
-			type = 1;
 			word = Constants.INSTRUCTOR_TAG + keywordmap.getName();
 		}
 		
@@ -152,7 +146,6 @@ public class RecentSearches {
 		ContentValues values = new ContentValues();
 		values.put("s_id", nextpk);
 		values.put("keyword", word);
-		values.put("type", type);
 		
 		if (mDb.insert(SEARCHES_TABLE, null, values) == -1)
 			Log.w(TAG, "Failed to insert new keyword into table");
@@ -171,10 +164,8 @@ public class RecentSearches {
 		if (c.getCount() > 0) {
 			do {
 				String keyword = c.getString(1);
-				int type = c.getInt(2);
-				String enum_type = (type == 0) ? Constants.COURSE_TAG : (type == 1) ? Constants.INSTRUCTOR_TAG : Constants.DEPARTMENT_TAG;
 				
-				rs.add(enum_type + keyword);
+				rs.add(keyword);
 			} while (c.moveToNext());
 			
 			String[] result = new String[rs.size()];

@@ -20,7 +20,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
  *
  */
 
-public class RecentSearches {
+public class FavoritesDB {
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
@@ -28,16 +28,16 @@ public class RecentSearches {
 	
 	/* Database and table names */
 	private static final String DATABASE_NAME = "ResultsCache";
-	private static final String SEARCHES_TABLE = "RecentSearches";
+	private static final String FAVORITES_TABLE = "Favorites";
 	private static final int DATABASE_VERSION = 2;
 	
 	/* Query strings */
-	private static final String SEARCHES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + SEARCHES_TABLE + " (" +
+	private static final String FAVORITES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + FAVORITES_TABLE + " (" +
 			"s_id integer PRIMARY KEY," +
 			"keyword char(50) NOT NULL)";
 	
 	/* TAG for logging purposes */
-	private static final String TAG = "RecentSearches";
+	private static final String TAG = "FavoritesDB";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -47,19 +47,19 @@ public class RecentSearches {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SEARCHES_TABLE_CREATE);
+            db.execSQL(FAVORITES_TABLE_CREATE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE);
             onCreate(db);
         }
     }
 	
-	public RecentSearches(Context ctx) {
+	public FavoritesDB(Context ctx) {
 		this.mCtx = ctx;
 	}
 	
@@ -68,11 +68,11 @@ public class RecentSearches {
 	 * @return SearchCache with the database opened
 	 * @throws SQLException
 	 */
-	public RecentSearches open() throws SQLException {
-		Log.w(TAG, "Opening RecentSearches");
+	public FavoritesDB open() throws SQLException {
+		Log.w(TAG, "Opening FavoritesTable");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
-		mDb.execSQL(SEARCHES_TABLE_CREATE);
+		mDb.execSQL(FAVORITES_TABLE_CREATE);
 		return this;
 	}
 	
@@ -80,7 +80,7 @@ public class RecentSearches {
 	 * Close all associated database tables
 	 */
 	public void close() {
-		Log.w(TAG, "Closing RecentSearches");
+		Log.w(TAG, "Closing FavoritesTable");
 		mDbHelper.close();
 	}
 	
@@ -89,14 +89,14 @@ public class RecentSearches {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DROP TABLE IF EXISTS "+ SEARCHES_TABLE);
+		mDb.execSQL("DROP TABLE IF EXISTS "+ FAVORITES_TABLE);
 	}
 	
 	/**
 	 * Get the next integer for primary key
 	 */
 	private int getNextPK() {
-		String query = "SELECT s_id FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 1";
+		String query = "SELECT s_id FROM " + FAVORITES_TABLE + " ORDER BY s_id DESC LIMIT 1";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
@@ -134,7 +134,7 @@ public class RecentSearches {
 		values.put("s_id", nextpk);
 		values.put("keyword", word);
 		
-		if (mDb.insert(SEARCHES_TABLE, null, values) == -1)
+		if (mDb.insert(FAVORITES_TABLE, null, values) == -1)
 			Log.w(TAG, "Failed to insert new keyword into table");
 	}
 	
@@ -143,7 +143,7 @@ public class RecentSearches {
 	 */
 	public String[] getKeywords() {
 		ArrayList<String> rs = new ArrayList<String>();
-		String query = "SELECT DISTINCT keyword FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
+		String query = "SELECT DISTINCT keyword FROM " + FAVORITES_TABLE + " ORDER BY s_id DESC LIMIT 50";
 		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();

@@ -4,25 +4,26 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
-import edu.upenn.cis.cis350.database.SearchCache;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
 
-public class SearchCacheTest extends AndroidTestCase {
+public class CourseSearchCacheTest extends AndroidTestCase {
 
 	Context c;
 	Course testCourse;
-	SearchCache cache;
+	CourseSearchCache cache;
 	
 	@Override
 	public void setUp() {
 		c = getContext();
-		cache = new SearchCache(c);
+		cache = new CourseSearchCache(c);
 		cache.open();
 		cache.resetTables();
+		cache.close();
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
 		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
@@ -39,22 +40,22 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test initializing the tables and such
 	 */
 	public void test_initialization() {
-		cache.resetTables();
+		cache.open();
 		
-		ArrayList<Course> rs = cache.getCourse("test");
+		ArrayList<Course> rs = cache.getCourse("test", 0);
 		assertEquals(0, rs.size());
-		
-		cache.close();
 	}
 	
 	/**
 	 * Test inserting an element into the table
 	 */
 	public void test_insertingCourse() {
+		cache.open();
+		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
-		cache.addCourse(t);
+		cache.addCourse(t, 0);
 		
 		assertEquals(1, cache.getSize());
 	}
@@ -63,6 +64,8 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test inserting invalid elements into the table
 	 */
 	public void test_insertingCourseWithInvalidEntries() {
+		cache.open();
+		
 		assertEquals(0, cache.getSize());
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
@@ -73,7 +76,7 @@ public class SearchCacheTest extends AndroidTestCase {
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
-		cache.addCourse(t);		// should fail and not insert anything
+		cache.addCourse(t, 0);		// should fail and not insert anything
 		
 		assertEquals(0, cache.getSize());
 	}
@@ -82,12 +85,14 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database based on course alias (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithCourseAlias() {
+		cache.open();
+		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
-		cache.addCourse(t);
+		cache.addCourse(t, 0);
 		
-		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
+		ArrayList<Course> testCourses = cache.getCourse("CIS-121", 0);
 		
 		assertEquals(1, testCourses.size());
 		assertEquals("12", testCourses.get(0).getID());
@@ -100,12 +105,14 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database based on professor's name (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithProfName() {
+		cache.open();
+		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
-		cache.addCourse(t);
+		cache.addCourse(t, 1);
 		
-		ArrayList<Course> testCourses = cache.getCourse("Kostas");
+		ArrayList<Course> testCourses = cache.getCourse("Kostas", 1);
 		
 		assertEquals(1, testCourses.size());
 		assertEquals("12", testCourses.get(0).getID());
@@ -118,7 +125,9 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database with invalid input
 	 */
 	public void test_getCourseInvalidEntry() {
-		ArrayList<Course> testCourses = cache.getCourse("HAHAHA");
+		cache.open();
+		
+		ArrayList<Course> testCourses = cache.getCourse("HAHAHA", 0);
 		
 		assertEquals(0, testCourses.size());
 	}
@@ -127,14 +136,18 @@ public class SearchCacheTest extends AndroidTestCase {
 	 * Test resetting the table
 	 */
 	public void test_resetTable() {
+		cache.open();
+		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
-		cache.addCourse(t);
+		cache.addCourse(t, 0);
 		
 		cache.resetTables();
+		cache.close();
+		cache.open();
 		
-		ArrayList<Course> testCourses = cache.getCourse("CIS-121");
+		ArrayList<Course> testCourses = cache.getCourse("CIS-121", 0);
 		assertEquals(0, testCourses.size());
 	}
 }

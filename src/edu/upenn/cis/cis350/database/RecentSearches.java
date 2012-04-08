@@ -93,18 +93,6 @@ public class RecentSearches {
 	}
 	
 	/**
-	 * Checks if a given keyword exists in the table
-	 * @param keyword
-	 * @return true if matched something in db, false otherwise
-	 */
-	private void deleteIfExistsInDB(String keyword) {
-		// First try to match based on course alias
-		keyword = keyword.toLowerCase();
-		String query = "DELETE FROM " + SEARCHES_TABLE + " WHERE LOWER(keyword)='" + keyword + "'";
-		mDb.execSQL(query);
-	}
-	
-	/**
 	 * Get the next integer for primary key
 	 */
 	private int getNextPK() {
@@ -140,7 +128,6 @@ public class RecentSearches {
 		}
 		
 		// First try to delete the keyword in DB if already exists in DB
-		deleteIfExistsInDB(word);
 		int nextpk = getNextPK();
 		
 		ContentValues values = new ContentValues();
@@ -156,14 +143,14 @@ public class RecentSearches {
 	 */
 	public String[] getKeywords() {
 		ArrayList<String> rs = new ArrayList<String>();
-		String query = "SELECT * FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
+		String query = "SELECT DISTINCT keyword FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
 		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
 		if (c.getCount() > 0) {
 			do {
-				String keyword = c.getString(1);
+				String keyword = c.getString(0);
 				
 				rs.add(keyword);
 			} while (c.moveToNext());

@@ -69,7 +69,7 @@ public class RecentSearches {
 	 * @throws SQLException
 	 */
 	public RecentSearches open() throws SQLException {
-		Log.w(TAG, "Opening CourseSearchCache");
+		Log.w(TAG, "Opening RecentSearches");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(SEARCHES_TABLE_CREATE);
@@ -80,7 +80,7 @@ public class RecentSearches {
 	 * Close all associated database tables
 	 */
 	public void close() {
-		Log.w(TAG, "Closing CourseSearchCache");
+		Log.w(TAG, "Closing RecentSearches");
 		mDbHelper.close();
 	}
 	
@@ -89,19 +89,7 @@ public class RecentSearches {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DROP TABLE IF EXISTS "+ SEARCHES_TABLE);
-	}
-	
-	/**
-	 * Checks if a given keyword exists in the table
-	 * @param keyword
-	 * @return true if matched something in db, false otherwise
-	 */
-	private void deleteIfExistsInDB(String keyword) {
-		// First try to match based on course alias
-		keyword = keyword.toLowerCase();
-		String query = "DELETE FROM " + SEARCHES_TABLE + " WHERE LOWER(keyword)='" + keyword + "'";
-		mDb.execSQL(query);
+		mDb.execSQL("DELETE FROM "+ SEARCHES_TABLE + " WHERE s_id > -1");
 	}
 	
 	/**
@@ -140,7 +128,6 @@ public class RecentSearches {
 		}
 		
 		// First try to delete the keyword in DB if already exists in DB
-		deleteIfExistsInDB(word);
 		int nextpk = getNextPK();
 		
 		ContentValues values = new ContentValues();
@@ -156,14 +143,14 @@ public class RecentSearches {
 	 */
 	public String[] getKeywords() {
 		ArrayList<String> rs = new ArrayList<String>();
-		String query = "SELECT * FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
+		String query = "SELECT DISTINCT keyword FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
 		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
 		if (c.getCount() > 0) {
 			do {
-				String keyword = c.getString(1);
+				String keyword = c.getString(0);
 				
 				rs.add(keyword);
 			} while (c.moveToNext());

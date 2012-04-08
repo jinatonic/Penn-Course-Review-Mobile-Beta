@@ -44,7 +44,6 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
-	private Dialog progressBar;
 	private AutoCompleteDB autocomplete;
 	private String search_term;
 	
@@ -73,8 +72,6 @@ public class SearchPage extends Activity {
 		search_term = "";
 		context = this.getApplicationContext();
 		
-		databaseMaintainance();
-
 		setContentView(R.layout.search_page);
 
 		// Set font to Times New Roman
@@ -154,6 +151,9 @@ public class SearchPage extends Activity {
 		super.onResume();
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setText("");
+		
+		// dismiss any remaining dialog that might be open
+		removeDialog(RECENT_DIALOG);
 	}
 	
 	@Override
@@ -163,10 +163,8 @@ public class SearchPage extends Activity {
 			if (currentTask != null) {
 				Log.w("SearchPage", "Back button is pressed, trying cancel current task");
 				currentTask.cancel(true);
-				if (progressBar != null) {
-					progressBar.setCancelable(true);
-					progressBar.dismiss();
-				}
+				removeDialog(PROGRESS_BAR);
+				
 				AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 				search.setText("");
 			}
@@ -232,30 +230,6 @@ public class SearchPage extends Activity {
 				}
 			});
 		}
-	}
-
-	/**
-	 * Helper function to check for out-of-date entries in all of the databases and delete them if necessary
-	 * Also fires the async query to get autocomplete data if the database doesn't exist 
-	 */
-	public void databaseMaintainance() {
-		// Perform clear on database
-		CourseSearchCache cache = new CourseSearchCache(context);
-		cache.open();
-		cache.clearOldEntries();
-		//cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
-		cache.close();
-		
-		DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
-		dept_cache.open();
-		dept_cache.clearOldEntries();
-		//dept_cache.resetTables();
-		dept_cache.close();
-		
-		RecentSearches rs = new RecentSearches(context);
-		rs.open();
-		//rs.resetTables();
-		rs.close();
 	}
 
 	/**
@@ -328,6 +302,7 @@ public class SearchPage extends Activity {
 		selectedFromAutocomplete = false;
 	}
 	
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
 		switch (id) {
@@ -379,7 +354,6 @@ public class SearchPage extends Activity {
 			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
-			progressBar = dialog;
 			return dialog;
 		default:
 			return null;
@@ -476,8 +450,8 @@ public class SearchPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
+			removeDialog(PROGRESS_BAR);
 			proceed();	// TODO fix
-			progressBar.dismiss();
 		}
 
 		public void runParser(KeywordMap input) {

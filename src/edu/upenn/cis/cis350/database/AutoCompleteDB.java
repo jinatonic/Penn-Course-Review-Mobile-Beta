@@ -263,4 +263,15 @@ public class AutoCompleteDB {
 		Log.w(TAG, "Resetting the AutoComplete table");
 		mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
 	}
+	
+	/**
+	 * Get the size of the cache (number of entries)
+	 * @return
+	 */
+	public int getSize() {
+		Log.w(TAG, "Getting size of the table");
+		Cursor c = mDb.rawQuery("SELECT count(*) AS count FROM " + AUTOCOMPLETE_TABLE, null);
+		c.moveToFirst();
+		return c.getInt(c.getColumnIndex("count"));
+	}
 }

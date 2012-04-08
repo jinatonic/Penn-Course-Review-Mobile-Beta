@@ -37,7 +37,7 @@ public class StartPage extends Activity {
 		setContentView(R.layout.start_page);
 
 		context = this.getApplicationContext();
-		
+
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView startPCRView = (TextView) findViewById(R.id.start_pcr);
@@ -57,7 +57,7 @@ public class StartPage extends Activity {
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
-		
+
 		new DatabaseMaintenance().execute("");
 	}
 
@@ -71,7 +71,7 @@ public class StartPage extends Activity {
 						progressBar = new ProgressDialog(v.getContext());
 						progressBar.setCancelable(true);
 						progressBar.setIndeterminate(true);
-						progressBar.setMessage("Autocomplete Downloading ...Please Wait 5 minutes...");
+						progressBar.setMessage("Autocomplete downloading. Please wait 5 minutes...");
 						//progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 						progressBar.show();
 						//reset progress bar status
@@ -136,16 +136,16 @@ public class StartPage extends Activity {
 			goToSearchPage();
 		}
 	}
-	
+
 	class DatabaseMaintenance extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... arg0) {
 			databaseMaintenance();
-			
+
 			return "DB maintainance complete";
 		}
-		
+
 
 		/**
 		 * Helper function to check for out-of-date entries in all of the databases and delete them if necessary
@@ -156,20 +156,20 @@ public class StartPage extends Activity {
 			CourseSearchCache cache = new CourseSearchCache(context);
 			cache.open();
 			cache.clearOldEntries();
-//			cache.resetTables();
+			// cache.resetTables();
 			cache.close();
-			
+
 			DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
 			dept_cache.open();
 			dept_cache.clearOldEntries();
-//			dept_cache.resetTables();
+			// dept_cache.resetTables();
 			dept_cache.close();
-			
-//			RecentSearches rs = new RecentSearches(context);
-//			rs.open();
-//			rs.resetTables();
-//			rs.close();
+
+			// RecentSearches rs = new RecentSearches(context);
+			// rs.open();
+			// rs.resetTables();
+			// rs.close();
 		}
-		
+
 	}
 }

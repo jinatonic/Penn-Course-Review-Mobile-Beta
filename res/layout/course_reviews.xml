@@ -41,8 +41,8 @@
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_marginTop="3dip"
+            android:layout_weight="1"
             android:scrollbars="none" >
 
             <TextView
@@ -75,11 +75,11 @@
             <TextView
                 android:id="@+id/instructor_tab"
                 android:layout_width="115dip"
-                android:layout_height="wrap_content"
+                android:layout_height="34dip"
                 android:layout_column="1"
                 android:clickable="true"
                 android:onClick="onClickSort"
-                android:shrinkColumns="*"
+                android:padding="6dip"
                 android:text="@string/instructor"
                 android:textColor="@color/text_navy"
                 android:textSize="9sp"
@@ -88,7 +88,7 @@
             <TextView
                 android:id="@+id/course_quality_tab"
                 android:layout_width="58dip"
-                android:layout_height="wrap_content"
+                android:layout_height="34dip"
                 android:layout_column="2"
                 android:clickable="true"
                 android:onClick="onClickSort"
@@ -101,7 +101,7 @@
             <TextView
                 android:id="@+id/instructor_quality_tab"
                 android:layout_width="58dip"
-                android:layout_height="wrap_content"
+                android:layout_height="34dip"
                 android:layout_column="3"
                 android:clickable="true"
                 android:onClick="onClickSort"
@@ -114,11 +114,11 @@
             <TextView
                 android:id="@+id/difficulty_tab"
                 android:layout_width="58dip"
-                android:layout_height="wrap_content"
+                android:layout_height="34dip"
                 android:layout_column="4"
                 android:clickable="true"
                 android:onClick="onClickSort"
-                android:padding="5dip"
+                android:padding="6dip"
                 android:text="@string/difficulty"
                 android:textColor="@color/text_navy"
                 android:textSize="9sp"
@@ -132,7 +132,7 @@
 
         <View
             android:layout_width="fill_parent"
-            android:layout_height="10dip"
+            android:layout_height="15dip"
             android:background="@android:color/transparent" />
 
         <ScrollView

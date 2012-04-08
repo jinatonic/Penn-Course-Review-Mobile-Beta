@@ -72,8 +72,6 @@ public class SearchPage extends Activity {
 		search_term = "";
 		context = this.getApplicationContext();
 		
-		databaseMaintainance();
-
 		setContentView(R.layout.search_page);
 
 		// Set font to Times New Roman
@@ -232,30 +230,6 @@ public class SearchPage extends Activity {
 				}
 			});
 		}
-	}
-
-	/**
-	 * Helper function to check for out-of-date entries in all of the databases and delete them if necessary
-	 * Also fires the async query to get autocomplete data if the database doesn't exist 
-	 */
-	public void databaseMaintainance() {
-		// Perform clear on database
-		CourseSearchCache cache = new CourseSearchCache(context);
-		cache.open();
-		cache.clearOldEntries();
-		cache.resetTables();	// REMOVE THIS WHEN FINISH DEBUGGING
-		cache.close();
-		
-		DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
-		dept_cache.open();
-		dept_cache.clearOldEntries();
-		dept_cache.resetTables();
-		dept_cache.close();
-		
-		RecentSearches rs = new RecentSearches(context);
-		rs.open();
-		rs.resetTables();
-		rs.close();
 	}
 
 	/**

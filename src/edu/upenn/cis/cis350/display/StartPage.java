@@ -4,18 +4,21 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
+import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends Activity {
@@ -23,6 +26,7 @@ public class StartPage extends Activity {
 	private Button btnStartProgress;
 	private ProgressDialog progressBar;
 
+	private Context context;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,8 @@ public class StartPage extends Activity {
 
 		setContentView(R.layout.start_page);
 
+		context = this.getApplicationContext();
+		
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView startPCRView = (TextView) findViewById(R.id.start_pcr);
@@ -51,6 +57,8 @@ public class StartPage extends Activity {
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
+		
+		new DatabaseMaintenance().execute("");
 	}
 
 	public void addListenerOnButton() {
@@ -97,7 +105,7 @@ public class StartPage extends Activity {
 		autocomplete.open();
 		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		if (autocomplete.updatesNeeded()) {
-			new AutocompleteQuery().execute("lala");
+			new AutocompleteQuery().execute("");
 		} 
 		else {
 			autocomplete.close();
@@ -127,5 +135,41 @@ public class StartPage extends Activity {
 		protected void onPostExecute(String result) {
 			goToSearchPage();
 		}
+	}
+	
+	class DatabaseMaintenance extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			databaseMaintenance();
+			
+			return "DB maintainance complete";
+		}
+		
+
+		/**
+		 * Helper function to check for out-of-date entries in all of the databases and delete them if necessary
+		 * Also fires the async query to get autocomplete data if the database doesn't exist 
+		 */
+		public void databaseMaintenance() {
+			// Perform clear on database
+			CourseSearchCache cache = new CourseSearchCache(context);
+			cache.open();
+			cache.clearOldEntries();
+//			cache.resetTables();
+			cache.close();
+			
+			DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
+			dept_cache.open();
+			dept_cache.clearOldEntries();
+//			dept_cache.resetTables();
+			dept_cache.close();
+			
+//			RecentSearches rs = new RecentSearches(context);
+//			rs.open();
+//			rs.resetTables();
+//			rs.close();
+		}
+		
 	}
 }

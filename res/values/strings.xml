@@ -23,5 +23,9 @@
     <string name="semester">Semester</string>
     <string name="recent">Recent</string>
     <string name="quit">Quit</string>
+    <string name="search">Search</string>
+    <string name="history">Recent History</string>
+    <string name="favorites">Favorites</string>
+    <string name="start_text">Search, view your favorites, or choose from recent searches</string>
 
 </resources>

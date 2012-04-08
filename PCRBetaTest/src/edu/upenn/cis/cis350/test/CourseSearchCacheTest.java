@@ -2,7 +2,6 @@ package edu.upenn.cis.cis350.test;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.test.AndroidTestCase;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.Course;
@@ -13,14 +12,12 @@ import edu.upenn.cis.cis350.objects.Section;
 
 public class CourseSearchCacheTest extends AndroidTestCase {
 
-	Context c;
 	Course testCourse;
 	CourseSearchCache cache;
 	
 	@Override
 	public void setUp() {
-		c = getContext();
-		cache = new CourseSearchCache(c);
+		cache = new CourseSearchCache(getContext());
 		cache.open();
 		cache.resetTables();
 		cache.close();

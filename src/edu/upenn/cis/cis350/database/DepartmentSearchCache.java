@@ -108,8 +108,7 @@ public class DepartmentSearchCache {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DELETE FROM " + DEPARTMENT_TABLE + " WHERE course_id > -1");
-		mDb.execSQL("DROP TABLE IF EXISTS " + DEPARTMENT_TABLE);
+		mDb.execSQL("DELETE FROM " + DEPARTMENT_TABLE + " WHERE d_id > -1");
 	}
 
 	/** 

@@ -68,7 +68,9 @@ public class Sorter {
 		}
 	}
 
-	// sort list by instructor, order = 0 is alphabetical, 1 is reverse
+	// sort list by instructor or course depending on the Type, order = 0 is alphabetical, 1 is reverse
+	//we first have to add the arraylist into a wrapper object InstructorCourse or IdCourse since for instructors
+	//we are sorting by Name, while for courses we are sorting by Course ID (two different fields).
 	public ArrayList<Course> sortAlphabetically(ArrayList<Course> courses, Type sortType, int order) {
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
 		switch (sortType) {
@@ -120,7 +122,9 @@ public class Sorter {
 		return sortedCourses;
 	}
 
-	//sort list by semester, order = 0 is increasing, 1 is decreasing
+	//sort Arraylist of Courses by semester, order = 0 is increasing, 1 is decreasing
+	//Semester is a string like '2007A' or '2011B' - we first create a wrapper Pair object (implements comparable) that matches 
+	//the semester to the Course object.
 	public ArrayList<Course> sortBySemester(ArrayList<Course> courses, int order){
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;

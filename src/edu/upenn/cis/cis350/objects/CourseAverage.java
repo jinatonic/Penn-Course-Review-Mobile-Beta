@@ -38,6 +38,8 @@ public class CourseAverage {
 		return path;
 	}
 
+	//Computes the averages for each type of rating in the ArrayList. A Course object contains a Rating object, and 
+	//each Rating object has a field for each type of Rating. 
 	private Ratings computeAverageRatings(ArrayList<Course> courses) {
 
 		double count_amountLearned = 0;

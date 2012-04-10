@@ -13,6 +13,11 @@ public class AutoComplete {
 
 	// Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR
 	// Example format for course: name = "INTRO GREEK ARCHAELOGY", path = "/coursehistories/2", course_id = "AAMW-401", type = COURSE
+	/*This method retrieves various JSONObjects from specified URLS and parses the resulting JSONObject to retrieve various fields
+	 * such as department names, instructor paths, course ids, etc. It stores the result as a KeywordMap object and returns an arraylist of 
+	 * KeywordMaps. 
+	 * 
+	 */
 	public static ArrayList<KeywordMap> getAutoCompleteTerms() {
 		ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
 		JSONObject instructor_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/instructors" + Parser.token);
@@ -20,6 +25,7 @@ public class AutoComplete {
 		JSONObject dept_result = null;
 		JSONObject instructor_result = null;
 		try {
+			//Forms keywordmaps for instructors
 			if(instructor_object.has("result")) {
 				instructor_result = instructor_object.getJSONObject("result");
 				JSONArray instructor_values = null;
@@ -40,6 +46,7 @@ public class AutoComplete {
 				}
 			}
 			if(dept_object.has("result")){
+				//creates keywordmap for departments
 				dept_result = dept_object.getJSONObject("result");
 				JSONArray dept_values = null;
 				if(dept_result.has("values")){
@@ -68,6 +75,7 @@ public class AutoComplete {
 							dpt_result = dpt_object.getJSONObject("result");
 							JSONArray coursehistories = null;
 							if(dpt_result.has("coursehistories")){
+								//form keywordmaps for courses
 								coursehistories = dpt_result.getJSONArray("coursehistories");
 								for(int m = 0 ; m < coursehistories.length(); m++){
 									JSONObject course = coursehistories.getJSONObject(m);

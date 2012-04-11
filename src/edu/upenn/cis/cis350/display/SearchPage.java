@@ -348,9 +348,9 @@ public class SearchPage extends Activity {
 			dialog = bDialog.create();
 			return dialog;
 		case PROGRESS_BAR:
-			String message = "Retrieving Reviews...";
+			String message = "Retrieving reviews...";
 			if (keywordmap.getType() == Type.DEPARTMENT)
-				message = message + "\nNote: Departments may take a long time to search";
+				message = message + "\nNote: Departments may take longer to retrieve";
 			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);

@@ -261,7 +261,7 @@ public class CourseSearchCache {
 				Instructor tIns = new Instructor(
 												c.getString(7),
 												c.getString(8),
-												c.getString(8)
+												c.getString(9)
 												);
 				Course tCourse = new Course(
 												c.getString(2),

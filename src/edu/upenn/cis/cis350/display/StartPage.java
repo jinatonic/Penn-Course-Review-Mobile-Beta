@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
@@ -58,6 +59,7 @@ public class StartPage extends Activity {
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
 
+		// Run db maintenance in the background
 		new DatabaseMaintenance().execute("");
 	}
 
@@ -105,8 +107,16 @@ public class StartPage extends Activity {
 		autocomplete.open();
 		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		if (autocomplete.updatesNeeded()) {
+			// Autocomplete table is empty, need to populate it initially
 			new AutocompleteQuery().execute("");
-		} 
+			autocomplete.close();
+		}
+		else if (autocomplete.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
+			// Autocomplete table is corrupt or missing entries, redownload it
+			autocomplete.resetTables();
+			new AutocompleteQuery().execute("");	// TODO add toast
+			autocomplete.close();
+		}
 		else {
 			autocomplete.close();
 			goToSearchPage();
@@ -165,6 +175,7 @@ public class StartPage extends Activity {
 			// dept_cache.resetTables();
 			dept_cache.close();
 
+			// debugging only
 			// RecentSearches rs = new RecentSearches(context);
 			// rs.open();
 			// rs.resetTables();

@@ -89,7 +89,8 @@ public class RecentSearches {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DELETE FROM "+ SEARCHES_TABLE + " WHERE s_id > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
+		mDb.execSQL(SEARCHES_TABLE_CREATE);
 	}
 	
 	/**

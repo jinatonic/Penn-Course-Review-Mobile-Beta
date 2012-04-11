@@ -121,7 +121,8 @@ public class CourseSearchCache {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE p_id > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
+		mDb.execSQL(COURSE_TABLE_CREATE);
 	}
 	
 	/** 

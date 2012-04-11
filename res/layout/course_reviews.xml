@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
     <TextView
@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="190dip"
+        android:layout_height="160dip"
         android:background="@color/bg_blue"
         android:orientation="vertical"
         android:padding="10dp" >
@@ -27,7 +27,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/text_navy"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/text_gray"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ScrollView
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="2sp"
                 android:textColor="@color/black"
-                android:textSize="9sp" />
+                android:textSize="11sp" />
         </ScrollView>
     </LinearLayout>
 
@@ -65,7 +65,10 @@
         android:layout_height="fill_parent"
         android:background="@layout/bg_gradient"
         android:orientation="vertical"
-        android:padding="10dp" >
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -74,54 +77,58 @@
 
             <TextView
                 android:id="@+id/instructor_tab"
-                android:layout_width="115dip"
-                android:layout_height="34dip"
+                android:layout_width="97dip"
+                android:layout_height="43dip"
                 android:layout_column="1"
                 android:clickable="true"
+                android:gravity="center_horizontal"
                 android:onClick="onClickSort"
-                android:padding="6dip"
+                android:padding="5dip"
                 android:text="@string/instructor"
                 android:textColor="@color/text_navy"
-                android:textSize="9sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/course_quality_tab"
-                android:layout_width="58dip"
-                android:layout_height="34dip"
+                android:layout_width="70dip"
+                android:layout_height="43dip"
                 android:layout_column="2"
                 android:clickable="true"
+                android:gravity="center_horizontal"
                 android:onClick="onClickSort"
-                android:padding="6dip"
+                android:padding="5dip"
                 android:text="@string/course_quality"
                 android:textColor="@color/text_navy"
-                android:textSize="9sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/instructor_quality_tab"
-                android:layout_width="58dip"
-                android:layout_height="34dip"
+                android:layout_width="70dip"
+                android:layout_height="43dip"
                 android:layout_column="3"
                 android:clickable="true"
+                android:gravity="center_horizontal"
                 android:onClick="onClickSort"
-                android:padding="6dip"
+                android:padding="5dip"
                 android:text="@string/instructor_quality"
                 android:textColor="@color/text_navy"
-                android:textSize="9sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/difficulty_tab"
-                android:layout_width="58dip"
-                android:layout_height="34dip"
+                android:layout_width="65dip"
+                android:layout_height="43dip"
                 android:layout_column="4"
                 android:clickable="true"
+                android:gravity="center_horizontal"
                 android:onClick="onClickSort"
-                android:padding="6dip"
+                android:padding="5dip"
                 android:text="@string/difficulty"
                 android:textColor="@color/text_navy"
-                android:textSize="9sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -132,56 +139,22 @@
 
         <View
             android:layout_width="fill_parent"
-            android:layout_height="15dip"
+            android:layout_height="7dip"
             android:background="@android:color/transparent" />
 
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:scrollbars="none" >
+        <LinearLayout
+            android:id="@+id/listview_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" >
 
-            <TableLayout
+            <ListView
                 android:id="@+id/reviews"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:onClick="onClickPick"
-                android:stretchColumns="4" >
-
-                <TableRow>
-
-                    <TextView
-                        android:layout_column="1"
-                        android:height="0dip"
-                        android:width="115dip" />
-
-                    <TextView
-                        android:layout_column="2"
-                        android:height="0dip"
-                        android:padding="6dip"
-                        android:width="58dip" />
-
-                    <TextView
-                        android:layout_column="3"
-                        android:height="0dip"
-                        android:padding="6dip"
-                        android:width="58dip" />
-
-                    <TextView
-                        android:layout_column="4"
-                        android:height="0dip"
-                        android:padding="5dip"
-                        android:width="58dip" />
-                </TableRow>
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="12dip"
-                    android:background="@android:color/transparent" />
-            </TableLayout>
-        </ScrollView>
+                android:cacheColorHint="#00000000"
+                android:scrollbars="none" >
+            </ListView>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

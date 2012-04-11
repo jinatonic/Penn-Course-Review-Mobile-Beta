@@ -3,14 +3,19 @@ package edu.upenn.cis.cis350.display;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
@@ -31,6 +36,7 @@ public abstract class Display extends Activity {
 	Sort sortingField;
 	ArrayList<Course> courseReviews; // for course, instructor
 	ArrayList<CourseAverage> courseAvgs; // for department
+	HashMap<Integer, Course> row_map; // for retrieving Course from row clicked on
 	Type displayType; // Type of page displayed (course, instructor, dept)
 	
 	public String keyword;
@@ -87,6 +93,10 @@ public abstract class Display extends Activity {
 	    return true;
 	}
 
+	/** Formats and prints each row of the table of reviews for course,
+	 * instructor, or department pages
+	 * @param displayType - the type of page we are printing on (course, instructor, or dept)
+	 * */
 	public void printReviews(Type displayType) {
 		// Set the current page display type
 		this.displayType = displayType;
@@ -94,61 +104,70 @@ public abstract class Display extends Activity {
 		switch (displayType) {
 		case COURSE:
 		case INSTRUCTOR:
-			// Iterate through reviews for course and fill table cells
+			ListView lv = (ListView)findViewById(R.id.reviews);
+			row_map = new HashMap<Integer, Course>(); // Used for mapping row number to Course in the row
+			// Grid item mapping to pass to ListView SimpleAdapter
+			String[] columnHeaders = new String[] {"col_1", "col_2", "col_3", "col_4"};
+			int[] cellIds = new int[] {R.id.item1, R.id.item2, R.id.item3, R.id.item4};
+			
+			// List of all rows (each row being a map of columnHeader to cell text)
+			List<HashMap<String, String>> allRows = new ArrayList<HashMap<String, String>>();
+			
+			// Iterate through Courses and create a new row mapping for each
 			Iterator<Course> iter = courseReviews.iterator();
-			TableLayout tl = (TableLayout)findViewById(R.id.reviews);
-			tl.removeAllViews();
-
+			int rowNumber = 0; // used to keep track of which row we are on, for mapping in list_map
 			while(iter.hasNext()) {
 				Course curCourse = iter.next();
-
-				/* Create a new row to be added. */
-				TableRow tr = new TableRow(this);
-				tr.setLayoutParams(new LayoutParams(
-						LayoutParams.FILL_PARENT,
-						LayoutParams.WRAP_CONTENT));
+				Ratings curRatings = curCourse.getRatings();
+				
+				// Map the current row number to this Course
+				row_map.put(new Integer(rowNumber), curCourse);
+				
+				// Mapping of columnHeader to text in each cell for this row
+				HashMap<String, String> row = new HashMap<String, String>();
 
 				switch (displayType) {
 				case COURSE:
-					/* Create a TextView for Instructor to be the row-content. */
-					TextView instructor = createRow(165, Gravity.LEFT, curCourse.getInstructor().getName(), 1);
-					tr.addView(instructor);
-
-					/* Create a TextView for Course Quality to be the row-content. */
-					TextView courseQuality = createRow(89, Gravity.CENTER_HORIZONTAL,
-							((Double)curCourse.getRatings().getCourseQuality()).toString(), 2);
-					tr.addView(courseQuality);
+					// Instructor
+					row.put("col_1", curCourse.getInstructor().getName());
+					// Course Quality
+					row.put("col_2", ((Double)curRatings.getCourseQuality()).toString());
 					break;
 				case INSTRUCTOR:
-					/* Create a TextView for Course Id to be the row-content. */
-					TextView courseId = createRow(165, Gravity.LEFT, curCourse.getAlias(), 1);
-					tr.addView(courseId);
-
-					/* Create a TextView for Course Semester to be the row-content. */
-					TextView courseSemester = createRow(89, Gravity.CENTER_HORIZONTAL, curCourse.getSemester(), 2);
-					tr.addView(courseSemester);
+					// Course Id
+					row.put("col_1", curCourse.getAlias());
+					// Course Semester
+					row.put("col_2", curCourse.getSemester());
 					break;
 				default:
 					break;
 
 				}
-				/* Create a TextView for Instructor Quality to be the row-content. */
-				TextView instructorQuality = createRow(89, Gravity.CENTER_HORIZONTAL,
-						((Double)curCourse.getRatings().getInstructorQuality()).toString(), 3);
-				tr.addView(instructorQuality);
-
-				/* Create a TextView for Difficulty to be the row-content. */
-				TextView difficulty = createRow(89, Gravity.CENTER_HORIZONTAL,
-						((Double)curCourse.getRatings().getDifficulty()).toString(), 4);
-				tr.addView(difficulty);
-
-				/* Add row to TableLayout. */
-				tl.addView(tr,new TableLayout.LayoutParams(
-						LayoutParams.FILL_PARENT,
-						LayoutParams.WRAP_CONTENT));
+				// Instructor Quality
+				row.put("col_3", ((Double)curRatings.getInstructorQuality()).toString());
+				// Difficulty
+				row.put("col_4", ((Double)curRatings.getDifficulty()).toString());
+				// Add this row to allRows
+				allRows.add(row);
+				
+				rowNumber++;
 			} // while loop
-			tl.invalidate();
-			break;
+			
+			SimpleAdapter adapter = new SimpleAdapter(
+					this, allRows, R.layout.list_row, columnHeaders, cellIds);
+			lv.setAdapter(adapter);
+			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				public void onItemClick(AdapterView parent, View v, int position, long id) {
+					Log.v("position", ""+position);
+					Log.v("id",""+id);
+					Course c = row_map.get(new Integer(position));
+					if (c == null) {
+						Log.v("Course", "course is null");
+					}
+				}
+			});
+			
+			break; // end of COURSE and INSTRUCTOR cases
 		case DEPARTMENT:
 			// Iterate through reviews for course and fill table cells
 			Iterator<CourseAverage> iter2 = courseAvgs.iterator();
@@ -192,11 +211,6 @@ public abstract class Display extends Activity {
 			tl2.invalidate();
 			break;
 		} // outer switch
-	}
-
-	public void onClickPick(View v) {
-		int x = 0;
-		x++;
 	}
 
 	public void onClickSort(View v) {
@@ -281,7 +295,7 @@ public abstract class Display extends Activity {
 						0, cAvg.getPath(), cAvg.getRatings(), null);
 				courseToCourseAvg.put(c, cAvg);
 			}
-			
+
 			// ArrayList of Courses to sort from and into before mapping back to CourseAverages
 			ArrayList<Course> tempCourses = new ArrayList<Course>();
 			for (Course tempCourse : courseToCourseAvg.keySet()) {

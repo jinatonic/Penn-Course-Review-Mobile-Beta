@@ -29,10 +29,16 @@ public class RecentSearches {
 	/* Database and table names */
 	private static final String DATABASE_NAME = "ResultsCache";
 	private static final String SEARCHES_TABLE = "RecentSearches";
+	private static final String FAVORITES_TABLE = "Favorites";
+	
 	private static final int DATABASE_VERSION = 2;
 	
 	/* Query strings */
 	private static final String SEARCHES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + SEARCHES_TABLE + " (" +
+			"s_id integer PRIMARY KEY," +
+			"keyword char(50) NOT NULL)";
+	
+	private static final String FAVORITES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + FAVORITES_TABLE + " (" +
 			"s_id integer PRIMARY KEY," +
 			"keyword char(50) NOT NULL)";
 	
@@ -48,6 +54,7 @@ public class RecentSearches {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SEARCHES_TABLE_CREATE);
+            db.execSQL(FAVORITES_TABLE_CREATE);
         }
 
         @Override
@@ -55,6 +62,7 @@ public class RecentSearches {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE);
             onCreate(db);
         }
     }
@@ -73,6 +81,7 @@ public class RecentSearches {
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(SEARCHES_TABLE_CREATE);
+		mDb.execSQL(FAVORITES_TABLE_CREATE);
 		return this;
 	}
 	
@@ -86,18 +95,22 @@ public class RecentSearches {
 	
 	/** 
 	 * Delete all entries from all tables in database (for testing purposes)
+	 * @param type - 0 for recent, 1 for favorites
 	 */
-	public void resetTables() {
+	public void resetTables(int type) {
 		Log.w(TAG, "Resetting database tables");
-		mDb.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
-		mDb.execSQL(SEARCHES_TABLE_CREATE);
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		mDb.execSQL("DROP TABLE IF EXISTS " + table);
+		mDb.execSQL((type == 0) ? SEARCHES_TABLE_CREATE : FAVORITES_TABLE_CREATE);
 	}
 	
 	/**
 	 * Get the next integer for primary key
+	 * @param type - 0 for recent, 1 for favorites
 	 */
-	private int getNextPK() {
-		String query = "SELECT s_id FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 1";
+	private int getNextPK(int type) {
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		String query = "SELECT s_id FROM " + table + " ORDER BY s_id DESC LIMIT 1";
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		
@@ -111,11 +124,11 @@ public class RecentSearches {
 	
 	/**
 	 * Adds the given keyword to the database
-	 * @param keyword
-	 * @param type
+	 * @param keywordmap
+	 * @param type - 0 for recent, 1 for favorites
 	 */
-	public void addKeyword(KeywordMap keywordmap) {
-		Log.w(TAG, "Adding " + keywordmap.getAlias() + " - " + keywordmap.getName() + " to database");
+	public void addKeyword(KeywordMap keywordmap, int type) {
+		Log.w(TAG, "Adding " + keywordmap.getAlias() + " - " + keywordmap.getName() + " to database " + type);
 		
 		String word;
 		if (keywordmap.getType() == Type.COURSE) {
@@ -128,23 +141,47 @@ public class RecentSearches {
 			word = Constants.INSTRUCTOR_TAG + keywordmap.getName();
 		}
 		
-		// First try to delete the keyword in DB if already exists in DB
-		int nextpk = getNextPK();
+		int nextpk = getNextPK(type);
 		
 		ContentValues values = new ContentValues();
 		values.put("s_id", nextpk);
 		values.put("keyword", word);
 		
-		if (mDb.insert(SEARCHES_TABLE, null, values) == -1)
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		
+		if (mDb.insert(table, null, values) == -1)
+			Log.w(TAG, "Failed to insert new keyword into table");
+	}
+	
+	/**
+	 * Overloaded for taking in a string argument
+	 * Adds the given keyword to the database
+	 * @param keyword
+	 * @param type - 0 for recent, 1 for favorites
+	 */
+	public void addKeyword(String keyword, int type) {
+		Log.w(TAG, "Adding " + keyword + " to database " + type);
+		
+		int nextpk = getNextPK(type);
+		
+		ContentValues values = new ContentValues();
+		values.put("s_id", nextpk);
+		values.put("keyword", keyword);
+		
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		
+		if (mDb.insert(table, null, values) == -1)
 			Log.w(TAG, "Failed to insert new keyword into table");
 	}
 	
 	/**
 	 * Returns a list of keywords ordered by how recently it was accessed
+	 * @param type - 0 for recent, 1 for favorites
 	 */
-	public String[] getKeywords() {
+	public String[] getKeywords(int type) {
 		ArrayList<String> rs = new ArrayList<String>();
-		String query = "SELECT DISTINCT keyword FROM " + SEARCHES_TABLE + " ORDER BY s_id DESC LIMIT 50";
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		String query = "SELECT DISTINCT keyword FROM " + table + " ORDER BY s_id DESC LIMIT 50";
 		
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
@@ -157,12 +194,38 @@ public class RecentSearches {
 			} while (c.moveToNext());
 			
 			String[] result = new String[rs.size()];
-			Log.w(TAG, "RecentSearches returned " + rs.size() + " results");
+			Log.w(TAG, "RecentSearches returned " + rs.size() + " results, based on " + table);
 			return rs.toArray(result);
 		}
 		else {
 			Log.w(TAG, "RecentSearches returned no results");
 			return new String[0];
 		}
+	}
+	
+	/**
+	 * Remove the given keyword from the database
+	 * @param keyword
+	 * @param type - 0 for recent, 1 for favorites
+	 */
+	public void removeKeyword(String keyword, int type) {
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		mDb.execSQL("DELETE FROM " + table + " WHERE keyword='" + keyword + "'");
+	}
+	
+	/**
+	 * Checks if the given keyword exists in database
+	 * @param keyword
+	 * @param type - 0 for recent, 1 for favorites
+	 * @return
+	 */
+	public boolean ifExists(String keyword, int type) {
+		Log.w(TAG, "Checking if " + keyword + " exists in table");
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		String query = "SELECT * FROM " + table + " WHERE keyword='" + keyword + "' LIMIT 1";
+		
+		Cursor c = mDb.rawQuery(query, null);
+		
+		return c.getCount() != 0;
 	}
 }

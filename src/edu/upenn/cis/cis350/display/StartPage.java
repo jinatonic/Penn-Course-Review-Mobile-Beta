@@ -3,9 +3,11 @@ package edu.upenn.cis.cis350.display;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,21 +15,34 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
+import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends Activity {
-	private AutoCompleteDB autocomplete;
-	private Button btnStartProgress;
+	private Button searchButton, favoritesButton, historyButton;
 	private ProgressDialog progressBar;
 
-	private Context context;
+	private boolean DLcomplete;
+	private boolean DLstarted;
+
+	// Database pointers
+	CourseSearchCache courseSearchCache;
+	DepartmentSearchCache departmentSearchCache;
+	AutoCompleteDB autoCompleteDB;
+	RecentSearches recentSearches;
+
+	private static final int RECENT_DIALOG = 0;
+	private static final int FAVORITES_DIALOG = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +52,13 @@ public class StartPage extends Activity {
 
 		setContentView(R.layout.start_page);
 
-		context = this.getApplicationContext();
+		DLcomplete = true;
+		DLstarted = false;
+
+		courseSearchCache = new CourseSearchCache(this.getApplicationContext());
+		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
+		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
+		recentSearches = new RecentSearches(this.getApplicationContext());
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
@@ -47,13 +68,13 @@ public class StartPage extends Activity {
 		startCommentView.setTypeface(timesNewRoman);
 
 		// Set icon of search button
-		Button searchButton = (Button) findViewById(R.id.search_button);
+		searchButton = (Button) findViewById(R.id.search_button);
 		searchButton.setBackgroundResource(R.drawable.search_icon);
 		// Set icon of favorites button
-		Button favoritesButton = (Button) findViewById(R.id.favorites_button);
+		favoritesButton = (Button) findViewById(R.id.favorites_button);
 		favoritesButton.setBackgroundResource(R.drawable.favorites_icon);
 		// Set icon of history button
-		Button historyButton = (Button) findViewById(R.id.history_button);
+		historyButton = (Button) findViewById(R.id.history_button);
 		historyButton.setBackgroundResource(R.drawable.history_icon);
 
 		setProgressBarIndeterminateVisibility(true);
@@ -63,28 +84,117 @@ public class StartPage extends Activity {
 		new DatabaseMaintenance().execute("");
 	}
 
-	public void addListenerOnButton() {
-		btnStartProgress = (Button) findViewById(R.id.search_button);
-		btnStartProgress.setOnClickListener(
-				new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// prepare for a progress bar dialog
-						progressBar = new ProgressDialog(v.getContext());
-						progressBar.setCancelable(true);
-						progressBar.setIndeterminate(true);
-						progressBar.setMessage("Autocomplete downloading. Please wait 5 minutes...");
-						//progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						progressBar.show();
-						//reset progress bar status
+	@Override
+	public void onResume() {
+		super.onResume();
+		// remove any remaining dialogs
+		removeDialog(FAVORITES_DIALOG);
+		removeDialog(RECENT_DIALOG);
+		
+		if (DLstarted && DLcomplete) {
+			Log.w("StartPage", "Resuming startpage, download finished");
+			DLstarted = false;
 
-						StartPage.this.runOnUiThread(new Runnable() {
-							public void run() {
-								downloadAutoComplete();
-							}
-						});
+			goToSearchPage();
+		}
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		final String[] result;
+		AlertDialog.Builder bDialog;
+		ArrayAdapter<String> auto_adapter;
+		ListView recentList;
+		switch (id) {
+		case RECENT_DIALOG:
+		case FAVORITES_DIALOG:
+			// Get the data from RecentSearches
+			recentSearches.open();
+			result = recentSearches.getKeywords(id);	// 0 for recent, 1 for favorite, matches id
+			recentSearches.close();
+
+			bDialog = new AlertDialog.Builder(this);
+			recentList = new ListView(this);
+
+			auto_adapter = new ArrayAdapter<String>(StartPage.this,
+					R.layout.item_list, result);
+
+			recentList.setAdapter(auto_adapter);
+			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
+			bDialog.setView(recentList);
+			bDialog.setInverseBackgroundForced(true);
+
+			recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int pos, long arg3) {
+					Log.w("StartPage", "Selected " + result[pos] + " from list");
+					preProcessForNextPage(result[pos]);
+				}
+
+			});
+
+			dialog = bDialog.create();
+			return dialog;
+		default:
+			return null;
+		}
+	}
+
+	/** 
+	 * Sets the intent to go to SearchPage (so that it auto processes and queries for result)
+	 * @param keyword
+	 */
+	public void preProcessForNextPage(String keyword) {
+		Intent i = new Intent(this, SearchPage.class);
+		i.putExtra("keyword", keyword);
+
+		// Start activity with process request
+		startActivityForResult(i, Constants.PROCESS_REQUEST);
+	}
+
+	public void addListenerOnButton() {
+		searchButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// prepare for a progress bar dialog
+				progressBar = new ProgressDialog(v.getContext());
+				progressBar.setCancelable(true);
+				progressBar.setIndeterminate(true);
+				progressBar.setMessage("Autocomplete downloading. Please wait 5 minutes...");
+				//progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				progressBar.show();
+				//reset progress bar status
+
+				StartPage.this.runOnUiThread(new Runnable() {
+					public void run() {
+						downloadAutoComplete();
 					}
 				});
+			}
+			
+		});
+
+		favoritesButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDialog(FAVORITES_DIALOG);
+			}
+
+		});
+		
+		historyButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDialog(RECENT_DIALOG);
+			}
+			
+		});
 	}
 
 	public void goToSearchPage(){
@@ -92,33 +202,39 @@ public class StartPage extends Activity {
 		Intent i = new Intent(this, SearchPage.class);
 
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivityForResult(i, 0);
+		startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.w("StartPage", "Returning to startpage, quitting");
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST || requestCode == Constants.PROCESS_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// Don't do anything
+			}
+			else if (resultCode == Constants.RESULT_QUIT)
+				// Quit application if quit is issued
+				this.finish();
+		}
 	}
 
 	// file download simulator... a really simple
 	public void downloadAutoComplete() {
 
-		autocomplete = new AutoCompleteDB(this.getApplicationContext());
-		autocomplete.open();
-		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		if (autocomplete.updatesNeeded()) {
+		autoCompleteDB.open();
+		// autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		if (autoCompleteDB.updatesNeeded()) {
 			// Autocomplete table is empty, need to populate it initially
 			new AutocompleteQuery().execute("");
-			autocomplete.close();
+			autoCompleteDB.close();
 		}
-		else if (autocomplete.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
+		else if (autoCompleteDB.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
 			// Autocomplete table is corrupt or missing entries, redownload it
-			autocomplete.resetTables();
+			autoCompleteDB.resetTables();
 			new AutocompleteQuery().execute("");	// TODO add toast
-			autocomplete.close();
+			autoCompleteDB.close();
 		}
 		else {
-			autocomplete.close();
+			autoCompleteDB.close();
 			goToSearchPage();
 		}
 	}
@@ -132,12 +248,17 @@ public class StartPage extends Activity {
 				return null;
 			}
 
+			DLcomplete = false;
+			DLstarted = true;
+
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
 
 
-			autocomplete.open();
-			autocomplete.addEntries(result);
-			autocomplete.close();
+			autoCompleteDB.open();
+			autoCompleteDB.addEntries(result);
+			autoCompleteDB.close();
+
+			DLcomplete = true;
 
 			return "COMPLETE"; // CHANGE
 		}
@@ -163,23 +284,15 @@ public class StartPage extends Activity {
 		 */
 		public void databaseMaintenance() {
 			// Perform clear on database
-			CourseSearchCache cache = new CourseSearchCache(context);
-			cache.open();
-			cache.clearOldEntries();
+			courseSearchCache.open();
+			courseSearchCache.clearOldEntries();
 			// cache.resetTables();
-			cache.close();
+			courseSearchCache.close();
 
-			DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
-			dept_cache.open();
-			dept_cache.clearOldEntries();
+			departmentSearchCache.open();
+			departmentSearchCache.clearOldEntries();
 			// dept_cache.resetTables();
-			dept_cache.close();
-
-			// debugging only
-			// RecentSearches rs = new RecentSearches(context);
-			// rs.open();
-			// rs.resetTables();
-			// rs.close();
+			departmentSearchCache.close();
 		}
 
 	}

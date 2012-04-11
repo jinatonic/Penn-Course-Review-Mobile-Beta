@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
+import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
@@ -21,16 +22,22 @@ public class DisplayReviewsForDept extends Display {
 
 		setContentView(R.layout.dept_reviews);
 
+		searches_db = new RecentSearches(this.getApplicationContext());
+
 		// Get course reviews for the search term
 		Intent i = getIntent();
-		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
+		String type = i.getStringExtra(getResources().getString(R.string.SEARCH_TYPE));
+		String alias = i.getStringExtra(getResources().getString(R.string.SEARCH_ALIAS));
+		String name = i.getStringExtra(getResources().getString(R.string.SEARCH_NAME));
 
-		Log.w("DisplayReviewsForDepartment", "Displaying information for " + searchTerm);
+		keyword = type + alias + " - " + name;
 		
+		Log.w("DisplayReviewsForDepartment", "Displaying information for " + keyword);
+
 		// Initialize cache so parser can use it
 		DepartmentSearchCache cache = new DepartmentSearchCache(this.getApplicationContext());
 		cache.open();
-		Department dept = cache.getDepartment(searchTerm); // TODO CHANGE
+		Department dept = cache.getDepartment(alias); 
 		// Always close DB after using it!
 		cache.close();
 
@@ -46,7 +53,7 @@ public class DisplayReviewsForDept extends Display {
 			number.setText("No reviews found for this department.");
 			return;
 		}
-		
+
 		courseAvgs = dept.getCourseAverages(); // filling in courseAvgs for use by Display
 
 		// Top half of page under PCR header - check if dept found
@@ -57,10 +64,10 @@ public class DisplayReviewsForDept extends Display {
 
 		// Set the text below the PCR header - course ID (alias), course name, course description
 		number.setText(dept.getId());
-		TextView name = (TextView) findViewById(R.id.dept_name);
-		name.setText(dept.getName());
-		name.setTypeface(timesNewRoman);
-		
+		TextView name_view = (TextView) findViewById(R.id.dept_name);
+		name_view.setText(dept.getName());
+		name_view.setTypeface(timesNewRoman);
+
 		// Set difficulty to be thing its sorted by first
 		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);
 		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
@@ -68,5 +75,5 @@ public class DisplayReviewsForDept extends Display {
 
 		printReviews(Type.DEPARTMENT);
 	}
-	
+
 }

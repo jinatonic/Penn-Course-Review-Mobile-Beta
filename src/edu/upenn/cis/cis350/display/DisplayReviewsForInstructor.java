@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
+import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class DisplayReviewsForInstructor extends Display {
@@ -18,16 +19,20 @@ public class DisplayReviewsForInstructor extends Display {
 
 		setContentView(R.layout.instructor_reviews);
 
+		searches_db = new RecentSearches(this.getApplicationContext());
+
 		// Get course reviews for the search term
 		Intent i = getIntent();
-		String searchTerm = i.getStringExtra(getResources().getString(R.string.SEARCH_TERM));
+		String type = i.getStringExtra(getResources().getString(R.string.SEARCH_TYPE));
+		String name = i.getStringExtra(getResources().getString(R.string.SEARCH_NAME));
 
-		Log.w("DisplayReviewsForInstructor", "Displaying information for " + searchTerm);
-		
+		keyword = type + name;
+		Log.w("DisplayReviewsForInstructor", "Displaying information for " + keyword);
+
 		// Search database first
 		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
-		courseReviews = cache.getCourse(searchTerm, 1);
+		courseReviews = cache.getCourse(name, 1);
 		cache.close();
 
 		// Set font to Times New Roman

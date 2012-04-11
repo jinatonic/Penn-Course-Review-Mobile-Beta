@@ -15,4 +15,8 @@ public class Constants {
 	public static final String DEPARTMENT_TAG = "[D] ";
 	
 	public static final int MINIMUM_AUTOCOMPLETE_SIZE = 13000;
+	
+	public static final int RESULT_QUIT = -100;
+	public static final int NORMAL_OPEN_REQUEST = 100;
+	public static final int PROCESS_REQUEST = 101;
 }

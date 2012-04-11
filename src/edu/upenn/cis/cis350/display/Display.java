@@ -9,6 +9,9 @@ import java.util.Map;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -17,7 +20,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
+import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
@@ -34,6 +39,60 @@ public abstract class Display extends Activity {
 	HashMap<Integer, Course> row_map; // for retrieving Course from row clicked on
 	HashMap<Integer, CourseAverage> row_map_dept; // for retrieving CourseAverage from row clicked on, for use by dept page
 	Type displayType; // Type of page displayed (course, instructor, dept)
+	
+	public String keyword;
+	
+	public RecentSearches searches_db;
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		
+		searches_db.open();
+		if (searches_db.ifExists(keyword, 1)) {
+			// If keyword already exists, display "remove" option
+			menu.add(0, 0, 0, "Remove from favorites");
+		}
+		else {
+			// Else display "add" option
+			menu.add(0, 1, 0, "Add to favorites");
+		}
+		searches_db.close();
+		
+		menu.add(0, 2, 1, "Quit");
+		
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			// Remove from db
+			searches_db.open();
+			searches_db.removeKeyword(keyword, 1);
+			searches_db.close();
+			return true;
+		case 1:
+			searches_db.open();
+			searches_db.addKeyword(keyword, 1);
+			searches_db.close();
+			return true;
+		case 2:
+			setResult(Constants.RESULT_QUIT, null);
+			this.finish();
+			return true;
+		default: 
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.search_page_menu, menu);
+	    return true;
+	}
 
 	/** Formats and prints each row of the table of reviews for course,
 	 * instructor, or department pages

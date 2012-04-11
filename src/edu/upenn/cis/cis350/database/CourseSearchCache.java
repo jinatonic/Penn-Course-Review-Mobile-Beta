@@ -8,8 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.Instructor;
@@ -23,73 +21,13 @@ import edu.upenn.cis.cis350.objects.Section;
  *
  */
 
-public class CourseSearchCache {
+public class CourseSearchCache extends DatabaseHelperClass {
 	
 	private final Context mCtx;
-	private DatabaseHelper mDbHelper;
-	private SQLiteDatabase mDb;
-	
-	/* Database and table names */
-	private static final String DATABASE_NAME = "ResultsCache";
-	private static final String COURSE_TABLE = "CourseResults";
-	private static final int DATABASE_VERSION = 2;
-	
-	/* Query strings */
-	private static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
-			"p_id integer PRIMARY KEY AUTOINCREMENT," +		// 0
-			"name char(50) NOT NULL," +						// 1
-			"course_alias char(20) NOT NULL DEFAULT ''," +	// 2
-			"description char(700)," +						// 3
-			"semester char(50)," +							// 4
-			"course_id char(50) NOT NULL," +				// 5
-			"comments char(300)," +							// 6
-			"instructor_id char(50) NOT NULL," +			// 7
-			"instructor_name char(50) NOT NULL," +			// 8
-			"instructor_path char(50) NOT NULL," +			// 9
-			"num_reviewers integer NOT NULL DEFAULT 0," +	// 10
-			"num_students integer NOT NULL DEFAULT 0," +	// 11
-			"course_path char(50) NOT NULL," +				// 12
-			"ratings_amountLearned float," +				// 13
-			"ratings_commAbility float," +					// 14
-			"ratings_courseQuality float," +				// 15
-			"ratings_difficulty float," +					// 16
-			"ratings_instructorAccess float," +				// 17
-			"ratings_instructorQuality float," +			// 18
-			"ratings_readingsValue float," +				// 19
-			"ratings_recommendMajor float," +				// 20
-			"ratings_recommendNonMajor float," +			// 21
-			"ratings_stimulateInterest float," +			// 22
-			"ratings_workRequired float," +					// 23
-			"section_id char(50) NOT NULL," +				// 24
-			"section_alias char(50) NOT NULL," +			// 25
-			"section_path char(50) NOT NULL," +				// 26
-			"section_name char(50) NOT NULL," +				// 27
-			"section_number char(20) NOT NULL," +			// 28		NOTE: DO NOT TOUCHED NUMBERED COLUMNS
-			"type int NOT NULL," + // 0 for course, 1 for instructor
-			"date int NOT NULL)";	// Date is stored as day of year for convenience/computation sake
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "CourseSearchCache";
-
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(COURSE_TABLE_CREATE);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
-            onCreate(db);
-        }
-    }
+	
 	
 	public CourseSearchCache(Context ctx) {
 		this.mCtx = ctx;

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
@@ -20,52 +19,14 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
  *
  */
 
-public class RecentSearches {
+public class RecentSearches extends DatabaseHelperClass {
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 	
-	/* Database and table names */
-	private static final String DATABASE_NAME = "ResultsCache";
-	private static final String SEARCHES_TABLE = "RecentSearches";
-	private static final String FAVORITES_TABLE = "Favorites";
-	
-	private static final int DATABASE_VERSION = 2;
-	
-	/* Query strings */
-	private static final String SEARCHES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + SEARCHES_TABLE + " (" +
-			"s_id integer PRIMARY KEY," +
-			"keyword char(50) NOT NULL)";
-	
-	private static final String FAVORITES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + FAVORITES_TABLE + " (" +
-			"s_id integer PRIMARY KEY," +
-			"keyword char(50) NOT NULL)";
-	
 	/* TAG for logging purposes */
 	private static final String TAG = "RecentSearches";
-
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SEARCHES_TABLE_CREATE);
-            db.execSQL(FAVORITES_TABLE_CREATE);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE);
-            onCreate(db);
-        }
-    }
 	
 	public RecentSearches(Context ctx) {
 		this.mCtx = ctx;

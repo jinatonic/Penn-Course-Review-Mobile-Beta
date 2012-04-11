@@ -45,25 +45,25 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class SearchPage extends Activity {
 	private String search_term;
-	
+
 	// Timer for autocomplete
 	Timer autocompleteTimer;
-	
+
 	String searchTerm;
 	boolean selectedFromAutocomplete;
-	
+
 	// Database pointers
 	CourseSearchCache courseSearchCache;
 	DepartmentSearchCache departmentSearchCache;
 	AutoCompleteDB autoCompleteDB;
 	RecentSearches recentSearches;
-	
+
 	private static final int NO_MATCH_FOUND_DIALOG = 1;
 	private static final int RECENT_DIALOG = 2;
 	private static final int PROGRESS_BAR = 3;
-	
+
 	AsyncTask<KeywordMap, Integer, String> currentTask;
-	
+
 	// KeywordMap object that we are currently searching for
 	KeywordMap keywordmap;
 
@@ -71,7 +71,7 @@ public class SearchPage extends Activity {
 		super.onCreate(savedInstanceState);
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		setContentView(R.layout.search_page);
 		
 		// Instantiate the database items
@@ -79,7 +79,7 @@ public class SearchPage extends Activity {
 		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
 		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
 		recentSearches = new RecentSearches(this.getApplicationContext());
-		
+
 		search_term = "";
 
 		// Set font to Times New Roman
@@ -93,7 +93,7 @@ public class SearchPage extends Activity {
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setAdapter(new ArrayAdapter<String>(SearchPage.this, 
 				android.R.layout.simple_dropdown_item_1line, new String[0]));
-		
+
 		// Used for soft/virtual keyboards (they do not register with the onKeyListener)
 		search.addTextChangedListener(new TextWatcher() {
 
@@ -110,12 +110,12 @@ public class SearchPage extends Activity {
 					@Override
 					public void run() {
 						SearchPage.this.runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								setAutocomplete();
 							}
-							
+
 						});
 						autocompleteTimer = null;
 					}
@@ -126,21 +126,21 @@ public class SearchPage extends Activity {
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
-		
+
 		// Set the on-key listener to listen to textview input
 		search.setOnKeyListener(new OnKeyListener() {
-			
+
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// If event is key-down event on "enter" button
@@ -153,25 +153,31 @@ public class SearchPage extends Activity {
 				return false;
 			}
 		});
+		
+		Intent i = getIntent();
+		String keyword = i.getStringExtra("keyword");
+		if (keyword != null) {
+			preProcessForNextPage(keyword, true);
+		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 		search.setText("");
-		
+
 		// dismiss any remaining dialog that might be open
 		removeDialog(RECENT_DIALOG);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.search_page_menu, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.search_page_menu, menu);
+		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -179,13 +185,27 @@ public class SearchPage extends Activity {
 			showDialog(RECENT_DIALOG);
 			return true;
 		case R.id.menu_quit:
+			setResult(Constants.RESULT_QUIT);
 			this.finish();
 			return true;
 		default: 
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// Don't do anything
+			}
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
+				this.finish();
+			}
+		}
+	}
+
 	/**
 	 * Helper function to find the appropriate keywords for autocomplete and fill in the
 	 * autocomplete drop-down menu
@@ -196,19 +216,19 @@ public class SearchPage extends Activity {
 		if (term.length() >= 2 && !search_term.equals(term)) {
 			// Store last search_term
 			search_term = term;
-			
+
 			// Check database for autocomplete key terms
 			autoCompleteDB.open();
 			String[] result = autoCompleteDB.checkAutocomplete(term);
 			autoCompleteDB.close();
-			
+
 			Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 			// Set autocomplete rows
 			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(SearchPage.this,
-	                R.layout.item_list, result);
+					R.layout.item_list, result);
 			search.setAdapter(auto_adapter);
 			search.showDropDown();
-			
+
 			// Set the on-click listener for when user clicks on an item
 			// Only thing it does is set the flag for selectedFromAutocomplete to true
 			search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -231,13 +251,18 @@ public class SearchPage extends Activity {
 		searchTerm = ((EditText)findViewById(R.id.search_term)).getText().toString();
 		preProcessForNextPage(searchTerm, false);
 	}
-	
+
 	/**
 	 * Helper function to process going to next page and getting the correct info
 	 */
 	private void preProcessForNextPage(String searchTerm, boolean fromAuto) {
-		Type type = Type.UNKNOWN;	// Default to UNKNOWN type
+		if (searchTerm.equals("")) {
+			showDialog(NO_MATCH_FOUND_DIALOG);
+			return;
+		}
 		
+		Type type = Type.UNKNOWN;	// Default to UNKNOWN type
+
 		if (fromAuto) {
 			// Normalize the string and find the type
 			String type_enum = searchTerm.substring(0, 4);
@@ -247,40 +272,38 @@ public class SearchPage extends Activity {
 			searchTerm = searchTerm.substring(4);
 			searchTerm = Normalizer.normalize(searchTerm, type);
 		}
-		
+
 		autoCompleteDB.open();
-		
+
 		// Call the function with appropriate Type field
 		keywordmap = autoCompleteDB.getInfoForParser(searchTerm,  type);
 
 		autoCompleteDB.close();
-		
+
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
 			// TODO: display dialog
 			Log.w("SearchPage", "enter pressed, no data found");
-			
+
 			showDialog(NO_MATCH_FOUND_DIALOG);
-			
 			return;
 		}
-		
+
 		showDialog(PROGRESS_BAR);
 
 		// Add the keywordmap into RecentSearches
 		recentSearches.open();
-		recentSearches.addKeyword(keywordmap);
+		recentSearches.addKeyword(keywordmap, 0);
 		recentSearches.close();
-	
+
 		// Run async thread to get the correct information for the keywordmap
 		SearchPage.this.runOnUiThread(new Runnable() {
 			public void run() {
 				currentTask = new ServerQuery().execute(keywordmap);
 			}
 		});
-		
 	}
-	
+
 	/**
 	 * Button listener for clear button, erases all texts in AutocompleteTextView
 	 * @param v
@@ -290,7 +313,7 @@ public class SearchPage extends Activity {
 		search.setText("");
 		selectedFromAutocomplete = false;
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
@@ -298,31 +321,31 @@ public class SearchPage extends Activity {
 		case NO_MATCH_FOUND_DIALOG:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage("Search term had no results")
-			       .setCancelable(false)
-			       .setNegativeButton("Back", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			                dialog.cancel();
-			           }
-			       });
+			.setCancelable(false)
+			.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
 			dialog = builder.create();
 			return dialog;
 		case RECENT_DIALOG: 
 			// Get the data from RecentSearches
 			recentSearches.open();
-			final String[] result = recentSearches.getKeywords();
+			final String[] result = recentSearches.getKeywords(0);
 			recentSearches.close();
-			
+
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);
-			
+
 			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(SearchPage.this,
-	                R.layout.item_list, result);
-			
+					R.layout.item_list, result);
+
 			recentList.setAdapter(auto_adapter);
 			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
 			bDialog.setView(recentList);
 			bDialog.setInverseBackgroundForced(true);
-			
+
 			recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 				@Override
@@ -331,9 +354,9 @@ public class SearchPage extends Activity {
 					Log.w("SearchPage", "Selected " + result[pos] + " from recentlist");
 					preProcessForNextPage(result[pos], true);
 				}
-				
+
 			});
-			
+
 			dialog = bDialog.create();
 			return dialog;
 		case PROGRESS_BAR:
@@ -343,34 +366,34 @@ public class SearchPage extends Activity {
 			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
-			
+
 			// Set key listener so when user presses back button we put current task to background and 
 			// remove the progress bar (so user can search for other stuff)
 			dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-				
+
 				@Override
 				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 					// Only handle back button
 					if (keyCode == KeyEvent.KEYCODE_BACK) {
 						Log.w("PROGRESS_BAR", "Back button is pressed, trying cancel current task");
-				    	// Cancel current task and progress bar if they are active
+						// Cancel current task and progress bar if they are active
 						if (currentTask != null) {
 							currentTask.cancel(true);
 						}
-						
+
 						// Remove dialog and reset search field
 						removeDialog(PROGRESS_BAR);
-						
+
 						AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
 						search.setText("");
-						
+
 						return true;
 					}
 					return false;
 				}
-				
+
 			});
-			
+
 			return dialog;
 		default:
 			return null;
@@ -422,25 +445,32 @@ public class SearchPage extends Activity {
 			Log.w("SearchPage", "ERROR: in proceed, keywordmap is null");
 			return;
 		}
-		
+
 		Type type = keywordmap.getType();
+		
 		if (type == Type.COURSE) {
 			Intent i = new Intent(this, DisplayReviewsForCourse.class);
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getAlias());
+			i.putExtra(getResources().getString(R.string.SEARCH_ALIAS), keywordmap.getAlias());
+			i.putExtra(getResources().getString(R.string.SEARCH_NAME), keywordmap.getName());
+			i.putExtra(getResources().getString(R.string.SEARCH_TYPE), Constants.COURSE_TAG);
 
-			startActivity(i);
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 		}
 		else if (type == Type.DEPARTMENT) {
 			Intent i = new Intent(this, DisplayReviewsForDept.class);
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getAlias());
-
-			startActivity(i);
+			i.putExtra(getResources().getString(R.string.SEARCH_ALIAS), keywordmap.getAlias());
+			i.putExtra(getResources().getString(R.string.SEARCH_NAME), keywordmap.getName());
+			i.putExtra(getResources().getString(R.string.SEARCH_TYPE), Constants.DEPARTMENT_TAG);
+			
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 		}
 		else if (type == Type.INSTRUCTOR) {
 			Intent i = new Intent(this, DisplayReviewsForInstructor.class);
-			i.putExtra(getResources().getString(R.string.SEARCH_TERM), keywordmap.getName());
-			
-			startActivity(i);
+			i.putExtra(getResources().getString(R.string.SEARCH_ALIAS), keywordmap.getAlias());
+			i.putExtra(getResources().getString(R.string.SEARCH_NAME), keywordmap.getName());
+			i.putExtra(getResources().getString(R.string.SEARCH_TYPE), Constants.INSTRUCTOR_TAG);
+
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 		}
 	}
 
@@ -479,15 +509,15 @@ public class SearchPage extends Activity {
 					Log.w("runParser", "Course " + input.getAlias() + " is found in CourseSearchCache");
 					return;
 				}
-				
+
 				ArrayList<Course> courses = parser.getReviewsForCourse(input);
-	
+
 				// Add the resulting courses into cache
 				if (courses == null) {
 					Log.w("Parser", "getReviewsForCourse returned null");
 					return;
 				}
-	
+
 				courseSearchCache.open();
 				courseSearchCache.addCourse(courses, 0);
 				courseSearchCache.close();
@@ -500,12 +530,12 @@ public class SearchPage extends Activity {
 				}
 
 				Department department = parser.getReviewsForDept(input);
-				
+
 				if (department == null) {
 					Log.w("Parser", "getReviewsForDept returned null");
 					return;
 				}
-				
+
 				departmentSearchCache.open();
 				departmentSearchCache.addDepartment(department);
 				departmentSearchCache.close();
@@ -516,15 +546,15 @@ public class SearchPage extends Activity {
 					Log.w("runParser", "Instructor " + input.getName() + " is found in CourseSearchCache");
 					return;
 				}
-				
+
 				ArrayList<Course> courses = parser.getReviewsForInstructor(input);
-	
+
 				// Add the resulting courses into cache
 				if (courses == null) {
 					Log.w("Parser", "getReviewsForInstructor returned null");
 					return;
 				}
-	
+
 				courseSearchCache.open();
 				courseSearchCache.addCourse(courses, 1);
 				courseSearchCache.close();

@@ -133,6 +133,7 @@ public class CourseSearchCache {
 		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
 		int end_day = (day < 30) ? day + 365 - 30 : day - 80;
 		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")");
+		// TODO: TEST THIS QUERY
 	}
 	
 	/**

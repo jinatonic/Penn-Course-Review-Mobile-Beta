@@ -21,7 +21,10 @@
         <activity android:name="DisplayReviewsForCourse" />
         <activity android:name="DisplayReviewsForDept" />
         <activity android:name="DisplayReviewsForInstructor" />
-        <activity android:name="SearchPage" />
+        <activity
+            android:name="SearchPage"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+        </activity>
     </application>
 
 </manifest>

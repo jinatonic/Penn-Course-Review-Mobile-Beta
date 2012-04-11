@@ -159,7 +159,8 @@ public class AutoCompleteDB {
 		}
 		
 		// Then we query for courses
-		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm LIKE '" + keyword + "%' AND type=0 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm LIKE '" + 
+					keyword + "%' AND type=0 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
 		c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		if (c.getCount() > 0) {
@@ -175,7 +176,8 @@ public class AutoCompleteDB {
 		
 		// Then we query for instructor (if and only if we didn't find enough course/departments
 		if (result.size() < Constants.MAX_AUTOCOMPLETE_RESULT) {
-			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + keyword + "%' AND type != 2 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + 
+						keyword + "%' AND type != 2 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
 			c = mDb.rawQuery(query, null);
 			c.moveToFirst();
 			if (c.getCount() > 0) {
@@ -247,7 +249,8 @@ public class AutoCompleteDB {
 		String name = c.getString(c.getColumnIndex("name"));
 		String course_id = c.getString(c.getColumnIndex("course_id"));
 		int dbtype = c.getInt(c.getColumnIndex("type"));
-		Type convertedType = (dbtype == 0) ? Type.COURSE : (dbtype == 1) ? Type.INSTRUCTOR : (dbtype == 2) ? Type.DEPARTMENT : Type.UNKNOWN;
+		Type convertedType = (dbtype == 0) ? Type.COURSE : (dbtype == 1) ? Type.INSTRUCTOR : 
+								(dbtype == 2) ? Type.DEPARTMENT : Type.UNKNOWN;
 		
 		Log.w("AutocompleteDB", "result, path: " + path + " name: " + name + " course_id: " + course_id);
 		

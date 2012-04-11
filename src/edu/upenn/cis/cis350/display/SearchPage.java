@@ -8,9 +8,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,15 +44,19 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 
 public class SearchPage extends Activity {
-	private AutoCompleteDB autocomplete;
 	private String search_term;
 	
 	// Timer for autocomplete
 	Timer autocompleteTimer;
 	
-	Context context;
 	String searchTerm;
 	boolean selectedFromAutocomplete;
+	
+	// Database pointers
+	CourseSearchCache courseSearchCache;
+	DepartmentSearchCache departmentSearchCache;
+	AutoCompleteDB autoCompleteDB;
+	RecentSearches recentSearches;
 	
 	private static final int NO_MATCH_FOUND_DIALOG = 1;
 	private static final int RECENT_DIALOG = 2;
@@ -65,14 +69,18 @@ public class SearchPage extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		autocomplete = new AutoCompleteDB(this.getApplicationContext());
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		search_term = "";
-		context = this.getApplicationContext();
-		
 		setContentView(R.layout.search_page);
+		
+		// Instantiate the database items
+		courseSearchCache = new CourseSearchCache(this.getApplicationContext());
+		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
+		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
+		recentSearches = new RecentSearches(this.getApplicationContext());
+		
+		search_term = "";
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
@@ -83,7 +91,8 @@ public class SearchPage extends Activity {
 
 		// Handle user pushing enter after typing search term
 		AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
-		search.setAdapter(new ArrayAdapter<String>(SearchPage.this, android.R.layout.simple_dropdown_item_1line, new String[0]));
+		search.setAdapter(new ArrayAdapter<String>(SearchPage.this, 
+				android.R.layout.simple_dropdown_item_1line, new String[0]));
 		
 		// Used for soft/virtual keyboards (they do not register with the onKeyListener)
 		search.addTextChangedListener(new TextWatcher() {
@@ -189,9 +198,9 @@ public class SearchPage extends Activity {
 			search_term = term;
 			
 			// Check database for autocomplete key terms
-			autocomplete.open();
-			String[] result = autocomplete.checkAutocomplete(term);
-			autocomplete.close();
+			autoCompleteDB.open();
+			String[] result = autoCompleteDB.checkAutocomplete(term);
+			autoCompleteDB.close();
 			
 			Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 			// Set autocomplete rows
@@ -239,13 +248,12 @@ public class SearchPage extends Activity {
 			searchTerm = Normalizer.normalize(searchTerm, type);
 		}
 		
-		AutoCompleteDB auto = new AutoCompleteDB(context);
-		auto.open();
+		autoCompleteDB.open();
 		
 		// Call the function with appropriate Type field
-		keywordmap = auto.getInfoForParser(searchTerm,  type);
+		keywordmap = autoCompleteDB.getInfoForParser(searchTerm,  type);
 
-		auto.close();
+		autoCompleteDB.close();
 		
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
@@ -260,10 +268,9 @@ public class SearchPage extends Activity {
 		showDialog(PROGRESS_BAR);
 
 		// Add the keywordmap into RecentSearches
-		RecentSearches rs = new RecentSearches(context);
-		rs.open();
-		rs.addKeyword(keywordmap);
-		rs.close();
+		recentSearches.open();
+		recentSearches.addKeyword(keywordmap);
+		recentSearches.close();
 	
 		// Run async thread to get the correct information for the keywordmap
 		SearchPage.this.runOnUiThread(new Runnable() {
@@ -301,10 +308,9 @@ public class SearchPage extends Activity {
 			return dialog;
 		case RECENT_DIALOG: 
 			// Get the data from RecentSearches
-			RecentSearches rs = new RecentSearches(context);
-			rs.open();
-			final String[] result = rs.getKeywords();
-			rs.close();
+			recentSearches.open();
+			final String[] result = recentSearches.getKeywords();
+			recentSearches.close();
 			
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);
@@ -313,6 +319,7 @@ public class SearchPage extends Activity {
 	                R.layout.item_list, result);
 			
 			recentList.setAdapter(auto_adapter);
+			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
 			bDialog.setView(recentList);
 			bDialog.setInverseBackgroundForced(true);
 			
@@ -377,31 +384,28 @@ public class SearchPage extends Activity {
 	public boolean checkCache(String keyword, Type type) {
 		switch (type) {
 		case COURSE:
-			CourseSearchCache course_cache = new CourseSearchCache(this.getApplicationContext());
-			course_cache.open();
-			if (course_cache.ifExistsInDB(keyword, 0)) {
-				course_cache.close();
+			courseSearchCache.open();
+			if (courseSearchCache.ifExistsInDB(keyword, 0)) {
+				courseSearchCache.close();
 				return true;
 			}
-			else course_cache.close();
+			else courseSearchCache.close();
 			return false;
 		case DEPARTMENT:
-			DepartmentSearchCache dept_cache = new DepartmentSearchCache(this.getApplicationContext());
-			dept_cache.open();
-			if (dept_cache.ifExistsInDB(keyword)) {
-				dept_cache.close();
+			departmentSearchCache.open();
+			if (departmentSearchCache.ifExistsInDB(keyword)) {
+				departmentSearchCache.close();
 				return true;
 			}
-			else dept_cache.close();
+			else departmentSearchCache.close();
 			return false;
 		case INSTRUCTOR:
-			CourseSearchCache ins_cache = new CourseSearchCache(this.getApplicationContext());
-			ins_cache.open();
-			if (ins_cache.ifExistsInDB(keyword, 1)) {
-				ins_cache.close();
+			courseSearchCache.open();
+			if (courseSearchCache.ifExistsInDB(keyword, 1)) {
+				courseSearchCache.close();
 				return true;
 			}
-			else ins_cache.close();
+			else courseSearchCache.close();
 			return false;
 		case UNKNOWN:
 		default:
@@ -484,10 +488,9 @@ public class SearchPage extends Activity {
 					return;
 				}
 	
-				CourseSearchCache cache = new CourseSearchCache(context);
-				cache.open();
-				cache.addCourse(courses, 0);
-				cache.close();
+				courseSearchCache.open();
+				courseSearchCache.addCourse(courses, 0);
+				courseSearchCache.close();
 			}
 			else if (input.getType() == Type.DEPARTMENT) {
 				// Check department cache first
@@ -503,10 +506,9 @@ public class SearchPage extends Activity {
 					return;
 				}
 				
-				DepartmentSearchCache cache = new DepartmentSearchCache(context);
-				cache.open();
-				cache.addDepartment(department);
-				cache.close();
+				departmentSearchCache.open();
+				departmentSearchCache.addDepartment(department);
+				departmentSearchCache.close();
 			}
 			else if (input.getType() == Type.INSTRUCTOR) {
 				// Check cache first, if exists, proceed
@@ -523,10 +525,9 @@ public class SearchPage extends Activity {
 					return;
 				}
 	
-				CourseSearchCache cache = new CourseSearchCache(context);
-				cache.open();
-				cache.addCourse(courses, 1);
-				cache.close();
+				courseSearchCache.open();
+				courseSearchCache.addCourse(courses, 1);
+				courseSearchCache.close();
 			}
 			else {
 				Log.w("ServerQuery", "Running ServerQuery with unknown type, keyword " + input.getAlias());

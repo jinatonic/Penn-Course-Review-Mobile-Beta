@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -23,11 +22,17 @@ import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends Activity {
-	private AutoCompleteDB autocomplete;
 	private Button btnStartProgress;
 	private ProgressDialog progressBar;
 
-	private Context context;
+	private boolean DLcomplete;
+	private boolean DLstarted;
+	
+	// Database pointers
+	CourseSearchCache courseSearchCache;
+	DepartmentSearchCache departmentSearchCache;
+	AutoCompleteDB autoCompleteDB;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +42,12 @@ public class StartPage extends Activity {
 
 		setContentView(R.layout.start_page);
 
-		context = this.getApplicationContext();
+		DLcomplete = true;
+		DLstarted = false;
+		
+		courseSearchCache = new CourseSearchCache(this.getApplicationContext());
+		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
+		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
@@ -61,6 +71,17 @@ public class StartPage extends Activity {
 
 		// Run db maintenance in the background
 		new DatabaseMaintenance().execute("");
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (DLstarted && DLcomplete) {
+			Log.w("StartPage", "Resuming startpage, download finished");
+			DLstarted = false;
+			
+			goToSearchPage();
+		}
 	}
 
 	public void addListenerOnButton() {
@@ -103,22 +124,21 @@ public class StartPage extends Activity {
 	// file download simulator... a really simple
 	public void downloadAutoComplete() {
 
-		autocomplete = new AutoCompleteDB(this.getApplicationContext());
-		autocomplete.open();
-		//autocomplete.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		if (autocomplete.updatesNeeded()) {
+		autoCompleteDB.open();
+		// autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		if (autoCompleteDB.updatesNeeded()) {
 			// Autocomplete table is empty, need to populate it initially
 			new AutocompleteQuery().execute("");
-			autocomplete.close();
+			autoCompleteDB.close();
 		}
-		else if (autocomplete.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
+		else if (autoCompleteDB.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
 			// Autocomplete table is corrupt or missing entries, redownload it
-			autocomplete.resetTables();
+			autoCompleteDB.resetTables();
 			new AutocompleteQuery().execute("");	// TODO add toast
-			autocomplete.close();
+			autoCompleteDB.close();
 		}
 		else {
-			autocomplete.close();
+			autoCompleteDB.close();
 			goToSearchPage();
 		}
 	}
@@ -132,13 +152,18 @@ public class StartPage extends Activity {
 				return null;
 			}
 
+			DLcomplete = false;
+			DLstarted = true;
+			
 			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
 
 
-			autocomplete.open();
-			autocomplete.addEntries(result);
-			autocomplete.close();
+			autoCompleteDB.open();
+			autoCompleteDB.addEntries(result);
+			autoCompleteDB.close();
 
+			DLcomplete = true;
+			
 			return "COMPLETE"; // CHANGE
 		}
 
@@ -163,23 +188,15 @@ public class StartPage extends Activity {
 		 */
 		public void databaseMaintenance() {
 			// Perform clear on database
-			CourseSearchCache cache = new CourseSearchCache(context);
-			cache.open();
-			cache.clearOldEntries();
+			courseSearchCache.open();
+			courseSearchCache.clearOldEntries();
 			// cache.resetTables();
-			cache.close();
+			courseSearchCache.close();
 
-			DepartmentSearchCache dept_cache = new DepartmentSearchCache(context);
-			dept_cache.open();
-			dept_cache.clearOldEntries();
+			departmentSearchCache.open();
+			departmentSearchCache.clearOldEntries();
 			// dept_cache.resetTables();
-			dept_cache.close();
-
-			// debugging only
-			// RecentSearches rs = new RecentSearches(context);
-			// rs.open();
-			// rs.resetTables();
-			// rs.close();
+			departmentSearchCache.close();
 		}
 
 	}

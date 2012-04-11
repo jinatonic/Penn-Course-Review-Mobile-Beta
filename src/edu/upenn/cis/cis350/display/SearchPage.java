@@ -157,24 +157,6 @@ public class SearchPage extends Activity {
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	// Cancel current task and progress bar if they are active
-			if (currentTask != null) {
-				Log.w("SearchPage", "Back button is pressed, trying cancel current task");
-				currentTask.cancel(true);
-				removeDialog(PROGRESS_BAR);
-				
-				AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
-				search.setText("");
-			}
-			else
-				this.finish();
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}
-	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.search_page_menu, menu);
@@ -354,6 +336,34 @@ public class SearchPage extends Activity {
 			dialog = ProgressDialog.show(SearchPage.this, "", message, true);
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(false);
+			
+			// Set key listener so when user presses back button we put current task to background and 
+			// remove the progress bar (so user can search for other stuff)
+			dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+				
+				@Override
+				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+					// Only handle back button
+					if (keyCode == KeyEvent.KEYCODE_BACK) {
+						Log.w("PROGRESS_BAR", "Back button is pressed, trying cancel current task");
+				    	// Cancel current task and progress bar if they are active
+						if (currentTask != null) {
+							currentTask.cancel(true);
+						}
+						
+						// Remove dialog and reset search field
+						removeDialog(PROGRESS_BAR);
+						
+						AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
+						search.setText("");
+						
+						return true;
+					}
+					return false;
+				}
+				
+			});
+			
 			return dialog;
 		default:
 			return null;

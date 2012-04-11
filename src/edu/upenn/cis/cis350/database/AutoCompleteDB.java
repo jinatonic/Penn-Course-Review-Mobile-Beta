@@ -126,7 +126,12 @@ public class AutoCompleteDB {
 	 * @param keyword
 	 */
 	public String[] checkAutocomplete(String keyword) {
+		keyword = keyword.trim();
 		keyword = keyword.toLowerCase().replace("-", "");
+		// Remove whitespace if we are looking for a course
+		if (keyword.matches("^.*?[0-9]+.*$")) {
+			keyword = keyword.replace(" ", "");
+		}
 		Log.w("AutocompleteDB", "Search DB for " + keyword);
 
 		long size = new File(mDb.getPath()).length();
@@ -211,6 +216,13 @@ public class AutoCompleteDB {
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
 		else {
 			// UNKNOWN type, find best match
+			// normalize input first
+			keyword = keyword.trim();
+			keyword = keyword.toLowerCase().replace("-", "");
+			// Remove whitespace if we are looking for a course
+			if (keyword.matches("^.*?[0-9]+.*$")) {
+				keyword = keyword.replace(" ", "");
+			}
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm)='" + keyword +"' LIMIT 1";
 			backup_query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + keyword + "%' LIMIT 1";
 		}
@@ -261,7 +273,8 @@ public class AutoCompleteDB {
 	 */
 	public void resetTables() {
 		Log.w(TAG, "Resetting the AutoComplete table");
-		mDb.execSQL("DELETE FROM " + AUTOCOMPLETE_TABLE + " WHERE year > -1");
+		mDb.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
+		mDb.execSQL(AUTOCOMPLETE_TABLE_CREATE);
 	}
 	
 	/**

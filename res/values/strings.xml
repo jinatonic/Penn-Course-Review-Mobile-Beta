@@ -25,6 +25,7 @@
     <string name="search">Search</string>
     <string name="history">Recent History</string>
     <string name="favorites">Favorites</string>
+    <string name="clean_db">Clear All</string>
     <string name="start_text">Search, view your favorites, or choose from recent searches</string>
 
     <!-- Constants used for intents -->

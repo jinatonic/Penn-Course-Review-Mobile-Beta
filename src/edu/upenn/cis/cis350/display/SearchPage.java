@@ -60,7 +60,8 @@ public class SearchPage extends Activity {
 
 	private static final int NO_MATCH_FOUND_DIALOG = 1;
 	private static final int RECENT_DIALOG = 2;
-	private static final int PROGRESS_BAR = 3;
+	private static final int FAVORITES_DIALOG = 3;
+	private static final int PROGRESS_BAR = 4;
 
 	AsyncTask<KeywordMap, Integer, String> currentTask;
 
@@ -183,6 +184,12 @@ public class SearchPage extends Activity {
 		switch (item.getItemId()) {
 		case R.id.menu_recent:
 			showDialog(RECENT_DIALOG);
+			return true;
+		case R.id.menu_favorites:
+			showDialog(FAVORITES_DIALOG);
+			return true;
+		case R.id.menu_clean:
+			clean_db();
 			return true;
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT);
@@ -330,9 +337,15 @@ public class SearchPage extends Activity {
 			dialog = builder.create();
 			return dialog;
 		case RECENT_DIALOG: 
+		case FAVORITES_DIALOG:
 			// Get the data from RecentSearches
 			recentSearches.open();
-			final String[] result = recentSearches.getKeywords(0);
+			final String[] result;
+			if (id == RECENT_DIALOG) 
+				result = recentSearches.getKeywords(0);
+			else
+				result = recentSearches.getKeywords(1);
+			
 			recentSearches.close();
 
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
@@ -398,6 +411,24 @@ public class SearchPage extends Activity {
 		default:
 			return null;
 		}
+	}
+	
+	/**
+	 * Clear everything excluding autocomplete
+	 */
+	public void clean_db() {
+		courseSearchCache.open();
+		courseSearchCache.resetTables();
+		courseSearchCache.close();
+
+		departmentSearchCache.open();
+		departmentSearchCache.resetTables();
+		departmentSearchCache.close();
+
+		recentSearches.open();
+		recentSearches.resetTables(0);
+		recentSearches.resetTables(1);
+		recentSearches.close();
 	}
 
 	/**

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,10 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TableRow.LayoutParams;
-import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.RecentSearches;

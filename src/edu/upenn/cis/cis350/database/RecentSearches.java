@@ -99,9 +99,14 @@ public class RecentSearches {
 	 */
 	public void resetTables(int type) {
 		Log.w(TAG, "Resetting database tables");
-		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
-		mDb.execSQL("DROP TABLE IF EXISTS " + table);
-		mDb.execSQL((type == 0) ? SEARCHES_TABLE_CREATE : FAVORITES_TABLE_CREATE);
+		if (type == 0) {
+			mDb.execSQL("DROP TABLE IF EXISTS " + SEARCHES_TABLE);
+			mDb.execSQL(SEARCHES_TABLE_CREATE);
+		}
+		else {
+			mDb.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE);
+			mDb.execSQL(FAVORITES_TABLE_CREATE);
+		}
 	}
 	
 	/**

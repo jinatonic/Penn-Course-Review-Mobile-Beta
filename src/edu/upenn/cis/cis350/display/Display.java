@@ -32,6 +32,7 @@ public abstract class Display extends Activity {
 	ArrayList<Course> courseReviews; // for course, instructor
 	ArrayList<CourseAverage> courseAvgs; // for department
 	HashMap<Integer, Course> row_map; // for retrieving Course from row clicked on
+	HashMap<Integer, CourseAverage> row_map_dept; // for retrieving CourseAverage from row clicked on, for use by dept page
 	Type displayType; // Type of page displayed (course, instructor, dept)
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -42,28 +43,32 @@ public abstract class Display extends Activity {
 		// Set the current page display type
 		this.displayType = displayType;
 
+		ListView lv = (ListView)findViewById(R.id.reviews);
+
+		// Grid item mapping to pass to ListView SimpleAdapter
+		String[] columnHeaders = new String[] {"col_1", "col_2", "col_3", "col_4"};
+		int[] cellIds = new int[] {R.id.item1, R.id.item2, R.id.item3, R.id.item4};
+
+		// List of all rows (each row being a map of columnHeader to cell text)
+		List<HashMap<String, String>> allRows = new ArrayList<HashMap<String, String>>();
+
+		int rowNumber = 0; // used to keep track of which row we are on, for mapping in list_map
+
 		switch (displayType) {
 		case COURSE:
 		case INSTRUCTOR:
-			ListView lv = (ListView)findViewById(R.id.reviews);
+
 			row_map = new HashMap<Integer, Course>(); // Used for mapping row number to Course in the row
-			// Grid item mapping to pass to ListView SimpleAdapter
-			String[] columnHeaders = new String[] {"col_1", "col_2", "col_3", "col_4"};
-			int[] cellIds = new int[] {R.id.item1, R.id.item2, R.id.item3, R.id.item4};
-			
-			// List of all rows (each row being a map of columnHeader to cell text)
-			List<HashMap<String, String>> allRows = new ArrayList<HashMap<String, String>>();
-			
+
 			// Iterate through Courses and create a new row mapping for each
 			Iterator<Course> iter = courseReviews.iterator();
-			int rowNumber = 0; // used to keep track of which row we are on, for mapping in list_map
 			while(iter.hasNext()) {
 				Course curCourse = iter.next();
 				Ratings curRatings = curCourse.getRatings();
-				
+
 				// Map the current row number to this Course
 				row_map.put(new Integer(rowNumber), curCourse);
-				
+
 				// Mapping of columnHeader to text in each cell for this row
 				HashMap<String, String> row = new HashMap<String, String>();
 
@@ -90,10 +95,10 @@ public abstract class Display extends Activity {
 				row.put("col_4", ((Double)curRatings.getDifficulty()).toString());
 				// Add this row to allRows
 				allRows.add(row);
-				
+
 				rowNumber++;
 			} // while loop
-			
+
 			SimpleAdapter adapter = new SimpleAdapter(
 					this, allRows, R.layout.list_row, columnHeaders, cellIds);
 			lv.setAdapter(adapter);
@@ -107,50 +112,55 @@ public abstract class Display extends Activity {
 					}
 				}
 			});
-			
+
 			break; // end of COURSE and INSTRUCTOR cases
 		case DEPARTMENT:
+
+			row_map_dept = new HashMap<Integer, CourseAverage>(); // Used for mapping row number to Course in the row
+
 			// Iterate through reviews for course and fill table cells
 			Iterator<CourseAverage> iter2 = courseAvgs.iterator();
-			TableLayout tl2 = (TableLayout)findViewById(R.id.reviews);
-			tl2.removeAllViews();
 
 			while(iter2.hasNext()) {
 				CourseAverage curCourseAvg = iter2.next();
 				Ratings curRatings = curCourseAvg.getRatings();
 
-				/* Create a new row to be added. */
-				TableRow tr2 = new TableRow(this);
-				tr2.setLayoutParams(new LayoutParams(
-						LayoutParams.FILL_PARENT,
-						LayoutParams.WRAP_CONTENT));
+				// Map the current row number to this Course
+				row_map_dept.put(new Integer(rowNumber), curCourseAvg);
 
-				/* Create a TextView for Course Id to be the row-content. */
-				TextView courseId = createRow(165, Gravity.LEFT, curCourseAvg.getId(), 1);
-				tr2.addView(courseId);
+				// Mapping of columnHeader to text in each cell for this row
+				HashMap<String, String> row = new HashMap<String, String>();
 
-				/* Create a TextView for Course Quality to be the row-content. */
-				TextView courseQuality = createRow(89, Gravity.CENTER_HORIZONTAL,
-						((Double)curRatings.getCourseQuality()).toString(), 2);
-				tr2.addView(courseQuality);
+				// Course Id
+				row.put("col_1", curCourseAvg.getId());
+				// Course Quality
+				row.put("col_2", ((Double)curRatings.getCourseQuality()).toString());
+				// Instructor Quality
+				row.put("col_3", ((Double)curRatings.getInstructorQuality()).toString());
+				// Difficulty
+				row.put("col_4", ((Double)curRatings.getDifficulty()).toString());
 
-				/* Create a TextView for Instructor Quality to be the row-content. */
-				TextView instructorQuality = createRow(89, Gravity.CENTER_HORIZONTAL,
-						((Double)curRatings.getInstructorQuality()).toString(), 3);
-				tr2.addView(instructorQuality);
+				// Add this row to allRows
+				allRows.add(row);
 
-				/* Create a TextView for Difficulty to be the row-content. */
-				TextView difficulty = createRow(89, Gravity.CENTER_HORIZONTAL,
-						((Double)curRatings.getDifficulty()).toString(), 4);
-				tr2.addView(difficulty);
-
-				/* Add row to TableLayout. */
-				tl2.addView(tr2,new TableLayout.LayoutParams(
-						LayoutParams.FILL_PARENT,
-						LayoutParams.WRAP_CONTENT));
+				rowNumber++;
 			} // while loop
-			tl2.invalidate();
-			break;
+
+			SimpleAdapter adapter_dept = new SimpleAdapter(
+					this, allRows, R.layout.list_row, columnHeaders, cellIds);
+			lv.setAdapter(adapter_dept);
+			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				public void onItemClick(AdapterView parent, View v, int position, long id) {
+					Log.v("position", ""+position);
+					Log.v("id",""+id);
+					CourseAverage c = row_map_dept.get(new Integer(position));
+					if (c == null) {
+						Log.v("Course", "course is null");
+					}
+				}
+			});
+
+			break; // end of DEPT case
 		} // outer switch
 	}
 
@@ -307,23 +317,5 @@ public abstract class Display extends Activity {
 		findViewById(R.id.difficulty_tab).setBackgroundColor(0);
 		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		printReviews(this.displayType);
-	}
-
-	TextView createRow(int width, int gravity, String text, int colNum) {
-		TextView row = new TextView(this);
-		row.setHeight(70);
-		row.setWidth(width);
-		row.setTextSize((float)11);
-		row.setTextColor(getResources().getColor(R.color.text_gray));
-		row.setGravity(gravity);
-		row.setText(text);
-		row.setBackgroundResource(R.layout.cell_gridline);
-		row.setClickable(true);
-		LayoutParams diffParams = new LayoutParams(
-				LayoutParams.FILL_PARENT,
-				LayoutParams.WRAP_CONTENT);
-		diffParams.column = colNum;
-		row.setLayoutParams(diffParams);
-		return row;
 	}
 }

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 11.3-b02 (Sun Microsystems Inc.)
+Main-Class: edu.upenn.isc.fastPdfServiceClient.FastPdfServiceClient
+Built-By: mchyzer
+Implementation-Vendor: Internet2
+Implementation-Title: fastPdfServiceClient
+Implementation-Version: 1.0
+Implementation-URL: https://wiki.internet2.edu/confluence/display/Grou
+ perWG/Grouper+Client
+Build-Timestamp: 2012/03/22 17:17:09
+

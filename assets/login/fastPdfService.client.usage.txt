@@ -1,0 +1,41 @@
+FastPdfService Client USAGE:
+
+This program queries PennGroups securely (and possibly other things).
+The system exit code will be 0 for success, and not 0 for failure
+Output data is printed to stdout, error messages are printed to stderr or logs (configured in fastPdfService.client.properties)
+
+Arguments are in the format: --argName=argValue
+Example argument: --operation=shareFiles
+Example argument(OS dependent): --operation="value with whitespace"
+
+Optional arguments below are in [brackets]
+
+
+###############################################
+## Misc operations
+
+Encrypt passwords for storing passwords in external encrypted files:
+  java -jar fastPdfServiceClient.jar --operation=encryptPassword [--dontMask=true|false]
+
+Usage (this message):
+  java -jar fastPdfServiceClient.jar
+
+
+###############################################
+## Web Service operations
+
+shareFiles web service usage:
+  java -jar fastPdfServiceClient.jar --operation=pennGroupsHasMember --groupName=a:b:c [--subjectSourceId=pennperson] [--subjectIdentifier=apennkey] [--subjectId=12345678] [--debug=true]  
+  e.g.: java -jar fastPdfServiceClient.jar --operation=pennGroupsHasMember --groupName=test:testGroup --subjectSourceId=pennperson --subjectIdentifier=somepennkey
+
+groupName: is the group ID path in Penngroups
+subjectId: if using pennperson source, this is the pennid
+subjectIdentifier: if using pennperson source, this is the pennkey
+subjectSourceId: for people are penn this is pennperson
+
+###############################################
+Common options:
+    
+  --debug=true
+    this will display debug information including the request and response to stderr
+    

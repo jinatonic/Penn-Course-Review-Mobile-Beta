@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -30,7 +31,6 @@ import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends Activity {
 	private Button searchButton, favoritesButton, historyButton;
-	private ProgressDialog progressBar;
 
 	private boolean DLcomplete;
 	private boolean DLstarted;
@@ -160,14 +160,6 @@ public class StartPage extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// prepare for a progress bar dialog
-				progressBar = new ProgressDialog(v.getContext());
-				progressBar.setCancelable(true);
-				progressBar.setIndeterminate(true);
-				progressBar.setMessage("Autocomplete downloading. Please wait 5 minutes...");
-				//progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				progressBar.show();
-				//reset progress bar status
 
 				StartPage.this.runOnUiThread(new Runnable() {
 					public void run() {
@@ -197,8 +189,7 @@ public class StartPage extends Activity {
 		});
 	}
 
-	public void goToSearchPage(){
-		progressBar.dismiss();
+	public void goToSearchPage() {
 		Intent i = new Intent(this, SearchPage.class);
 
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
@@ -221,16 +212,16 @@ public class StartPage extends Activity {
 	public void downloadAutoComplete() {
 
 		autoCompleteDB.open();
-		// autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		if (autoCompleteDB.updatesNeeded()) {
 			// Autocomplete table is empty, need to populate it initially
-			new AutocompleteQuery().execute("");
+			new AutocompleteQuery(this).execute("");
 			autoCompleteDB.close();
 		}
 		else if (autoCompleteDB.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
 			// Autocomplete table is corrupt or missing entries, redownload it
 			autoCompleteDB.resetTables();
-			new AutocompleteQuery().execute("");	// TODO add toast
+			new AutocompleteQuery(this).execute("");	// TODO add toast
 			autoCompleteDB.close();
 		}
 		else {
@@ -241,6 +232,34 @@ public class StartPage extends Activity {
 
 	class AutocompleteQuery extends AsyncTask<String, Integer, String> {
 
+		private ProgressDialog dialog;
+		int progress;
+		int total;
+		
+		Activity _activity;
+		
+		AutocompleteQuery(Activity activity) {
+			_activity = activity;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			dialog = new ProgressDialog(_activity);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setIndeterminate(false);
+			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			
+			progress = 0;
+			
+			dialog.setMessage("Initiating download for autocomplete...");
+			dialog.setProgress(progress);
+
+			dialog.setMax(100);
+			
+			dialog.show();
+		}
+		
 		@Override
 		protected String doInBackground(String... input) {
 			if (input == null || input.length != 1) {
@@ -250,12 +269,44 @@ public class StartPage extends Activity {
 
 			DLcomplete = false;
 			DLstarted = true;
-
-			ArrayList<KeywordMap> result = AutoComplete.getAutoCompleteTerms();
-
-
+			
 			autoCompleteDB.open();
-			autoCompleteDB.addEntries(result);
+
+			// Get instructors
+			//ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
+			//autoCompleteDB.addEntries(instructor_result);
+
+			// Get individual departments
+			ArrayList<KeywordMap> department_result = AutoComplete.getAutoCompleteDepartments();
+			autoCompleteDB.addEntries(department_result);
+			
+			// Get courses within departments
+			ArrayList<KeywordMap> course_result = new ArrayList<KeywordMap>();
+			
+			total = course_result.size();
+			
+			for (KeywordMap dept : department_result) {
+				progress++;
+				
+				final KeywordMap curr_dept = dept;
+				
+				StartPage.this.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						dialog.setMessage("Downloading " + curr_dept.getName());
+						Log.w("PROGRESS", "PROGRESS IS " + progress + " TOTAL IS " + total + " % is " + (int)((double)progress / total) * 100);
+						dialog.setProgress((int)((double)progress / total) * 100);
+					}
+					
+				});
+				
+				course_result.addAll(AutoComplete.getAutoCompleteCourses(curr_dept));
+				autoCompleteDB.addEntries(course_result);
+				
+				break;
+			}
+			
 			autoCompleteDB.close();
 
 			DLcomplete = true;
@@ -264,6 +315,8 @@ public class StartPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
+			if (dialog.isShowing())
+				dialog.dismiss();
 			goToSearchPage();
 		}
 	}

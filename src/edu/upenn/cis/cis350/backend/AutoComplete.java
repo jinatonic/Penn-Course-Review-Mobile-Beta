@@ -18,13 +18,13 @@ public class AutoComplete {
 	 * KeywordMaps. 
 	 * 
 	 */
-	public static ArrayList<KeywordMap> getAutoCompleteTerms() {
+
+	public static ArrayList<KeywordMap> getAutoCompleteInstructors(){
 		ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
-		JSONObject instructor_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/instructors" + Parser.token);
-		JSONObject dept_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/depts" + Parser.token);
-		JSONObject dept_result = null;
-		JSONObject instructor_result = null;
-		try {
+		try{
+			JSONObject instructor_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/instructors" + Parser.token);
+
+			JSONObject instructor_result = null;
 			//Forms keywordmaps for instructors
 			if(instructor_object.has("result")) {
 				instructor_result = instructor_object.getJSONObject("result");
@@ -45,6 +45,20 @@ public class AutoComplete {
 					}
 				}
 			}
+		}
+		catch(JSONException e){e.printStackTrace();
+		}
+		return keywordMap;
+	}
+
+	public static ArrayList<KeywordMap> getAutoCompleteDepartments() {
+		ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
+
+		JSONObject dept_object = JSONRequest.retrieveJSONObject(Parser.baseURL + "/depts" + Parser.token);
+		JSONObject dept_result = null;
+
+		try {
+
 			if(dept_object.has("result")){
 				//creates keywordmap for departments
 				dept_result = dept_object.getJSONObject("result");
@@ -64,35 +78,7 @@ public class AutoComplete {
 							dept_path = dpt.getString("path");
 						KeywordMap deptMap = new KeywordMap(dept_path, dept_name, dept_id, Type.DEPARTMENT);
 						keywordMap.add(deptMap);
-						JSONObject dpt_object = JSONRequest.retrieveJSONObject(Parser.baseURL + dept_path + Parser.token);
-						int count = 0;
-						while(dpt_object == null && count < 3){
-							count++;
-							dpt_object = JSONRequest.retrieveJSONObject(Parser.baseURL + dept_path + Parser.token);
-						}
-						JSONObject dpt_result = null;
-						if(dpt_object.has("result")){
-							dpt_result = dpt_object.getJSONObject("result");
-							JSONArray coursehistories = null;
-							if(dpt_result.has("coursehistories")){
-								//form keywordmaps for courses
-								coursehistories = dpt_result.getJSONArray("coursehistories");
-								for(int m = 0 ; m < coursehistories.length(); m++){
-									JSONObject course = coursehistories.getJSONObject(m);
-									String course_id = "";
-									String course_path = "";
-									String course_name = "";
-									if(course.has("aliases"))
-										course_id = course.getJSONArray("aliases").getString(0);
-									if(course.has("name"))
-										course_name = course.getString("name");
-									if(course.has("path"))
-										course_path = course.getString("path");
-									KeywordMap courseMap = new KeywordMap(course_path, course_name, course_id, Type.COURSE);
-									keywordMap.add(courseMap);
-								}
-							}
-						}
+
 					}
 				}
 			}
@@ -103,4 +89,43 @@ public class AutoComplete {
 
 		return keywordMap;
 	}
+
+	public static ArrayList<KeywordMap> getAutoCompleteCourses(KeywordMap dept){
+		String dept_path = dept.getPath();
+		ArrayList<KeywordMap> keywordMap = new ArrayList<KeywordMap>();
+		try{
+			JSONObject dpt_object = JSONRequest.retrieveJSONObject(Parser.baseURL + dept_path + Parser.token);
+
+
+			JSONObject dpt_result = null;
+			if(dpt_object.has("result")){
+				dpt_result = dpt_object.getJSONObject("result");
+				JSONArray coursehistories = null;
+				if(dpt_result.has("coursehistories")){
+					//form keywordmaps for courses
+					coursehistories = dpt_result.getJSONArray("coursehistories");
+					for(int m = 0 ; m < coursehistories.length(); m++){
+						JSONObject course = coursehistories.getJSONObject(m);
+						String course_id = "";
+						String course_path = "";
+						String course_name = "";
+						if(course.has("aliases"))
+							course_id = course.getJSONArray("aliases").getString(0);
+						if(course.has("name"))
+							course_name = course.getString("name");
+						if(course.has("path"))
+							course_path = course.getString("path");
+						KeywordMap courseMap = new KeywordMap(course_path, course_name, course_id, Type.COURSE);
+						keywordMap.add(courseMap);
+					}
+				}
+			}
+		}
+		catch(JSONException e) {
+			e.printStackTrace();
+		}
+		return keywordMap;
+	}
+
 }
+

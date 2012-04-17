@@ -1,12 +1,14 @@
 package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -90,7 +92,7 @@ public class StartPage extends Activity {
 		// remove any remaining dialogs
 		removeDialog(FAVORITES_DIALOG);
 		removeDialog(RECENT_DIALOG);
-		
+
 		if (DLstarted && DLcomplete) {
 			Log.w("StartPage", "Resuming startpage, download finished");
 			DLstarted = false;
@@ -157,7 +159,7 @@ public class StartPage extends Activity {
 
 	public void addListenerOnButton() {
 		searchButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 
@@ -167,7 +169,7 @@ public class StartPage extends Activity {
 					}
 				});
 			}
-			
+
 		});
 
 		favoritesButton.setOnClickListener(new OnClickListener() {
@@ -178,14 +180,14 @@ public class StartPage extends Activity {
 			}
 
 		});
-		
+
 		historyButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				showDialog(RECENT_DIALOG);
 			}
-			
+
 		});
 	}
 
@@ -235,31 +237,26 @@ public class StartPage extends Activity {
 		private ProgressDialog dialog;
 		int progress;
 		int total;
-		
+
 		Activity _activity;
-		
+
 		AutocompleteQuery(Activity activity) {
 			_activity = activity;
 		}
-		
+
 		@Override
 		protected void onPreExecute() {
 			dialog = new ProgressDialog(_activity);
-			dialog.setCancelable(false);
 			dialog.setCanceledOnTouchOutside(false);
-			dialog.setIndeterminate(false);
-			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			
-			progress = 0;
-			
-			dialog.setMessage("Initiating download for autocomplete...");
-			dialog.setProgress(progress);
+			dialog.setIndeterminate(true);
 
-			dialog.setMax(100);
-			
+			progress = 0;
+
+			dialog.setMessage("Initiating download for autocomplete...");
+
 			dialog.show();
 		}
-		
+
 		@Override
 		protected String doInBackground(String... input) {
 			if (input == null || input.length != 1) {
@@ -269,45 +266,48 @@ public class StartPage extends Activity {
 
 			DLcomplete = false;
 			DLstarted = true;
-			
-			autoCompleteDB.open();
 
+			autoCompleteDB.open();
+			final ExecutorService executor = Executors.newFixedThreadPool(8);
+
+			publishMessage("Downloading instructor information...");
+
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			
 			// Get instructors
-			//ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
-			//autoCompleteDB.addEntries(instructor_result);
+			final ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
+			autoCompleteDB.addEntries(instructor_result);
 
 			// Get individual departments
 			ArrayList<KeywordMap> department_result = AutoComplete.getAutoCompleteDepartments();
 			autoCompleteDB.addEntries(department_result);
-			
-			// Get courses within departments
-			ArrayList<KeywordMap> course_result = new ArrayList<KeywordMap>();
-			
-			total = course_result.size();
-			
-			for (KeywordMap dept : department_result) {
-				progress++;
-				
-				final KeywordMap curr_dept = dept;
-				
-				StartPage.this.runOnUiThread(new Runnable() {
 
-					@Override
+			total = department_result.size();
+
+			final ArrayList<KeywordMap> course_result = new ArrayList<KeywordMap>();
+
+			for (final KeywordMap dept : department_result) {
+				progress++;
+
+				executor.execute(new Runnable() {
 					public void run() {
-						dialog.setMessage("Downloading " + curr_dept.getName());
-						Log.w("PROGRESS", "PROGRESS IS " + progress + " TOTAL IS " + total + " % is " + (int)((double)progress / total) * 100);
-						dialog.setProgress((int)((double)progress / total) * 100);
+						course_result.addAll(AutoComplete.getAutoCompleteCourses(dept));
+						publishMessage("Downloading " + dept.getName());
 					}
-					
 				});
-				
-				course_result.addAll(AutoComplete.getAutoCompleteCourses(curr_dept));
-				autoCompleteDB.addEntries(course_result);
-				
-				break;
 			}
-			
-			autoCompleteDB.close();
+
+			publishMessage("Saving data to database...");
+
+			try {
+				executor.shutdown();
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			autoCompleteDB.addEntries(course_result);
 
 			DLcomplete = true;
 
@@ -317,7 +317,16 @@ public class StartPage extends Activity {
 		protected void onPostExecute(String result) {
 			if (dialog.isShowing())
 				dialog.dismiss();
+
 			goToSearchPage();
+		}
+
+		private void publishMessage(final String msg) {
+			StartPage.this.runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.setMessage(msg);
+				}
+			});
 		}
 	}
 

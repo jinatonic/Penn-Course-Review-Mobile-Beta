@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -96,29 +96,46 @@ public class AutoCompleteDB {
 	 * @param keywords
 	 */
 	public void addEntries(ArrayList<KeywordMap> keywords) {
+		DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(mDb, AUTOCOMPLETE_TABLE);
+		
+		final int path_id = insertHelper.getColumnIndex("path");
+		final int name_id = insertHelper.getColumnIndex("name");
+		final int course_col_id = insertHelper.getColumnIndex("course_id");
+		final int course_id_norm_id = insertHelper.getColumnIndex("course_id_norm");
+		final int type_id = insertHelper.getColumnIndex("type");
+		final int year_id = insertHelper.getColumnIndex("year");
+		
+		final int year = Calendar.getInstance().get(Calendar.YEAR);
+
+		if (keywords.get(0).getAlias() == null)
+			Log.w(TAG, "adding " + keywords.size() + " instructors to database");
+		else
+			Log.w(TAG, "adding " + keywords.size() + " courses to database");
+
+		int count = 1;
+		
 		for (KeywordMap keyword : keywords) {
-			if (keyword.getAlias() == null)
-				Log.w(TAG, "adding instructor " + keyword.getName() + " to database");
-			else
-				Log.w(TAG, "adding course " + keyword.getAlias() + " - " + keyword.getName() + " to database");
-			
+			Log.w(TAG, count++ + ": adding " + keyword.getAlias() + " - " + keyword.getName());
 			// First we add to the course table 
-			ContentValues values = new ContentValues();
 			String course_id = keyword.getAlias();
 			String course_id_norm = null;
 			if (course_id != null)
 				course_id_norm = course_id.replace("-", "").toLowerCase();
 			
-			values.put("path", keyword.getPath());
-			values.put("name", keyword.getName());
-			values.put("course_id", course_id);
-			values.put("course_id_norm", course_id_norm);
-			values.put("type", (keyword.getType() == Type.COURSE) ? 0 : (keyword.getType() == Type.INSTRUCTOR) ? 1 : 2);
-			values.put("year", Calendar.getInstance().get(Calendar.YEAR));
+			insertHelper.prepareForInsert();
+			insertHelper.bind(path_id, keyword.getPath());
+			insertHelper.bind(name_id, keyword.getName());
+			insertHelper.bind(course_col_id, course_id);
+			insertHelper.bind(course_id_norm_id, course_id_norm);
+			insertHelper.bind(type_id, (keyword.getType() == Type.COURSE) ? 0 : (keyword.getType() == Type.INSTRUCTOR) ? 1 : 2);
+			insertHelper.bind(year_id, year);
 			
-			if (mDb.insert(AUTOCOMPLETE_TABLE, null, values) == -1) 
-				Log.w(TAG, "Failed to insert new course into table");
+			insertHelper.execute();
 		}
+		
+		insertHelper.close();
+		
+		Log.w(TAG, "Autocomplete done with one insert");
 	}
 	
 	/**

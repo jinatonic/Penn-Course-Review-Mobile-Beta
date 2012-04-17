@@ -6,10 +6,10 @@ import java.util.Calendar;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
@@ -96,16 +96,14 @@ public class AutoCompleteDB {
 	 * @param keywords
 	 */
 	public void addEntries(ArrayList<KeywordMap> keywords) {
-		DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(mDb, AUTOCOMPLETE_TABLE);
+		if (keywords == null || keywords.size() == 0)
+			return;
 		
-		final int path_id = insertHelper.getColumnIndex("path");
-		final int name_id = insertHelper.getColumnIndex("name");
-		final int course_col_id = insertHelper.getColumnIndex("course_id");
-		final int course_id_norm_id = insertHelper.getColumnIndex("course_id_norm");
-		final int type_id = insertHelper.getColumnIndex("type");
-		final int year_id = insertHelper.getColumnIndex("year");
+		mDb.beginTransaction();
 		
 		final int year = Calendar.getInstance().get(Calendar.YEAR);
+		final int type = (keywords.get(0).getType() == Type.COURSE) ? 0 : 
+			(keywords.get(0).getType() == Type.INSTRUCTOR) ? 1 : 2;
 
 		if (keywords.get(0).getAlias() == null)
 			Log.w(TAG, "adding " + keywords.size() + " instructors to database");
@@ -114,26 +112,30 @@ public class AutoCompleteDB {
 
 		int count = 1;
 		
+		String sql = "Insert into " + AUTOCOMPLETE_TABLE + " (path, name, course_id, " +
+				"course_id_norm, type, year) values(?,?,?,?,?,?)";
+        SQLiteStatement insert = mDb.compileStatement(sql);
+		
 		for (KeywordMap keyword : keywords) {
-			Log.w(TAG, count++ + ": adding " + keyword.getAlias() + " - " + keyword.getName());
+			// Log.w(TAG, count++ + ": adding " + keyword.getAlias() + " - " + keyword.getName());
 			// First we add to the course table 
 			String course_id = keyword.getAlias();
-			String course_id_norm = null;
+			String course_id_norm = "";
 			if (course_id != null)
 				course_id_norm = course_id.replace("-", "").toLowerCase();
 			
-			insertHelper.prepareForInsert();
-			insertHelper.bind(path_id, keyword.getPath());
-			insertHelper.bind(name_id, keyword.getName());
-			insertHelper.bind(course_col_id, course_id);
-			insertHelper.bind(course_id_norm_id, course_id_norm);
-			insertHelper.bind(type_id, (keyword.getType() == Type.COURSE) ? 0 : (keyword.getType() == Type.INSTRUCTOR) ? 1 : 2);
-			insertHelper.bind(year_id, year);
+			insert.bindString(1, keyword.getPath());
+			insert.bindString(2, keyword.getName());
+			insert.bindString(3, (course_id == null) ? "" : course_id);
+			insert.bindString(4, (course_id_norm == null) ? "" : course_id_norm);
+			insert.bindDouble(5, type);
+			insert.bindDouble(6, year);
 			
-			insertHelper.execute();
+			insert.execute();
 		}
 		
-		insertHelper.close();
+		mDb.setTransactionSuccessful();
+		mDb.endTransaction();
 		
 		Log.w(TAG, "Autocomplete done with one insert");
 	}

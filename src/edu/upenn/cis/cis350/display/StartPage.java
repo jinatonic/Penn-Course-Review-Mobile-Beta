@@ -9,8 +9,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -246,10 +249,15 @@ public class StartPage extends Activity {
 
 		@Override
 		protected void onPreExecute() {
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			
 			dialog = new ProgressDialog(_activity);
+			dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
 			dialog.setCanceledOnTouchOutside(false);
-			dialog.setIndeterminate(true);
-
+			dialog.setIndeterminate(false);
+			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			dialog.setMax(200);	// change, 157
+			
 			progress = 0;
 
 			dialog.setMessage("Initiating download for autocomplete...");
@@ -270,13 +278,16 @@ public class StartPage extends Activity {
 			autoCompleteDB.open();
 			final ExecutorService executor = Executors.newFixedThreadPool(8);
 
-			publishMessage("Downloading instructor information...");
-
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			publishMessage("Downloading instructor information...", progress);
 			
 			// Get instructors
 			final ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
 			autoCompleteDB.addEntries(instructor_result);
+			instructor_result.clear();
+			
+			progress += 33;
+			
+			publishMessage("Downloading department information...", progress);
 
 			// Get individual departments
 			ArrayList<KeywordMap> department_result = AutoComplete.getAutoCompleteDepartments();
@@ -287,27 +298,27 @@ public class StartPage extends Activity {
 			final ArrayList<KeywordMap> course_result = new ArrayList<KeywordMap>();
 
 			for (final KeywordMap dept : department_result) {
-				progress++;
-
 				executor.execute(new Runnable() {
 					public void run() {
 						course_result.addAll(AutoComplete.getAutoCompleteCourses(dept));
-						publishMessage("Downloading " + dept.getName());
+						
+						publishMessage("Downloading " + dept.getName(), ++progress);
 					}
 				});
 			}
 
-			publishMessage("Saving data to database...");
-
 			try {
+				// Make sure all of the queries complete executing before proceeding
 				executor.shutdown();
 				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+				publishMessage("Saving data to database...", progress);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			autoCompleteDB.addEntries(course_result);
+			
+			publishMessage("Done", 200);
 
 			DLcomplete = true;
 
@@ -321,9 +332,10 @@ public class StartPage extends Activity {
 			goToSearchPage();
 		}
 
-		private void publishMessage(final String msg) {
+		private void publishMessage(final String msg, final int progress) {
 			StartPage.this.runOnUiThread(new Runnable() {
 				public void run() {
+					dialog.setProgress(progress);
 					dialog.setMessage(msg);
 				}
 			});
@@ -356,6 +368,5 @@ public class StartPage extends Activity {
 			// dept_cache.resetTables();
 			departmentSearchCache.close();
 		}
-
 	}
 }

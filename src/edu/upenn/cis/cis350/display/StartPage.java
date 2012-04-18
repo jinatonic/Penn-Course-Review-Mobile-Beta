@@ -9,11 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -278,7 +275,7 @@ public class StartPage extends Activity {
 			autoCompleteDB.open();
 			final ExecutorService executor = Executors.newFixedThreadPool(8);
 
-			publishMessage("Downloading instructor information...", progress);
+			publishMessage("Downloading \ninstructor information", progress);
 			
 			// Get instructors
 			final ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
@@ -287,7 +284,7 @@ public class StartPage extends Activity {
 			
 			progress += 33;
 			
-			publishMessage("Downloading department information...", progress);
+			publishMessage("Downloading \ndepartment information", progress);
 
 			// Get individual departments
 			ArrayList<KeywordMap> department_result = AutoComplete.getAutoCompleteDepartments();
@@ -302,7 +299,7 @@ public class StartPage extends Activity {
 					public void run() {
 						course_result.addAll(AutoComplete.getAutoCompleteCourses(dept));
 						
-						publishMessage("Downloading " + dept.getName(), ++progress);
+						publishMessage("Downloading \n" + dept.getName(), ++progress);
 					}
 				});
 			}

@@ -1,20 +1,30 @@
 package edu.upenn.cis.cis350.display;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.app.Activity;
+import android.app.Dialog;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.RecentSearches;
@@ -25,6 +35,7 @@ import edu.upenn.cis.cis350.objects.Ratings;
 
 public abstract class Display extends Activity {
 
+
 	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
 		CQ_DES, IQ_ASC, IQ_DES, DIFFICULTY_ASC, DIFFICULTY_DES, ID_ASC, ID_DES,
 		SEM_ASC, SEM_DES }
@@ -34,15 +45,15 @@ public abstract class Display extends Activity {
 	HashMap<Integer, Course> row_map; // for retrieving Course from row clicked on
 	HashMap<Integer, CourseAverage> row_map_dept; // for retrieving CourseAverage from row clicked on, for use by dept page
 	Type displayType; // Type of page displayed (course, instructor, dept)
-	
+
 	public String keyword;
-	
+
 	public RecentSearches searches_db;
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		
+
 		searches_db.open();
 		if (searches_db.ifExists(keyword, 1)) {
 			// If keyword already exists, display "remove" option
@@ -53,12 +64,12 @@ public abstract class Display extends Activity {
 			menu.add(0, 1, 0, "Add to favorites");
 		}
 		searches_db.close();
-		
+
 		menu.add(0, 2, 1, "Quit");
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -81,12 +92,12 @@ public abstract class Display extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.search_page_menu, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.search_page_menu, menu);
+		return true;
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -98,6 +109,9 @@ public abstract class Display extends Activity {
 		this.displayType = displayType;
 
 		ListView lv = (ListView)findViewById(R.id.reviews);
+		lv.setClickable(true);
+
+		lv.setTextFilterEnabled(true);
 
 		// Grid item mapping to pass to ListView SimpleAdapter
 		String[] columnHeaders = new String[] {"col_1", "col_2", "col_3", "col_4"};
@@ -164,7 +178,36 @@ public abstract class Display extends Activity {
 					if (c == null) {
 						Log.v("Course", "course is null");
 					}
+					Dialog dialog = new Dialog(Display.this);
+					dialog.setContentView(R.layout.main_dialog);
+
+
+					dialog.setTitle("HELLO");
+
+					dialog.setCancelable(true);
+					//there are a lot of settings, for dialog, check them all out!
+
+					//set up text
+					TextView text = (TextView) dialog.findViewById(R.id.TextView01);
+
+					String displayText = "";
+					displayText += "Testing\n";				
+
+					text.setText((CharSequence) displayText);
+
+
+					//set up button
+					Button button = (Button) dialog.findViewById(R.id.Button01);
+					/*button.setOnClickListener(new DialogInterface.OnClickListener() {
+			         @Override
+			             public void onClick(View v) {
+			                 finish();
+			             }
+			         });*/
+					//now that the dialog is set up, it's time to show it    
+					dialog.show();
 				}
+
 			});
 
 			break; // end of COURSE and INSTRUCTOR cases

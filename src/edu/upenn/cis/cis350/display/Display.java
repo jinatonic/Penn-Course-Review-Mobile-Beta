@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.RecentSearches;
@@ -24,6 +26,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 
 public abstract class Display extends Activity {
+	
 
 	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
 		CQ_DES, IQ_ASC, IQ_DES, DIFFICULTY_ASC, DIFFICULTY_DES, ID_ASC, ID_DES,
@@ -38,7 +41,7 @@ public abstract class Display extends Activity {
 	public String keyword;
 	
 	public RecentSearches searches_db;
-	
+		
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -98,6 +101,9 @@ public abstract class Display extends Activity {
 		this.displayType = displayType;
 
 		ListView lv = (ListView)findViewById(R.id.reviews);
+		lv.setClickable(true);
+		
+		lv.setTextFilterEnabled(true);
 
 		// Grid item mapping to pass to ListView SimpleAdapter
 		String[] columnHeaders = new String[] {"col_1", "col_2", "col_3", "col_4"};
@@ -164,6 +170,9 @@ public abstract class Display extends Activity {
 					if (c == null) {
 						Log.v("Course", "course is null");
 					}
+					Dialog dialog = new Dialog(Display.this);
+					
+					dialog.show();
 				}
 			});
 

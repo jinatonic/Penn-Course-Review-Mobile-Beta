@@ -1,11 +1,16 @@
 package edu.upenn.cis.cis350.display;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
@@ -20,7 +25,7 @@ public class DisplayReviewsForCourse extends Display {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.course_reviews);
-		
+
 		searches_db = new RecentSearches(this.getApplicationContext());
 
 		// Get course reviews for the search term
@@ -30,9 +35,9 @@ public class DisplayReviewsForCourse extends Display {
 		String name = i.getStringExtra(getResources().getString(R.string.SEARCH_NAME));
 
 		keyword = type + alias + " - " + name;
-		
+
 		Log.w("DisplayReviewsForCourse", "Displaying information for " + keyword);
-		
+
 		// Search database first
 		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();

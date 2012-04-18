@@ -217,7 +217,7 @@ public class StartPage extends Activity {
 	public void downloadAutoComplete() {
 
 		autoCompleteDB.open();
-		autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
+		//autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
 		if (autoCompleteDB.updatesNeeded()) {
 			// Autocomplete table is empty, need to populate it initially
 			new AutocompleteQuery(this).execute("");

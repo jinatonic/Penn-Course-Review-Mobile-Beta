@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:text="@string/pcr"
+        android:text="@string/main_auth"
         android:textColor="@color/text_navy"
         android:textSize="35sp" />
 
@@ -51,18 +51,16 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/enter"
+            android:id="@+id/launch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onEnterButtonClick"
-            android:text="@string/enter" />
+            android:text="@string/browser" />
 
         <Button
-            android:id="@+id/clear"
+            android:id="@+id/auth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onClearButtonClick"
-            android:text="@string/clear" />
+            android:text="@string/auth" />
     </LinearLayout>
 
 </LinearLayout>

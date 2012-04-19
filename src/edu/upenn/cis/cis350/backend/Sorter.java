@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import edu.upenn.cis.cis350.objects.Course;
-import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class Sorter {

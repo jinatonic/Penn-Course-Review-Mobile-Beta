@@ -109,15 +109,12 @@ public class AutoCompleteDB {
 			Log.w(TAG, "adding " + keywords.size() + " instructors to database");
 		else
 			Log.w(TAG, "adding " + keywords.size() + " courses to database");
-
-		int count = 1;
 		
 		String sql = "Insert into " + AUTOCOMPLETE_TABLE + " (path, name, course_id, " +
 				"course_id_norm, type, year) values(?,?,?,?,?,?)";
         SQLiteStatement insert = mDb.compileStatement(sql);
 		
 		for (KeywordMap keyword : keywords) {
-			// Log.w(TAG, count++ + ": adding " + keyword.getAlias() + " - " + keyword.getName());
 			// First we add to the course table 
 			String course_id = keyword.getAlias();
 			String course_id_norm = "";

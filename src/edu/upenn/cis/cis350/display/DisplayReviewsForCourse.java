@@ -1,16 +1,11 @@
 package edu.upenn.cis.cis350.display;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;

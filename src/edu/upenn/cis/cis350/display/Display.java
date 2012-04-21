@@ -175,7 +175,7 @@ public abstract class Display extends Activity {
 					dialog.setContentView(R.layout.main_dialog);
 
 
-					dialog.setTitle("HELLO");
+					dialog.setTitle(c.getName());
 
 					dialog.setCancelable(true);
 					//there are a lot of settings, for dialog, check them all out!
@@ -183,8 +183,7 @@ public abstract class Display extends Activity {
 					//set up text
 					TextView text = (TextView) dialog.findViewById(R.id.TextView01);
 
-					String displayText = "";
-					displayText += "Testing\n";				
+					String displayText = c.getComments();	
 
 					text.setText((CharSequence) displayText);
 

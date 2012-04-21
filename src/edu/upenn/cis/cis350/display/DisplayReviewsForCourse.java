@@ -61,7 +61,6 @@ public class DisplayReviewsForCourse extends Display {
 		description.setText(courseReviews.get(0).getDescription());
 
 		// Set difficulty to be thing its sorted by first
-		// TODO(cymai): see if you should change default
 		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);
 		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		sortingField = Sort.DIFFICULTY_ASC;

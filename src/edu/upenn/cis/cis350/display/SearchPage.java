@@ -188,8 +188,11 @@ public class SearchPage extends Activity {
 		case R.id.menu_favorites:
 			showDialog(FAVORITES_DIALOG);
 			return true;
-		case R.id.menu_clean:
-			clean_db();
+		case R.id.menu_settings:
+			//clean_db();
+			Intent i = new Intent(this, SettingsPage.class);
+			// Start Settings Page activity
+			startActivityForResult(i, Constants.NORMAL_PAGE_LOAD);
 			return true;
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT);

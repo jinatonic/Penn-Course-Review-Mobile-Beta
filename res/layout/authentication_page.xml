@@ -70,7 +70,7 @@
             android:id="@+id/auth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onAuthSerial"
+            android:onClick="onAuthSerialButtonClick"
             android:text="@string/auth" />
     </LinearLayout>
 

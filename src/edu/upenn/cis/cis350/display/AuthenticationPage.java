@@ -70,7 +70,7 @@ public class AuthenticationPage extends Activity {
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 						(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					// Perform action on key press
-					onAuthSerial(v);
+					onAuthSerialButtonClick(v);
 					return true;
 				}
 				return false;
@@ -93,7 +93,7 @@ public class AuthenticationPage extends Activity {
 
 	}
 
-	public void onAuthSerial(View v) {
+	public void onAuthSerialButtonClick(View v) {
 
 		int count = 0;
 		String pennKey_response = "!ERROR";
@@ -198,6 +198,19 @@ public class AuthenticationPage extends Activity {
 		Intent i = new Intent(this, StartPage.class);
 
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivity(i);
+		startActivityForResult(i, Constants.NORMAL_PAGE_LOAD);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Constants.NORMAL_PAGE_LOAD) {
+			if (resultCode == RESULT_OK) {
+				// Don't do anything
+			}
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
+				this.finish();
+			}
+		}
 	}
 }

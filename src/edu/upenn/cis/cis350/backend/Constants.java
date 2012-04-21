@@ -6,6 +6,8 @@ public class Constants {
 	
 	public static final int ACTIVITY_LOADING_PAGE = 1;
 	
+	public static final int NORMAL_PAGE_LOAD = 5;
+
 	public static final int MAX_AUTOCOMPLETE_RESULT = 15;
 	
 	public static final int AUTOCOMPLETE_WAIT_TIME = 300;	// milliseconds

@@ -204,9 +204,11 @@ public class StartPage extends Activity {
 			if (resultCode == RESULT_OK) {
 				// Don't do anything
 			}
-			else if (resultCode == Constants.RESULT_QUIT)
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
 				// Quit application if quit is issued
 				this.finish();
+			}
 		}
 	}
 
@@ -247,14 +249,14 @@ public class StartPage extends Activity {
 		@Override
 		protected void onPreExecute() {
 			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-			
+
 			dialog = new ProgressDialog(_activity);
 			dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
 			dialog.setCanceledOnTouchOutside(false);
 			dialog.setIndeterminate(false);
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setMax(200);	// change, 157
-			
+
 			progress = 0;
 
 			dialog.setMessage("Initiating download for autocomplete...");
@@ -276,14 +278,14 @@ public class StartPage extends Activity {
 			final ExecutorService executor = Executors.newFixedThreadPool(8);
 
 			publishMessage("Downloading \ninstructor information", progress);
-			
+
 			// Get instructors
 			final ArrayList<KeywordMap> instructor_result = AutoComplete.getAutoCompleteInstructors();
 			autoCompleteDB.addEntries(instructor_result);
 			instructor_result.clear();
-			
+
 			progress += 33;
-			
+
 			publishMessage("Downloading \ndepartment information", progress);
 
 			// Get individual departments
@@ -298,7 +300,7 @@ public class StartPage extends Activity {
 				executor.execute(new Runnable() {
 					public void run() {
 						course_result.addAll(AutoComplete.getAutoCompleteCourses(dept));
-						
+
 						publishMessage("Downloading \n" + dept.getName(), ++progress);
 					}
 				});
@@ -314,7 +316,7 @@ public class StartPage extends Activity {
 			}
 
 			autoCompleteDB.addEntries(course_result);
-			
+
 			publishMessage("Done", 200);
 
 			DLcomplete = true;

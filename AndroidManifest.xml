@@ -26,6 +26,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity android:name="StartPage"/>
+        <activity android:name="SettingsPage"></activity>
     </application>
 
 </manifest>

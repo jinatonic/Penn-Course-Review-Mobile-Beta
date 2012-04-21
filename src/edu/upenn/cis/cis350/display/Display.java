@@ -113,7 +113,7 @@ public abstract class Display extends Activity {
 		// List of all rows (each row being a map of columnHeader to cell text)
 		List<HashMap<String, String>> allRows = new ArrayList<HashMap<String, String>>();
 
-		int rowNumber = 0; // used to keep track of which row we are on, for mapping in list_map
+		int rowNumber = 0; // used to keep track of which row we are on, for mapping in row_map
 
 		switch (displayType) {
 		case COURSE:
@@ -175,16 +175,22 @@ public abstract class Display extends Activity {
 					dialog.setContentView(R.layout.main_dialog);
 
 
-					dialog.setTitle("HELLO");
+					dialog.setTitle(c.getAlias());
 
 					dialog.setCancelable(true);
+					dialog.setCanceledOnTouchOutside(true);
+					
 					//there are a lot of settings, for dialog, check them all out!
 
 					//set up text
 					TextView text = (TextView) dialog.findViewById(R.id.TextView01);
 
-					String displayText = "";
-					displayText += "Testing\n";				
+					String displayText = 
+							c.getName() + "\n\n"
+							+ c.getDescription() + "\n\n"
+							+ c.getSemester() + "\n\n"
+							+ c.getInstructor().getName() + "\n\n"
+							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
 
 					text.setText((CharSequence) displayText);
 

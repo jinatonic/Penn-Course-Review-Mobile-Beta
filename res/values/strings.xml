@@ -14,7 +14,7 @@
     <string name="difficulty">Difficulty</string>
     <string name="course_id">Course ID</string>
     <string name="dept_note">*Ratings listed here are averaged over all past course offerings in the department.</string>
-	<string name="main_auth">Enter Serial Number</string>
+	<string name="main_auth1">You must have a valid PennKey</string>
     
     <color name="bg_blue">#D7D7EB</color>
     <color name="highlight_blue">#EEEFFF</color>
@@ -35,4 +35,5 @@
     <string name="SEARCH_TYPE">SEARCH_TYPE</string>
     <string name="SEARCH_ALIAS">SEARCH_ALIAS</string>
     <string name="SEARCH_NAME">SEARCH_NAME</string>
+    <string name="main_auth2">Please retrieve and enter your serial number below</string>
 </resources>

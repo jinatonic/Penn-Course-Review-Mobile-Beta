@@ -174,7 +174,6 @@ public abstract class Display extends Activity {
 					Dialog dialog = new Dialog(Display.this);
 					dialog.setContentView(R.layout.main_dialog);
 
-
 					dialog.setTitle(c.getAlias());
 
 					dialog.setCancelable(true);
@@ -190,7 +189,8 @@ public abstract class Display extends Activity {
 							+ c.getDescription() + "\n\n"
 							+ c.getSemester() + "\n\n"
 							+ c.getInstructor().getName() + "\n\n"
-							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
+							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n"
+							+ c.getComments();
 
 					text.setText((CharSequence) displayText);
 

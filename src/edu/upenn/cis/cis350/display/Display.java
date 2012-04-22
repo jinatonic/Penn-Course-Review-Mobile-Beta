@@ -8,12 +8,14 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
+import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 
@@ -48,12 +51,17 @@ public abstract class Display extends Activity {
 
 	protected ImageButton favHeart;
 
+	Typeface timesNewRoman;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		// Set font Times New Roman
+		timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 	}
 
 	@Override
@@ -132,7 +140,7 @@ public abstract class Display extends Activity {
 	 * instructor, or department pages
 	 * @param displayType - the type of page we are printing on (course, instructor, or dept)
 	 * */
-	public void printReviews(Type displayType) {
+	public void printReviews(final Type displayType) {
 		// Set the current page display type
 		this.displayType = displayType;
 
@@ -206,38 +214,52 @@ public abstract class Display extends Activity {
 					if (c == null) {
 						Log.v("Course", "course is null");
 					}
-					Dialog dialog = new Dialog(Display.this);
-					dialog.setContentView(R.layout.main_dialog);
+					final Dialog dialog = new Dialog(Display.this);
+					dialog.setContentView(R.layout.main_dialog);					
 
 					dialog.setTitle(c.getAlias());
 
 					dialog.setCancelable(true);
 					dialog.setCanceledOnTouchOutside(true);
 
-					//there are a lot of settings, for dialog, check them all out!
+					// Set up title
+					TextView title = (TextView) dialog.findViewById(R.id.CourseContent);
+					title.setTypeface(timesNewRoman);
+					String titleText = 
+							c.getName() + "\n"
+									+ c.getFullSemester() + "\n"
+									+ c.getInstructor().getName() + "\n"
+									+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
 
-					//set up text
-					TextView text = (TextView) dialog.findViewById(R.id.TextView01);
+					title.setText((CharSequence) titleText);
 
-					String displayText = 
-							c.getName() + "\n\n"
-									+ c.getDescription() + "\n\n"
-									+ c.getFullSemester() + "\n\n"
-									+ c.getInstructor().getName() + "\n\n"
-									+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n"
-									+ c.getComments();
+					//set up comments
+					TextView description = (TextView) dialog.findViewById(R.id.Comments);
+					String ratingString = "Course Quality: " + c.getRatings().getCourseQuality();
+					ratingString += "\nInstructor Quality: " + c.getRatings().getInstructorQuality();
+					ratingString += "\nDifficulty: " + c.getRatings().getDifficulty() + "\n\n";
 
-					text.setText((CharSequence) displayText);
+					String commentString = "";
+					if (displayType == KeywordMap.Type.COURSE) {
+						commentString = c.getComments();
 
+					} else if (displayType == KeywordMap.Type.INSTRUCTOR) {
+						commentString = c.getDescription();
+					}
+					if (commentString == null) {
+						commentString = "There are no available comments for this course.\n";
+					}
+					ratingString += commentString;
+					description.setText((CharSequence) ratingString);
 
 					//set up button
 					Button button = (Button) dialog.findViewById(R.id.Button01);
-					/*button.setOnClickListener(new DialogInterface.OnClickListener() {
-			         @Override
-			             public void onClick(View v) {
-			                 finish();
-			             }
-			         });*/
+					button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							dialog.dismiss();
+						}
+					});
 					//now that the dialog is set up, it's time to show it    
 					dialog.show();
 				}

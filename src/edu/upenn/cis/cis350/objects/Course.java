@@ -48,11 +48,11 @@ public class Course {
 		if (semester == null) return null;
 		char s = semester.charAt(semester.length()-1);
 		if(s == 'A' || s == 'a')
-			return "Fall "+semester.substring(0,semester.length()-1);
+			return "Spring "+semester.substring(0,semester.length()-1);
 		else if(s == 'B' || s == 'b')
-			return "Spring" + semester.substring(0,semester.length()-1);
+			return "Summer " + semester.substring(0,semester.length()-1);
 		else if(s == 'C' || s == 'c')
-			return "Summer" + semester.substring(0,semester.length()-1);
+			return "Fall " + semester.substring(0,semester.length()-1);
 		else return semester;
 	}
 }

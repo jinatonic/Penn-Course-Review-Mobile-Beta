@@ -180,7 +180,7 @@ public abstract class Display extends Activity {
 					// Course Id
 					row.put("col_1", curCourse.getAlias());
 					// Course Semester
-					row.put("col_2", curCourse.getSemester());
+					row.put("col_2", curCourse.getFullSemester());
 					break;
 				default:
 					break;
@@ -223,7 +223,7 @@ public abstract class Display extends Activity {
 					String displayText = 
 							c.getName() + "\n\n"
 									+ c.getDescription() + "\n\n"
-									+ c.getSemester() + "\n\n"
+									+ c.getFullSemester() + "\n\n"
 									+ c.getInstructor().getName() + "\n\n"
 									+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n"
 									+ c.getComments();

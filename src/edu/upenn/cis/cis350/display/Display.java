@@ -8,13 +8,17 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -42,6 +46,16 @@ public abstract class Display extends Activity {
 	public String keyword;
 
 	public RecentSearches searches_db;
+
+	protected ImageButton favHeart;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Remove title bar
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -91,6 +105,28 @@ public abstract class Display extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.search_page_menu, menu);
 		return true;
+	}
+
+	/* Called when user taps on favorites heart icon in upper right corner on a display page */
+	public void onFavHeartClick(View v) {
+		searches_db.open();
+		if (searches_db.ifExists(keyword, 1)) { // was favorited, now removing
+			// If keyword already exists, toggle to unselected heart icon
+			favHeart = (ImageButton) findViewById(R.id.fav_heart);
+			favHeart.setImageResource(R.drawable.favorites_unselected_100);
+
+			// Remove keyword from favorites
+			searches_db.removeKeyword(keyword, 1);
+		}
+		else { // was not favorited, now favoriting
+			// Toggle to selected heart icon
+			favHeart = (ImageButton) findViewById(R.id.fav_heart);
+			favHeart.setImageResource(R.drawable.favorites_selected_100);
+
+			// Add keyword to favorites
+			searches_db.addKeyword(keyword, 1);
+		}
+		searches_db.close();
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -178,7 +214,7 @@ public abstract class Display extends Activity {
 
 					dialog.setCancelable(true);
 					dialog.setCanceledOnTouchOutside(true);
-					
+
 					//there are a lot of settings, for dialog, check them all out!
 
 					//set up text
@@ -186,11 +222,11 @@ public abstract class Display extends Activity {
 
 					String displayText = 
 							c.getName() + "\n\n"
-							+ c.getDescription() + "\n\n"
-							+ c.getSemester() + "\n\n"
-							+ c.getInstructor().getName() + "\n\n"
-							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n"
-							+ c.getComments();
+									+ c.getDescription() + "\n\n"
+									+ c.getSemester() + "\n\n"
+									+ c.getInstructor().getName() + "\n\n"
+									+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n"
+									+ c.getComments();
 
 					text.setText((CharSequence) displayText);
 

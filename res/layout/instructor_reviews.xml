@@ -19,16 +19,32 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_blue"
-        android:orientation="vertical"
-        android:padding="10dp" >
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/instructor_name"
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_navy"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/instructor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:textColor="@color/text_navy"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/fav_heart"
+                android:layout_width="55dip"
+                android:layout_height="40dip"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:onClick="onFavHeartClick" />
+        </RelativeLayout>
     </LinearLayout>
 
     <View

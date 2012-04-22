@@ -19,33 +19,56 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_blue"
-        android:orientation="vertical"
-        android:padding="10dp" >
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/dept_number"
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_navy"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/dept_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dip"
-            android:textColor="@color/text_gray"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/dept_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:textColor="@color/text_navy"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/dept_note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dept_note"
-            android:textColor="@color/black"
-            android:textSize="11sp" />
+            <ImageButton
+                android:id="@+id/fav_heart"
+                android:layout_width="55dip"
+                android:layout_height="40dip"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:onClick="onFavHeartClick" />
+
+            <TextView
+                android:id="@+id/dept_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dept_number"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="2dp"
+                android:textColor="@color/text_gray"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dept_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dept_name"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="2dp"
+                android:text="@string/dept_note"
+                android:textColor="@color/black"
+                android:textSize="11sp" />
+        </RelativeLayout>
     </LinearLayout>
 
     <View

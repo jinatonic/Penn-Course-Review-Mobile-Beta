@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
@@ -15,9 +16,6 @@ public class DisplayReviewsForCourse extends Display {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Remove title bar
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.course_reviews);
 
@@ -39,7 +37,23 @@ public class DisplayReviewsForCourse extends Display {
 		courseReviews = cache.getCourse(alias, 0);
 		cache.close();
 
-		// Set font to Times New Roman
+		// Check whether heart icon should be set or not
+		searches_db.open();
+		if (searches_db.ifExists(keyword, 1)) { // was favorited
+			Log.v("Favorites", "Was favorited already");
+			// If keyword already exists, set favorited icon
+			favHeart = (ImageButton) findViewById(R.id.fav_heart);
+			favHeart.setImageResource(R.drawable.favorites_selected_100);
+		}
+		else { // was not favorited
+			Log.v("Favorites", "Was not favorited already");
+			// Set unselected heart icon
+			favHeart = (ImageButton) findViewById(R.id.fav_heart);
+			favHeart.setImageResource(R.drawable.favorites_unselected_100);
+		}
+		searches_db.close();
+
+		// Set header font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.header);
 		searchPCRView.setTypeface(timesNewRoman);

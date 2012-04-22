@@ -170,6 +170,7 @@ public class SearchPage extends Activity {
 
 		// dismiss any remaining dialog that might be open
 		removeDialog(RECENT_DIALOG);
+		removeDialog(FAVORITES_DIALOG);
 	}
 
 	@Override

@@ -22,9 +22,7 @@ public class Parser {
 	public static final String token = "?token=cis350a_3uZg7s5d62hHBtZGeTDl"; // private token (github repo is private)
 
 
-	public Department getReviewsForDept(KeywordMap dept_map) {
-		String dept_name = dept_map.getName();
-		String dept_id =  dept_map.getAlias();
+	public JSONArray getReviewsForDept(KeywordMap dept_map) {
 		String dept_path = dept_map.getPath();
 		/*if(dept == null) return null;
 		dept = dept.trim().toUpperCase();
@@ -47,7 +45,6 @@ public class Parser {
 
 		System.out.println(dept);
 		String path = "/depts/"+dept;*/
-		Department department = null;
 		String url = baseURL + dept_path + token;
 		try{
 			JSONObject json = JSONRequest.retrieveJSONObject(url);
@@ -56,40 +53,42 @@ public class Parser {
 			}
 			System.out.println(url);
 
-			ArrayList<CourseAverage> courseAverages = new ArrayList<CourseAverage>();
 			JSONObject result = null;
 			if (json.has("result")) {
-				//try {
 				result = json.getJSONObject("result");
 				JSONArray coursehistories = null;
 				if (result.has("coursehistories")) {
 					coursehistories = result.getJSONArray("coursehistories");
-					for (int i = 0; i < coursehistories.length(); i++) {
-						JSONObject o = coursehistories.getJSONObject(i);
-						String course_path = null;
-						String course_name = "";
-						String course_id = "";
-						if(o.has("aliases"))
-							course_id = o.getJSONArray("aliases").getString(0);
-						if(o.has("name"))
-							course_name = o.getString("name");
-						if (o.has("path")) {
-							course_path = o.getString("path");
-							CourseAverage a = new CourseAverage(course_name, course_id, course_path, storeReviews(course_path));
-							courseAverages.add(a);
-						}
-					}
-					department = new Department(dept_name, dept_id, dept_path, courseAverages);
-
+					return coursehistories;
 				}
-				//} catch (JSONException e) {
-				//e.printStackTrace();
-				//	return null;
 			}
+			return null;
+		} catch (JSONException e) { 
+			e.printStackTrace(); 
+			return null;
+		}
+	}
 
+	public CourseAverage getCourseAvgForDept(JSONObject o) {
+		String course_path = null;
+		String course_name = "";
+		String course_id = "";
+		try {
+			if(o.has("aliases"))
+				course_id = o.getJSONArray("aliases").getString(0);
+			if(o.has("name"))
+				course_name = o.getString("name");
+			if (o.has("path")) {
+				course_path = o.getString("path");
+				CourseAverage a = new CourseAverage(course_name, course_id, course_path, storeReviews(course_path));
+				return a;
+			}
+			return null;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 
-			return  department;
-		}catch(JSONException e) { e.printStackTrace(); return department;}
 	}
 
 	//path is of form: "/instructors/1-DONALD-D-FITTS
@@ -102,7 +101,7 @@ public class Parser {
 		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
 		try{
 			//Log.w("PATH", reviewpath);
-			
+
 			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
 			for(int i = 0; i < values.length(); i++){
@@ -116,14 +115,14 @@ public class Parser {
 				String [] aliases = new String[alias.length()];
 				for(int j = 0; j < alias.length(); j++)
 					aliases[j] = alias.getString(j);
-				
+
 				String semester = course_info.getString("semester");
 				String name = course_info.getString("name");
 				String course_path = section_result.getJSONObject("reviews").getString("path");
 				reviews.addAll(createCourseReview(course_path, aliases, name, null, semester));
-				
+
 			}
-			
+
 			//reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { e.printStackTrace(); }
 		return reviews;
@@ -183,7 +182,7 @@ public class Parser {
 				return null;
 			}
 		}
-		*/
+		 */
 		System.out.println(course_path);
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		reviews = storeReviews(course_path);
@@ -203,7 +202,7 @@ public class Parser {
 	public ArrayList<Course> storeReviews(String path) {
 		ArrayList<Course> courseReviews = new ArrayList<Course>();
 		JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
-		
+
 		String[] course_aliases = null;
 
 		if (js.has("result")) {
@@ -337,18 +336,18 @@ public class Parser {
 					}
 
 					r = new Ratings(
-								rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-								rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-								rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-								rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-								rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-								rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-								rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-								rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-								rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-								rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-								rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-					);
+							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
+									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
+											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
+													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
+															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
+																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
+																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
+																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
+																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
+																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
+																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
+							);
 				}
 				JSONObject section = null;
 				Section s = null;

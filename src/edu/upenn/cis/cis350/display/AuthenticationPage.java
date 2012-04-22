@@ -20,6 +20,8 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -97,7 +99,7 @@ public class AuthenticationPage extends Activity {
 
 	public void onAuthSerialButtonClick(View v) {
 		String serialNumber = ((EditText)findViewById(R.id.authenticate_text)).getText().toString();
-		new AuthKey().execute(serialNumber);
+		new AuthKey(this).execute(serialNumber);
 	}
 
 
@@ -122,6 +124,29 @@ public class AuthenticationPage extends Activity {
 	}
 	
 	class AuthKey extends AsyncTask<String, Integer, String> {
+		
+		Dialog dialog;
+		Activity _activity;
+		
+		boolean auth;
+		
+		AuthKey(Activity activity) {
+			_activity = activity;
+			
+			dialog = ProgressDialog.show(_activity, "", "Authenticating your key...", true);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.show();
+			
+			auth = false;
+		}
+		
+		protected void onPostExecute(String result) {
+			dialog.dismiss();
+			if (auth) {
+				goToStartPage();
+			}
+		}
 
 		@Override
 		protected String doInBackground(String... arg0) {
@@ -184,8 +209,8 @@ public class AuthenticationPage extends Activity {
 							CharSequence text = "Authenticated!";
 							
 							displayToast(text);
-							
-							goToStartPage();
+
+							auth = true;
 						}
 
 					}
@@ -220,5 +245,6 @@ public class AuthenticationPage extends Activity {
 				}
 			});
 		}
+		
 	}
 }

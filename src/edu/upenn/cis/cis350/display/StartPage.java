@@ -215,24 +215,17 @@ public class StartPage extends Activity {
 
 	// file download simulator... a really simple
 	public void downloadAutoComplete() {
-
 		autoCompleteDB.open();
 		//autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
-		if (autoCompleteDB.updatesNeeded()) {
+		if (autoCompleteDB.updatesNeeded() || autoCompleteDB.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
 			// Autocomplete table is empty, need to populate it initially
-			new AutocompleteQuery(this).execute("");
-			autoCompleteDB.close();
-		}
-		else if (autoCompleteDB.getSize() < Constants.MAX_AUTOCOMPLETE_RESULT) {
-			// Autocomplete table is corrupt or missing entries, redownload it
+			// OR Autocomplete table is corrupt or missing entries, redownload it
 			autoCompleteDB.resetTables();
-			new AutocompleteQuery(this).execute("");	// TODO add toast
+			new AutocompleteQuery(this).execute("");
 			autoCompleteDB.close();
 		}
 		else {
 			autoCompleteDB.close();
-			
-			autoCompleteDB.getSize();
 			
 			goToSearchPage();
 		}
@@ -329,8 +322,9 @@ public class StartPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
-			if (dialog.isShowing())
+			if (dialog.isShowing()) {
 				dialog.dismiss();
+			}
 
 			goToSearchPage();
 		}

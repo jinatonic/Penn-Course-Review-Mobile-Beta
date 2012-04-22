@@ -1,8 +1,16 @@
 package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,6 +46,7 @@ import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Course;
+import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
@@ -311,11 +320,7 @@ public class SearchPage extends Activity {
 		recentSearches.close();
 
 		// Run async thread to get the correct information for the keywordmap
-		SearchPage.this.runOnUiThread(new Runnable() {
-			public void run() {
-				currentTask = new ServerQuery().execute(keywordmap);
-			}
-		});
+		currentTask = new ServerQuery(this).execute(keywordmap);
 	}
 
 	/**
@@ -496,6 +501,16 @@ public class SearchPage extends Activity {
 
 	class ServerQuery extends AsyncTask<KeywordMap, Integer, String> {
 
+		private ProgressDialog dialog;
+		int progress = 0;
+		int total;
+		
+		Activity _activity;
+		
+		ServerQuery(Activity activity) {
+			_activity = activity;
+		}
+		
 		/**
 		 * Inputs are: path, name, course_id, type
 		 * Recall: type: course-0, instructor-1, department-2, UNKNOWN-3
@@ -506,6 +521,17 @@ public class SearchPage extends Activity {
 				Log.w("SearchPage: ServerQuery", "Too many arguments provided to AsyncTask");
 				return null;
 			}
+			
+			SearchPage.this.runOnUiThread(new Runnable() {
+				public void run() {
+					dialog = new ProgressDialog(_activity);
+					dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
+					dialog.setCancelable(true);
+					dialog.setCanceledOnTouchOutside(false);
+					dialog.setIndeterminate(false);
+					dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				}
+			});
 
 			// Run the parser
 			runParser(input[0]);
@@ -514,6 +540,7 @@ public class SearchPage extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
+			dialog.dismiss();
 			removeDialog(PROGRESS_BAR);
 			proceed();	// TODO fix
 		}
@@ -521,8 +548,11 @@ public class SearchPage extends Activity {
 		public void runParser(KeywordMap input) {
 			Log.w("Parser", "Running parser with " + input.getAlias());
 
-			Parser parser = new Parser();
+			final Parser parser = new Parser();
 
+			final ExecutorService executor = Executors.newFixedThreadPool(8);
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			
 			if (input.getType() == Type.COURSE) {
 				// Check cache first, if exists, proceed
 				if (checkCache(input.getAlias(), Type.COURSE)) {
@@ -549,12 +579,61 @@ public class SearchPage extends Activity {
 					return;
 				}
 
-				Department department = parser.getReviewsForDept(input);
+				JSONArray dept_courses = parser.getReviewsForDept(input);
 
-				if (department == null) {
-					Log.w("Parser", "getReviewsForDept returned null");
+				if (dept_courses == null) {
+					Log.w("SearchPage Error", "NULL JSONArray returned by getReviewsForDept");
+					// TODO: make toast?
 					return;
 				}
+
+				dialog.setProgress(progress);
+				dialog.setMax(dept_courses.length());
+				dialog.setMessage("Downloading information for " + input.getName());
+
+				SearchPage.this.runOnUiThread(new Runnable() {
+					public void run() {
+						dialog.show();
+					}
+				});
+				
+				final CourseAverage[] avg = new CourseAverage[dept_courses.length()];
+				for (int i = 0; i < dept_courses.length(); i++) {
+					try {
+						final JSONObject o = dept_courses.getJSONObject(i);
+						final int j = i;
+						executor.execute(new Runnable() {
+							public void run() {
+								CourseAverage t = parser.getCourseAvgForDept(o);
+								if (t != null) {
+									avg[j] = t;
+								}
+								else {
+									Log.w("SearchPage Error", "NULL CourseAverage is returned by parser");
+								}
+								
+								SearchPage.this.runOnUiThread(new Runnable() {
+									public void run() {
+										dialog.setProgress(++progress);
+									}
+								});
+							}
+						});
+						
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				try {
+					// Make sure all of the queries complete executing before proceeding
+					executor.shutdown();
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				Department department = new Department(input.getName(), input.getAlias(), input.getPath(), new ArrayList<CourseAverage>(Arrays.asList(avg)));
 
 				departmentSearchCache.open();
 				departmentSearchCache.addDepartment(department);

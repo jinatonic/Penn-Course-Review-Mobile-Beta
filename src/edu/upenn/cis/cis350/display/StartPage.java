@@ -231,6 +231,9 @@ public class StartPage extends Activity {
 		}
 		else {
 			autoCompleteDB.close();
+			
+			autoCompleteDB.getSize();
+			
 			goToSearchPage();
 		}
 	}

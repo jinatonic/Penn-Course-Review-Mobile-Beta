@@ -150,9 +150,6 @@ public class AutoCompleteDB {
 		}
 		Log.w("AutocompleteDB", "Search DB for " + keyword);
 
-		long size = new File(mDb.getPath()).length();
-		Log.w("AutocompleteDB", "Size of db is " + size);
-		
 		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" +
 						keyword + "%' OR course_id_norm LIKE '" + keyword + "%'";
 		
@@ -297,13 +294,20 @@ public class AutoCompleteDB {
 	}
 	
 	/**
-	 * Get the size of the cache (number of entries)
+	 * Get the size of the autocomplete table (in KBs)
 	 * @return
 	 */
-	public int getSize() {
-		Log.w(TAG, "Getting size of the table");
-		Cursor c = mDb.rawQuery("SELECT count(*) AS count FROM " + AUTOCOMPLETE_TABLE, null);
-		c.moveToFirst();
-		return c.getInt(c.getColumnIndex("count"));
+	public long getSize() {
+		long size = new File(mDb.getPath()).length();
+		
+//		String query = "SELECT bytes from user_segments where segment_name = '" + AUTOCOMPLETE_TABLE + "'";
+//		Cursor c = mDb.rawQuery(query, null);
+//		c.moveToFirst();
+//		
+//		int bytes = c.getInt(0);
+//		
+//		Log.w("AUTOCOMPLETE", "Size of table based on file is " + size + " and based on query is " + bytes);
+		
+		return size / 1000;
 	}
 }

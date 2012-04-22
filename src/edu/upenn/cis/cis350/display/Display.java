@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;

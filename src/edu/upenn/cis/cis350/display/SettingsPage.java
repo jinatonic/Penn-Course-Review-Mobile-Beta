@@ -1,14 +1,31 @@
 package edu.upenn.cis.cis350.display;
 
 import android.app.Activity;
-import android.graphics.Typeface;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+import edu.upenn.cis.cis350.backend.Constants;
+import edu.upenn.cis.cis350.database.AutoCompleteDB;
+import edu.upenn.cis.cis350.database.CourseSearchCache;
+import edu.upenn.cis.cis350.database.DepartmentSearchCache;
+import edu.upenn.cis.cis350.database.RecentSearches;
 
 public class SettingsPage extends Activity {
+
+	// Database pointers
+	private CourseSearchCache courseSearchCache;
+	private DepartmentSearchCache departmentSearchCache;
+	private AutoCompleteDB autoCompleteDB;
+	private RecentSearches recentSearches;
+	
+	private boolean autoCleared;
+	
+	private Toast toast;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -19,41 +36,161 @@ public class SettingsPage extends Activity {
 
 		setContentView(R.layout.settings_page);
 
-		/*
-		// Set title font to Times New Roman
-		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		TextView dataTitle = (TextView) findViewById(R.id.data_title);
-		dataTitle.setTypeface(timesNewRoman);
-		*/
-
+		// Instantiate the database items
+		courseSearchCache = new CourseSearchCache(this.getApplicationContext());
+		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
+		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
+		recentSearches = new RecentSearches(this.getApplicationContext());
+		
+		showSearchCacheSize();
+		showHistorySize();
+		showFavoriteSize();
+		showAutocompleteSize();
+		
+		autoCleared = false;
+	}
+	
+	/**
+	 * Used to capture the back key (to set the result code for re-downloading autocomplete)
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	        if (autoCleared) {
+	        	Log.w("SettingsPage", "Cleared autocomplete, going back to startpage");
+	        	setResult(Constants.AUTOCOMPLETE_RESET);
+	        }
+	        else {
+	        	Log.w("SettingsPage", "Going back to searchPage");
+	        	setResult(RESULT_OK);
+	        }
+	        this.finish();
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+	
+	/**
+	 * Helper method to refresh the size of search cache
+	 */
+	public void showSearchCacheSize() {
 		// Set data store sizes
 		TextView cacheSize = (TextView)findViewById(R.id.cache_size);
 		cacheSize.setText(""); // TODO
-
+	}
+	
+	/**
+	 * Helper method to refresh the size of history table
+	 */
+	public void showHistorySize() {
 		TextView historySize = (TextView)findViewById(R.id.history_size);
 		historySize.setText(""); // TODO
-
+	}
+	
+	/**
+	 * Helper method to refresh the size of favorites table
+	 */
+	public void showFavoriteSize() {
 		TextView favSize = (TextView)findViewById(R.id.fav_size);
 		favSize.setText(""); // TODO
-
+	}
+	
+	/**
+	 * Helper method to refresh the size of autocomplete table
+	 */
+	public void showAutocompleteSize() {
+		autoCompleteDB.open();
+		long size = autoCompleteDB.getSize();
 		TextView autocompleteSize = (TextView)findViewById(R.id.autocomplete_size);
-		autocompleteSize.setText(""); // TODO
+		autocompleteSize.setText(size + "KB"); // TODO
+		autoCompleteDB.close();
 	}
 
+	/**
+	 * Button listener for clearing the search cache
+	 * @param v
+	 */
 	public void onClearCacheButtonClick(View v) {
-		// TODO
+		courseSearchCache.open();
+		courseSearchCache.resetTables();
+		courseSearchCache.close();
+		
+		departmentSearchCache.open();
+		departmentSearchCache.resetTables();
+		departmentSearchCache.close();
+		
+		Context context = getApplicationContext();
+		CharSequence text = "Search cache cleared";
+
+		int duration = Toast.LENGTH_LONG;
+
+		if (toast != null)
+			toast.cancel();
+		toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
+	/**
+	 * Button listener for clearing the history table
+	 * @param v
+	 */
 	public void onClearHistoryButtonClick(View v) {
-		// TODO
+		recentSearches.open();
+		recentSearches.resetTables(0);
+		recentSearches.close();
+		
+		Context context = getApplicationContext();
+		CharSequence text = "History cleared";
+
+		int duration = Toast.LENGTH_LONG;
+
+		if (toast != null)
+			toast.cancel();
+		toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
+	/**
+	 * Button listener for clearing the favorites table
+	 * @param v
+	 */
 	public void onClearFavoritesButtonClick(View v) {
-		// TODO
-	}
+		recentSearches.open();
+		recentSearches.resetTables(1);
+		recentSearches.close();
+		
+		Context context = getApplicationContext();
+		CharSequence text = "Favorites cleared";
 
+		int duration = Toast.LENGTH_LONG;
+
+		if (toast != null)
+			toast.cancel();
+		toast = Toast.makeText(context, text, duration);
+		toast.show();
+	}
+	
+	/**
+	 * Button listener for clearing the autocomplete table
+	 * @param v
+	 */
 	public void onClearAutocompleteButtonClick(View v) {
-		// TODO
+		autoCompleteDB.open();
+		autoCompleteDB.resetTables();
+		autoCompleteDB.close();
+		
+		autoCleared = true;
+		
+		showAutocompleteSize();
+		
+		Context context = getApplicationContext();
+		CharSequence text = "Autocomplete data cleared";
+
+		int duration = Toast.LENGTH_LONG;
+
+		if (toast != null)
+			toast.cancel();
+		toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
 

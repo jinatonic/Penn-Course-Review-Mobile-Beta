@@ -190,10 +190,9 @@ public class SearchPage extends Activity {
 			showDialog(FAVORITES_DIALOG);
 			return true;
 		case R.id.menu_settings:
-			//clean_db();
 			Intent i = new Intent(this, SettingsPage.class);
 			// Start Settings Page activity
-			startActivityForResult(i, Constants.NORMAL_PAGE_LOAD);
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 			return true;
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT);
@@ -212,6 +211,10 @@ public class SearchPage extends Activity {
 			}
 			else if (resultCode == Constants.RESULT_QUIT) {
 				setResult(Constants.RESULT_QUIT);
+				this.finish();
+			}
+			else if (resultCode == Constants.AUTOCOMPLETE_RESET) {
+				setResult(Constants.AUTOCOMPLETE_RESET);
 				this.finish();
 			}
 		}
@@ -417,24 +420,6 @@ public class SearchPage extends Activity {
 		}
 	}
 	
-	/**
-	 * Clear everything excluding autocomplete
-	 */
-	public void clean_db() {
-		courseSearchCache.open();
-		courseSearchCache.resetTables();
-		courseSearchCache.close();
-
-		departmentSearchCache.open();
-		departmentSearchCache.resetTables();
-		departmentSearchCache.close();
-
-		recentSearches.open();
-		recentSearches.resetTables(0);
-		recentSearches.resetTables(1);
-		recentSearches.close();
-	}
-
 	/**
 	 * Helper function to check if the given searchTerm exists in the database
 	 * @return

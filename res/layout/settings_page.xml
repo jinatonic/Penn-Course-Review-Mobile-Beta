@@ -36,7 +36,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingRight="25dip"
-                android:text="1mb"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -47,6 +46,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/cache_text"
             android:onClick="onClearCacheButtonClick"
+            android:paddingRight="15dip"
             android:text="Clear Cache" />
     </RelativeLayout>
 
@@ -75,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingRight="25dip"
-                android:text="1mb"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -86,6 +85,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/history_text"
             android:onClick="onClearHistoryButtonClick"
+            android:paddingRight="15dip"
             android:text="Clear History" />
     </RelativeLayout>
 
@@ -114,7 +114,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingRight="25dip"
-                android:text="1mb"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -125,6 +124,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/fav_text"
             android:onClick="onClearFavoritesButtonClick"
+            android:paddingRight="15dip"
             android:text="Clear Favorites" />
     </RelativeLayout>
 
@@ -153,7 +153,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingRight="25dip"
-                android:text="1mb"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -164,6 +163,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/autocomplete_text"
             android:onClick="onClearAutocompleteButtonClick"
+            android:paddingRight="15dip"
             android:text="Clear Autocomplete" />
 
         <TextView
@@ -171,10 +171,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/clear_autocomplete"
-            android:paddingRight="5dip"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
             android:paddingTop="10dip"
             android:text="*Note: this will require you to redownload the autocomplete data"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
     </RelativeLayout>
 
 </LinearLayout>

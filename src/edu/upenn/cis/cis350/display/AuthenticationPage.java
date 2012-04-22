@@ -19,10 +19,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 
-
-import edu.upenn.cis.cis350.backend.Constants;
-import edu.upenn.cis.cis350.backend.EasySSLSocketFactory;
-import edu.upenn.isc.fastPdfServiceClient.api.FpsPennGroupsHasMember;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -32,13 +28,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnKeyListener;
-import android.widget.AutoCompleteTextView;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.upenn.cis.cis350.backend.Constants;
+import edu.upenn.cis.cis350.backend.EasySSLSocketFactory;
+import edu.upenn.isc.fastPdfServiceClient.api.FpsPennGroupsHasMember;
 
 public class AuthenticationPage extends Activity {
 
@@ -186,6 +184,7 @@ public class AuthenticationPage extends Activity {
 
 				Toast toast = Toast.makeText(context, text, duration);
 				((EditText)findViewById(R.id.authenticate_text)).setText("");
+				toast.show();
 			}
 
 			count++;

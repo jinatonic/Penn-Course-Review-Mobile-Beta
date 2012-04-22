@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.CourseSearchCache;

@@ -25,8 +25,9 @@
             android:name="SearchPage"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
-        <activity android:name="StartPage"/>
-        <activity android:name="SettingsPage"></activity>
+        <activity android:name="StartPage" />
+        <activity android:name="SettingsPage" >
+        </activity>
     </application>
 
 </manifest>

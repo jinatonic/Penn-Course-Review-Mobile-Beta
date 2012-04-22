@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
-import edu.upenn.cis.cis350.backend.QueryWrapper;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends QueryWrapper {

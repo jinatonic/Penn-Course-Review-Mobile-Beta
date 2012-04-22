@@ -54,6 +54,8 @@ public abstract class Display extends Activity {
 
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		favHeart = (ImageButton) findViewById(R.id.fav_heart);
 	}
 
 	@Override
@@ -82,11 +84,13 @@ public abstract class Display extends Activity {
 		case 0:
 			// Remove from db
 			searches_db.open();
+			favHeart.setImageResource(R.drawable.favorites_unselected_100);
 			searches_db.removeKeyword(keyword, 1);
 			searches_db.close();
 			return true;
 		case 1:
 			searches_db.open();
+			favHeart.setImageResource(R.drawable.favorites_selected_100);
 			searches_db.addKeyword(keyword, 1);
 			searches_db.close();
 			return true;

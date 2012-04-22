@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.backend;
+package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +26,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import edu.upenn.cis.cis350.backend.Constants;
+import edu.upenn.cis.cis350.backend.Normalizer;
+import edu.upenn.cis.cis350.backend.Parser;
 import edu.upenn.cis.cis350.database.AutoCompleteDB;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
-import edu.upenn.cis.cis350.display.DisplayReviewsForCourse;
-import edu.upenn.cis.cis350.display.DisplayReviewsForDept;
-import edu.upenn.cis.cis350.display.DisplayReviewsForInstructor;
-import edu.upenn.cis.cis350.display.R;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;

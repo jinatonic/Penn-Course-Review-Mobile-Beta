@@ -133,9 +133,6 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 	public Department getDepartment(String keyword) {
 		Log.w(TAG, "Searching database for department " + keyword);
 
-		long size = new File(mDb.getPath()).length();
-		Log.w("DepartmentSearchCache", "Size of db is " + size);
-		
 		keyword = keyword.toLowerCase();
 		
 		// First try to match based on course alias

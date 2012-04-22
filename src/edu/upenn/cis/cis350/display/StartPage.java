@@ -6,11 +6,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,33 +15,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
-import edu.upenn.cis.cis350.database.AutoCompleteDB;
-import edu.upenn.cis.cis350.database.CourseSearchCache;
-import edu.upenn.cis.cis350.database.DepartmentSearchCache;
-import edu.upenn.cis.cis350.database.RecentSearches;
+import edu.upenn.cis.cis350.backend.QueryWrapper;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
-public class StartPage extends Activity {
+public class StartPage extends QueryWrapper {
 	private Button searchButton, favoritesButton, historyButton;
 
 	private boolean DLcomplete;
 	private boolean DLstarted;
-
-	// Database pointers
-	CourseSearchCache courseSearchCache;
-	DepartmentSearchCache departmentSearchCache;
-	AutoCompleteDB autoCompleteDB;
-	RecentSearches recentSearches;
-
-	private static final int RECENT_DIALOG = 0;
-	private static final int FAVORITES_DIALOG = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,11 +39,6 @@ public class StartPage extends Activity {
 
 		DLcomplete = true;
 		DLstarted = false;
-
-		courseSearchCache = new CourseSearchCache(this.getApplicationContext());
-		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
-		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
-		recentSearches = new RecentSearches(this.getApplicationContext());
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
@@ -102,93 +79,30 @@ public class StartPage extends Activity {
 		}
 	}
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		Dialog dialog;
-		final String[] result;
-		AlertDialog.Builder bDialog;
-		ArrayAdapter<String> auto_adapter;
-		ListView recentList;
-		switch (id) {
-		case RECENT_DIALOG:
-		case FAVORITES_DIALOG:
-			// Get the data from RecentSearches
-			recentSearches.open();
-			result = recentSearches.getKeywords(id);	// 0 for recent, 1 for favorite, matches id
-			recentSearches.close();
-
-			bDialog = new AlertDialog.Builder(this);
-			recentList = new ListView(this);
-
-			auto_adapter = new ArrayAdapter<String>(StartPage.this,
-					R.layout.item_list, result);
-
-			recentList.setAdapter(auto_adapter);
-			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
-			bDialog.setView(recentList);
-			bDialog.setInverseBackgroundForced(true);
-
-			recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int pos, long arg3) {
-					Log.w("StartPage", "Selected " + result[pos] + " from list");
-					preProcessForNextPage(result[pos]);
-				}
-
-			});
-
-			dialog = bDialog.create();
-			return dialog;
-		default:
-			return null;
-		}
-	}
-
-	/** 
-	 * Sets the intent to go to SearchPage (so that it auto processes and queries for result)
-	 * @param keyword
-	 */
-	public void preProcessForNextPage(String keyword) {
-		Intent i = new Intent(this, SearchPage.class);
-		i.putExtra("keyword", keyword);
-
-		// Start activity with process request
-		startActivityForResult(i, Constants.PROCESS_REQUEST);
-	}
-
 	public void addListenerOnButton() {
 		searchButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-
 				StartPage.this.runOnUiThread(new Runnable() {
 					public void run() {
 						downloadAutoComplete();
 					}
 				});
 			}
-
 		});
 
 		favoritesButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				showDialog(FAVORITES_DIALOG);
 			}
-
 		});
 
 		historyButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				showDialog(RECENT_DIALOG);
 			}
-
 		});
 	}
 

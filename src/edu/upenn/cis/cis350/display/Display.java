@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,20 +15,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
-import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
+import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 
-public abstract class Display extends Activity {
+public abstract class Display extends QueryWrapper {
 
 
 	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
@@ -43,8 +41,6 @@ public abstract class Display extends Activity {
 	Type displayType; // Type of page displayed (course, instructor, dept)
 
 	public String keyword;
-
-	public RecentSearches searches_db;
 
 	protected ImageButton favHeart;
 
@@ -62,8 +58,8 @@ public abstract class Display extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 
-		searches_db.open();
-		if (searches_db.ifExists(keyword, 1)) {
+		recentSearches.open();
+		if (recentSearches.ifExists(keyword, 1)) {
 			// If keyword already exists, display "remove" option
 			menu.add(0, 0, 0, "Remove from favorites");
 		}
@@ -71,7 +67,7 @@ public abstract class Display extends Activity {
 			// Else display "add" option
 			menu.add(0, 1, 0, "Add to favorites");
 		}
-		searches_db.close();
+		recentSearches.close();
 
 		menu.add(0, 2, 1, "Quit");
 
@@ -83,16 +79,16 @@ public abstract class Display extends Activity {
 		switch (item.getItemId()) {
 		case 0:
 			// Remove from db
-			searches_db.open();
+			recentSearches.open();
 			favHeart.setImageResource(R.drawable.favorites_unselected_100);
-			searches_db.removeKeyword(keyword, 1);
-			searches_db.close();
+			recentSearches.removeKeyword(keyword, 1);
+			recentSearches.close();
 			return true;
 		case 1:
-			searches_db.open();
+			recentSearches.open();
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
-			searches_db.addKeyword(keyword, 1);
-			searches_db.close();
+			recentSearches.addKeyword(keyword, 1);
+			recentSearches.close();
 			return true;
 		case 2:
 			setResult(Constants.RESULT_QUIT, null);
@@ -112,14 +108,14 @@ public abstract class Display extends Activity {
 
 	/* Called when user taps on favorites heart icon in upper right corner on a display page */
 	public void onFavHeartClick(View v) {
-		searches_db.open();
-		if (searches_db.ifExists(keyword, 1)) { // was favorited, now removing
+		recentSearches.open();
+		if (recentSearches.ifExists(keyword, 1)) { // was favorited, now removing
 			// If keyword already exists, toggle to unselected heart icon
 			favHeart = (ImageButton) findViewById(R.id.fav_heart);
 			favHeart.setImageResource(R.drawable.favorites_unselected_100);
 
 			// Remove keyword from favorites
-			searches_db.removeKeyword(keyword, 1);
+			recentSearches.removeKeyword(keyword, 1);
 		}
 		else { // was not favorited, now favoriting
 			// Toggle to selected heart icon
@@ -127,9 +123,9 @@ public abstract class Display extends Activity {
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
 
 			// Add keyword to favorites
-			searches_db.addKeyword(keyword, 1);
+			recentSearches.addKeyword(keyword, 1);
 		}
-		searches_db.close();
+		recentSearches.close();
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -235,7 +231,7 @@ public abstract class Display extends Activity {
 
 
 					//set up button
-					Button button = (Button) dialog.findViewById(R.id.Button01);
+					//Button button = (Button) dialog.findViewById(R.id.Button01);
 					/*button.setOnClickListener(new DialogInterface.OnClickListener() {
 			         @Override
 			             public void onClick(View v) {
@@ -289,9 +285,13 @@ public abstract class Display extends Activity {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
 					CourseAverage c = row_map_dept.get(new Integer(position));
+					
 					if (c == null) {
 						Log.v("Course", "course is null");
+						return;
 					}
+					
+					preProcessForNextPage(Constants.COURSE_TAG + c.getId() + " - " + c.getName(), true);
 				}
 			});
 

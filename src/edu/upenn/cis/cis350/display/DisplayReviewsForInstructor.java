@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
-import edu.upenn.cis.cis350.database.RecentSearches;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class DisplayReviewsForInstructor extends Display {
@@ -15,8 +14,6 @@ public class DisplayReviewsForInstructor extends Display {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.instructor_reviews);
-
-		searches_db = new RecentSearches(this.getApplicationContext());
 
 		// Get course reviews for the search term
 		Intent i = getIntent();
@@ -33,8 +30,8 @@ public class DisplayReviewsForInstructor extends Display {
 		cache.close();
 
 		// Check whether heart icon should be set or not
-		searches_db.open();
-		if (searches_db.ifExists(keyword, 1)) { // was favorited
+		recentSearches.open();
+		if (recentSearches.ifExists(keyword, 1)) { // was favorited
 			// If keyword already exists, set favorited icon
 			favHeart = (ImageButton) findViewById(R.id.fav_heart);
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
@@ -44,7 +41,7 @@ public class DisplayReviewsForInstructor extends Display {
 			favHeart = (ImageButton) findViewById(R.id.fav_heart);
 			favHeart.setImageResource(R.drawable.favorites_unselected_100);
 		}
-		searches_db.close();
+		recentSearches.close();
 
 		// Set header font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");

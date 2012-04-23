@@ -187,7 +187,6 @@ public class QueryWrapper extends Activity {
 		
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
-			// TODO: display dialog
 			Log.w("SearchPage", "enter pressed, no data found");
 
 			showDialog(NO_MATCH_FOUND_DIALOG);
@@ -323,7 +322,7 @@ public class QueryWrapper extends Activity {
 		protected void onPostExecute(String result) {
 			dialog.dismiss();
 			removeDialog(PROGRESS_BAR);
-			proceed();	// TODO fix
+			proceed();
 		}
 
 		public void runParser(KeywordMap input) {

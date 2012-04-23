@@ -87,7 +87,12 @@ public class QueryWrapper extends Activity {
 			recentSearches.close();
 			
 			if (result == null || result.length == 0) {
-				Toast toast = Toast.makeText(this.getApplicationContext(), "No relevant keywords found", Toast.LENGTH_SHORT);
+				Toast toast;
+				if (id == RECENT_DIALOG) {
+					toast = Toast.makeText(this.getApplicationContext(), "No recent searches found", Toast.LENGTH_SHORT);
+				} else {
+					toast = Toast.makeText(this.getApplicationContext(), "No favorites found", Toast.LENGTH_SHORT);
+				}
 				toast.show();
 				return null;
 			}

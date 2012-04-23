@@ -134,7 +134,7 @@ public class AuthenticationPage extends Activity {
 		AuthKey(Activity activity) {
 			_activity = activity;
 			
-			dialog = ProgressDialog.show(_activity, "", "Authenticating your key...", true);
+			dialog = ProgressDialog.show(_activity, "", "Authenticating...", true);
 			dialog.setCancelable(false);
 			dialog.setCanceledOnTouchOutside(false);
 			dialog.show();

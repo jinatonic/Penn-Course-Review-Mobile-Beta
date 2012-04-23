@@ -65,53 +65,44 @@ public abstract class Display extends QueryWrapper {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
+		
+		MenuInflater inflater = getMenuInflater();
 
 		recentSearches.open();
 		if (recentSearches.ifExists(keyword, 1)) {
-			// If keyword already exists, display "remove" option
-			menu.add(0, 0, 0, "Remove from favorites");
+			inflater.inflate(R.menu.result_menu2, menu);
 		}
 		else {
-			// Else display "add" option
-			menu.add(0, 1, 0, "Add to favorites");
+			inflater.inflate(R.menu.result_menu1, menu);
 		}
 		recentSearches.close();
 
-		menu.add(0, 2, 1, "Quit");
-
 		return super.onPrepareOptionsMenu(menu);
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case 0:
+		case R.id.menu_remove_fav:
 			// Remove from db
 			recentSearches.open();
 			favHeart.setImageResource(R.drawable.favorites_unselected_100);
 			recentSearches.removeKeyword(keyword, 1);
 			recentSearches.close();
 			return true;
-		case 1:
+		case R.id.menu_add_fav:
 			recentSearches.open();
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
 			recentSearches.addKeyword(keyword, 1);
 			recentSearches.close();
 			return true;
-		case 2:
+		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT, null);
 			this.finish();
 			return true;
 		default: 
 			return super.onOptionsItemSelected(item);
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.search_page_menu, menu);
-		return true;
 	}
 
 	/* Called when user taps on favorites heart icon in upper right corner on a display page */

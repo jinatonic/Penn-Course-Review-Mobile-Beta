@@ -237,7 +237,11 @@ public abstract class Display extends QueryWrapper {
 					TextView description = (TextView) dialog.findViewById(R.id.Comments);
 					String ratingString = "Course Quality: " + c.getRatings().getCourseQuality();
 					ratingString += "\nInstructor Quality: " + c.getRatings().getInstructorQuality();
-					ratingString += "\nDifficulty: " + c.getRatings().getDifficulty() + "\n\n";
+					ratingString += "\nDifficulty: " + c.getRatings().getDifficulty();
+					ratingString += "\nMajor Recommendation: " + c.getRatings().getRecommendMajor();
+					ratingString += "\nNonmajor Recommendation: " + c.getRatings().getRecommendNonMajor();
+					ratingString += "\nAmount Learned: " + c.getRatings().getAmountLearned();
+					ratingString += "\nWork Required: " + c.getRatings().getWorkRequired()+ "\n\n";
 
 					String commentString = "";
 					if (displayType == KeywordMap.Type.COURSE) {
@@ -246,20 +250,12 @@ public abstract class Display extends QueryWrapper {
 					} else if (displayType == KeywordMap.Type.INSTRUCTOR) {
 						commentString = c.getDescription();
 					}
-					if (commentString == null) {
+					if (commentString == null || commentString.equals("null") || commentString.length() < 6) {
 						commentString = "There are no available comments for this course.\n";
 					}
 					ratingString += commentString;
 					description.setText((CharSequence) ratingString);
 
-					//set up button
-					Button button = (Button) dialog.findViewById(R.id.Button01);
-					button.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							dialog.dismiss();
-						}
-					});
 					//now that the dialog is set up, it's time to show it    
 					dialog.show();
 				}

@@ -49,15 +49,21 @@ public class DisplayReviewsForInstructor extends Display {
 		searchPCRView.setTypeface(timesNewRoman);
 
 		// Top half of page under PCR header - check if instructor was found
-		TextView number = (TextView)findViewById(R.id.instructor_name);
-		number.setTypeface(timesNewRoman);
+		TextView instructor = (TextView)findViewById(R.id.instructor_name);
+		instructor.setTypeface(timesNewRoman);
 		if (courseReviews == null || courseReviews.size() == 0) {
-			number.setText("No reviews found for this instructor.");
+			instructor.setText("No reviews found for this instructor.");
 			return;
 		}
 
+		String instructorName = courseReviews.get(0).getInstructor().getName();
 		// Set the text below the PCR header - instructor name
-		number.setText(courseReviews.get(0).getInstructor().getName());
+		instructor.setText(instructorName);
+		
+		if (instructorName.length() > 21) {
+			instructor.setWidth(400);
+			instructor.setLines(2);
+		}
 
 		// Set difficulty to be thing its sorted by first
 		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);

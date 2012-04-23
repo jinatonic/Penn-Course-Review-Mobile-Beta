@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
-import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Instructor;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -92,40 +91,45 @@ public class Parser {
 	}
 
 	//path is of form: "/instructors/1-DONALD-D-FITTS
-	public ArrayList<Course> getReviewsForInstructor(KeywordMap instructor_map){
-		String instructor_name = instructor_map.getName();
+	public JSONArray getReviewsForInstructor(KeywordMap instructor_map){
 		String path = instructor_map.getPath();
-		ArrayList<Course> reviews = new ArrayList<Course>();
-		if(path == null) return null;
+		if (path == null) return null;
 		//String reviewpath = path + "/reviews";
 		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
-		try{
+		try {
 			//Log.w("PATH", reviewpath);
 
 			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
-			for(int i = 0; i < values.length(); i++){
-				JSONObject section = values.getJSONObject(i);
-				String section_path = section.getJSONObject("section").getString("path");
-				Log.w("section_path", section_path);
-				JSONObject section_result = JSONRequest.retrieveJSONObject(baseURL + section_path + token).getJSONObject("result");
-				//section path = courses/11706/sections/001
-				JSONObject course_info = section_result.getJSONObject("courses");
-				JSONArray alias = course_info.getJSONArray("aliases");
-				String [] aliases = new String[alias.length()];
-				for(int j = 0; j < alias.length(); j++)
-					aliases[j] = alias.getString(j);
-
-				String semester = course_info.getString("semester");
-				String name = course_info.getString("name");
-				String course_path = section_result.getJSONObject("reviews").getString("path");
-				reviews.addAll(createCourseReview(course_path, aliases, name, null, semester));
-
-			}
-
+			
+			return values;
 			//reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
-		} catch (JSONException e) { e.printStackTrace(); }
-		return reviews;
+		} catch (JSONException e) { 
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ArrayList<Course> getCourseForInstructor(JSONObject section) {
+		try {
+			String section_path = section.getJSONObject("section").getString("path");
+			Log.w("section_path", section_path);
+			JSONObject section_result = JSONRequest.retrieveJSONObject(baseURL + section_path + token).getJSONObject("result");
+			//section path = courses/11706/sections/001
+			JSONObject course_info = section_result.getJSONObject("courses");
+			JSONArray alias = course_info.getJSONArray("aliases");
+			String [] aliases = new String[alias.length()];
+			for(int j = 0; j < alias.length(); j++)
+				aliases[j] = alias.getString(j);
+
+			String semester = course_info.getString("semester");
+			String name = course_info.getString("name");
+			String course_path = section_result.getJSONObject("reviews").getString("path");
+			return createCourseReview(course_path, aliases, name, null, semester);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public ArrayList<Course> getReviewsForCourse(KeywordMap course_map) {

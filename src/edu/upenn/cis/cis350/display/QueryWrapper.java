@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
@@ -84,6 +85,17 @@ public class QueryWrapper extends Activity {
 				result = recentSearches.getKeywords(1);
 			
 			recentSearches.close();
+			
+			if (result == null || result.length == 0) {
+				Toast toast;
+				if (id == RECENT_DIALOG) {
+					toast = Toast.makeText(this.getApplicationContext(), "No recent searches found", Toast.LENGTH_SHORT);
+				} else {
+					toast = Toast.makeText(this.getApplicationContext(), "No favorites found", Toast.LENGTH_SHORT);
+				}
+				toast.show();
+				return null;
+			}
 
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);
@@ -154,7 +166,7 @@ public class QueryWrapper extends Activity {
 	 * Helper function to process going to next page and getting the correct info
 	 */
 	protected void preProcessForNextPage(String searchTerm, boolean fromAuto) {
-		if (searchTerm.equals("")) {
+		if (searchTerm == null || searchTerm.trim().length() <= 1) {
 			showDialog(NO_MATCH_FOUND_DIALOG);
 			return;
 		}
@@ -177,10 +189,9 @@ public class QueryWrapper extends Activity {
 		keywordmap = autoCompleteDB.getInfoForParser(searchTerm,  type);
 
 		autoCompleteDB.close();
-
+		
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
-			// TODO: display dialog
 			Log.w("SearchPage", "enter pressed, no data found");
 
 			showDialog(NO_MATCH_FOUND_DIALOG);
@@ -316,7 +327,7 @@ public class QueryWrapper extends Activity {
 		protected void onPostExecute(String result) {
 			dialog.dismiss();
 			removeDialog(PROGRESS_BAR);
-			proceed();	// TODO fix
+			proceed();
 		}
 
 		public void runParser(KeywordMap input) {
@@ -420,14 +431,34 @@ public class QueryWrapper extends Activity {
 					return;
 				}
 
-				ArrayList<Course> courses = parser.getReviewsForInstructor(input);
-
-				// Add the resulting courses into cache
-				if (courses == null) {
-					Log.w("Parser", "getReviewsForInstructor returned null");
+				JSONArray arr = parser.getReviewsForInstructor(input);
+				if (arr == null) {
+					Log.w("Parser", "getReviewsForInstructor returned null JSONArray");
 					return;
 				}
-
+				
+				final ArrayList<Course> courses = new ArrayList<Course>();
+				for (int i = 0; i < arr.length(); i++) {
+					try {
+						final JSONObject section = arr.getJSONObject(i);
+						executor.execute(new Runnable() {
+							public void run() {
+								courses.addAll(parser.getCourseForInstructor(section));
+							}
+						});
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				try {
+					// Make sure all of the queries complete executing before proceeding
+					executor.shutdown();
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
 				courseSearchCache.open();
 				courseSearchCache.addCourse(courses, 1);
 				courseSearchCache.close();

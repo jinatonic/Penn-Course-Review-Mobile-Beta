@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis350.database;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -120,7 +119,7 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 	public boolean ifExistsInDB(String keyword) {
 		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
-		keyword = keyword.toLowerCase();
+		keyword = keyword.toLowerCase().replace("'", "''");
 		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_id)='" + keyword + "'";
 		Cursor c = mDb.rawQuery(query, null);
 		
@@ -133,7 +132,7 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 	public Department getDepartment(String keyword) {
 		Log.w(TAG, "Searching database for department " + keyword);
 
-		keyword = keyword.toLowerCase();
+		keyword = keyword.toLowerCase().replace("'", "''");
 		
 		// First try to match based on course alias
 		String query = "SELECT * FROM " + DEPARTMENT_TABLE + " WHERE LOWER(dept_id)='" + keyword + "'";

@@ -154,7 +154,7 @@ public class QueryWrapper extends Activity {
 	 * Helper function to process going to next page and getting the correct info
 	 */
 	protected void preProcessForNextPage(String searchTerm, boolean fromAuto) {
-		if (searchTerm.equals("")) {
+		if (searchTerm == null || searchTerm.trim().length() <= 1) {
 			showDialog(NO_MATCH_FOUND_DIALOG);
 			return;
 		}
@@ -177,7 +177,7 @@ public class QueryWrapper extends Activity {
 		keywordmap = autoCompleteDB.getInfoForParser(searchTerm,  type);
 
 		autoCompleteDB.close();
-
+		
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
 			// TODO: display dialog
@@ -420,14 +420,34 @@ public class QueryWrapper extends Activity {
 					return;
 				}
 
-				ArrayList<Course> courses = parser.getReviewsForInstructor(input);
-
-				// Add the resulting courses into cache
-				if (courses == null) {
-					Log.w("Parser", "getReviewsForInstructor returned null");
+				JSONArray arr = parser.getReviewsForInstructor(input);
+				if (arr == null) {
+					Log.w("Parser", "getReviewsForInstructor returned null JSONArray");
 					return;
 				}
-
+				
+				final ArrayList<Course> courses = new ArrayList<Course>();
+				for (int i = 0; i < arr.length(); i++) {
+					try {
+						final JSONObject section = arr.getJSONObject(i);
+						executor.execute(new Runnable() {
+							public void run() {
+								courses.addAll(parser.getCourseForInstructor(section));
+							}
+						});
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				try {
+					// Make sure all of the queries complete executing before proceeding
+					executor.shutdown();
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
 				courseSearchCache.open();
 				courseSearchCache.addCourse(courses, 1);
 				courseSearchCache.close();

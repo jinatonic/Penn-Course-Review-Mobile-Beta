@@ -188,7 +188,7 @@ public class RecentSearches extends DatabaseHelperClass {
 	public boolean ifExists(String keyword, int type) {
 		Log.w(TAG, "Checking if " + keyword + " exists in table");
 		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
-		String query = "SELECT * FROM " + table + " WHERE keyword='" + keyword + "' LIMIT 1";
+		String query = "SELECT * FROM " + table + " WHERE keyword='" + keyword.replace("'", "''") + "' LIMIT 1";
 		
 		Cursor c = mDb.rawQuery(query, null);
 		

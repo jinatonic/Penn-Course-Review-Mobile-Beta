@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis350.database;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -142,8 +141,14 @@ public class CourseSearchCache extends DatabaseHelperClass {
 	public boolean ifExistsInDB(String keyword, int type) {
 		Log.w(TAG, "Trying to find " + keyword + " in DB");
 		// First try to match based on course alias
-		keyword = keyword.toLowerCase();
-		String query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + type;
+		keyword = keyword.toLowerCase().replace("'", "''");
+		String query = null;
+		if (type == 0) {
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + type;
+		}
+		else {
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + type;
+		}
 		Cursor c = mDb.rawQuery(query, null);
 		
 		return c.getCount() != 0;
@@ -158,10 +163,7 @@ public class CourseSearchCache extends DatabaseHelperClass {
 	public ArrayList<Course> getCourse(String keyword, int type) {
 		Log.w(TAG, "Searching database for course " + keyword);
 
-		long size = new File(mDb.getPath()).length();
-		Log.w("CourseSearchCache", "Size of db is " + size);
-		
-		keyword = keyword.toLowerCase();
+		keyword = keyword.toLowerCase().replace("'", "''");
 		ArrayList<Course> rs = new ArrayList<Course>();
 		
 		// First try to match based on course alias

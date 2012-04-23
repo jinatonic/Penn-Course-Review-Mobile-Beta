@@ -150,13 +150,10 @@ public class AutoCompleteDB {
 		}
 		Log.w("AutocompleteDB", "Search DB for " + keyword);
 
+		keyword = keyword.replace("'", "''");
+		
 		String query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" +
 						keyword + "%' OR course_id_norm LIKE '" + keyword + "%'";
-		
-		// DEBUG REMOVE ME
-		Cursor temp = mDb.rawQuery("SELECT COUNT(*) as count from " + AUTOCOMPLETE_TABLE + " WHERE course_id IS NOT NULL", null);
-		temp.moveToFirst();
-		Log.w("AUTOCOMPLETE", "total num of courses " + temp.getInt(temp.getColumnIndex("count")));
 		
 		ArrayList<String> result = new ArrayList<String>();
 		

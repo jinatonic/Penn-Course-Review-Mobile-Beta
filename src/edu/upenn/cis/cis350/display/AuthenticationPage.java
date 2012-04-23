@@ -46,6 +46,7 @@ public class AuthenticationPage extends Activity {
 	Context context;
 	
 	private String path = "http://beta.penncoursereview.com/androidapp/auth/?serial=";
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -237,7 +238,7 @@ public class AuthenticationPage extends Activity {
 			AuthenticationPage.this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					int duration = Toast.LENGTH_LONG;
+					int duration = Toast.LENGTH_SHORT;
 
 					Toast toast = Toast.makeText(context, text, duration);
 					((EditText)findViewById(R.id.authenticate_text)).setText("");

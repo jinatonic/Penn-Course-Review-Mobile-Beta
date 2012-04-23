@@ -146,7 +146,6 @@ public abstract class Display extends QueryWrapper {
 
 		ListView lv = (ListView)findViewById(R.id.reviews);
 		lv.setClickable(true);
-
 		lv.setTextFilterEnabled(true);
 
 		// Grid item mapping to pass to ListView SimpleAdapter

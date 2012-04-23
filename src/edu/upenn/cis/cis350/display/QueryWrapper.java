@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
 import edu.upenn.cis.cis350.backend.Parser;
@@ -84,6 +85,12 @@ public class QueryWrapper extends Activity {
 				result = recentSearches.getKeywords(1);
 			
 			recentSearches.close();
+			
+			if (result == null || result.length == 0) {
+				Toast toast = Toast.makeText(this.getApplicationContext(), "No relevant keywords found", Toast.LENGTH_SHORT);
+				toast.show();
+				return null;
+			}
 
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);

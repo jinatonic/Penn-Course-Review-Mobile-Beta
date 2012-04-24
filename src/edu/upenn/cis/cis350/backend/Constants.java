@@ -25,4 +25,10 @@ public class Constants {
 	
 	// Authentication key is cached for 30 days (change to what the OSA people want)
 	public static final int MAX_DAY_FOR_AUTHENTICATION = 30;
+	
+	// database sizes
+	public static final int AUTOCOMPLETE_ROW_SIZE = 100;
+	public static final int SEARCH_CACHE_ROW_SIZE = 1000;
+	public static final int DEPARTMENT_CACHE_ROW_SIZE = 700;
+	public static final int FAVORITE_ROW_SIZE = 30;
 }

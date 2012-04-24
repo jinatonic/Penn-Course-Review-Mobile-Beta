@@ -189,4 +189,18 @@ public class RecentSearches extends DatabaseHelperClass {
 		
 		return c.getCount() != 0;
 	}
+	
+	/**
+	 * Get the size of the recent/favorite table (in KBs)
+	 * @param type - 0 for recent, 1 for favorites
+	 * @return
+	 */
+	public long getSize(int type) {
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		Cursor c = mDb.rawQuery("SELECT COUNT(*) as num FROM " + table , null);
+		c.moveToFirst();
+		int num = c.getInt(c.getColumnIndex("num"));
+		
+		return num * Constants.FAVORITE_ROW_SIZE / 1000;
+	}
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.Ratings;
@@ -168,8 +169,10 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 	 */
 	public int getSize() {
 		Log.w(TAG, "Getting size of the table");
-		Cursor c = mDb.rawQuery("SELECT count(*) AS count FROM " + DEPARTMENT_TABLE, null);
+		Cursor c = mDb.rawQuery("SELECT count(*) AS num FROM " + DEPARTMENT_TABLE, null);
 		c.moveToFirst();
-		return c.getInt(c.getColumnIndex("count"));
+		int num = c.getInt(c.getColumnIndex("num"));
+		
+		return num * Constants.DEPARTMENT_CACHE_ROW_SIZE / 1000;
 	}
 }

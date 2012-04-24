@@ -75,7 +75,15 @@ public class SettingsPage extends Activity {
 	public void showSearchCacheSize() {
 		// Set data store sizes
 		TextView cacheSize = (TextView)findViewById(R.id.cache_size);
-		cacheSize.setText(""); // TODO
+		
+		courseSearchCache.open();
+		long size = courseSearchCache.getSize();
+		courseSearchCache.close();
+		departmentSearchCache.open();
+		size += departmentSearchCache.getSize();
+		departmentSearchCache.close();
+		
+		cacheSize.setText(size + "KB"); // TODO
 	}
 	
 	/**
@@ -83,7 +91,10 @@ public class SettingsPage extends Activity {
 	 */
 	public void showHistorySize() {
 		TextView historySize = (TextView)findViewById(R.id.history_size);
-		historySize.setText(""); // TODO
+		recentSearches.open();
+		long size = recentSearches.getSize(0);
+		recentSearches.close();
+		historySize.setText(size + "KB"); // TODO
 	}
 	
 	/**
@@ -91,18 +102,21 @@ public class SettingsPage extends Activity {
 	 */
 	public void showFavoriteSize() {
 		TextView favSize = (TextView)findViewById(R.id.fav_size);
-		favSize.setText(""); // TODO
+		recentSearches.open();
+		long size = recentSearches.getSize(0);
+		recentSearches.close();
+		favSize.setText(size + "KB"); // TODO
 	}
 	
 	/**
 	 * Helper method to refresh the size of autocomplete table
 	 */
 	public void showAutocompleteSize() {
+		TextView autocompleteSize = (TextView)findViewById(R.id.autocomplete_size);
 		autoCompleteDB.open();
 		long size = autoCompleteDB.getSize();
-		TextView autocompleteSize = (TextView)findViewById(R.id.autocomplete_size);
-		autocompleteSize.setText(size + "KB"); // TODO
 		autoCompleteDB.close();
+		autocompleteSize.setText(size + "KB"); // TODO
 	}
 
 	/**

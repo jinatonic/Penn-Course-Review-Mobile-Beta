@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,7 +21,7 @@ import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
 public class StartPage extends QueryWrapper {
-	private Button searchButton, favoritesButton, historyButton;
+	private Button searchButton, historyButton, favoritesButton, settingsButton;
 
 	private boolean DLcomplete;
 	private boolean DLstarted;
@@ -49,12 +48,15 @@ public class StartPage extends QueryWrapper {
 		// Set icon of search button
 		searchButton = (Button) findViewById(R.id.search_button);
 		searchButton.setBackgroundResource(R.drawable.search_icon);
-		// Set icon of favorites button
-		favoritesButton = (Button) findViewById(R.id.favorites_button);
-		favoritesButton.setBackgroundResource(R.drawable.favorites_icon);
 		// Set icon of history button
 		historyButton = (Button) findViewById(R.id.history_button);
 		historyButton.setBackgroundResource(R.drawable.history_icon);
+		// Set icon of favorites button
+		favoritesButton = (Button) findViewById(R.id.favorites_button);
+		favoritesButton.setBackgroundResource(R.drawable.favorites_icon);
+		// Set icon of settings button
+		settingsButton = (Button) findViewById(R.id.settings_button);
+		settingsButton.setBackgroundResource(R.drawable.settings_icon3);
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
@@ -76,7 +78,7 @@ public class StartPage extends QueryWrapper {
 	}
 
 	public void addListenerOnButton() {
-		searchButton.setOnClickListener(new OnClickListener() {
+		searchButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				StartPage.this.runOnUiThread(new Runnable() {
@@ -87,17 +89,26 @@ public class StartPage extends QueryWrapper {
 			}
 		});
 
-		favoritesButton.setOnClickListener(new OnClickListener() {
+		favoritesButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				showDialog(FAVORITES_DIALOG);
 			}
 		});
 
-		historyButton.setOnClickListener(new OnClickListener() {
+		historyButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				showDialog(RECENT_DIALOG);
+			}
+		});
+		
+		settingsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(StartPage.this, SettingsPage.class);
+				// Start Settings Page activity
+				startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 			}
 		});
 	}

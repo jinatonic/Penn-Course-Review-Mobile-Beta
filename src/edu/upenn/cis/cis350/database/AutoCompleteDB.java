@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis350.database;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -295,16 +294,10 @@ public class AutoCompleteDB {
 	 * @return
 	 */
 	public long getSize() {
-		long size = new File(mDb.getPath()).length();
+		Cursor c = mDb.rawQuery("SELECT COUNT(*) AS num FROM " + AUTOCOMPLETE_TABLE, null);
+		c.moveToFirst();
+		int num = c.getInt(c.getColumnIndex("num"));
 		
-//		String query = "SELECT bytes from user_segments where segment_name = '" + AUTOCOMPLETE_TABLE + "'";
-//		Cursor c = mDb.rawQuery(query, null);
-//		c.moveToFirst();
-//		
-//		int bytes = c.getInt(0);
-//		
-//		Log.w("AUTOCOMPLETE", "Size of table based on file is " + size + " and based on query is " + bytes);
-		
-		return size / 1000;
+		return num * Constants.AUTOCOMPLETE_ROW_SIZE / 1000;
 	}
 }

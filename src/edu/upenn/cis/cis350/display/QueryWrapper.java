@@ -41,24 +41,24 @@ import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class QueryWrapper extends Activity {
-	
+
 	// Database pointers
 	protected CourseSearchCache courseSearchCache;
 	protected DepartmentSearchCache departmentSearchCache;
 	protected AutoCompleteDB autoCompleteDB;
 	protected RecentSearches recentSearches;
-	
+
 	protected static final int NO_MATCH_FOUND_DIALOG = 1;
 	protected static final int RECENT_DIALOG = 2;
 	protected static final int FAVORITES_DIALOG = 3;
 	protected static final int PROGRESS_BAR = 4;
-	
-	
+
+
 	/* IMPORTANT STATE VARIABLES */
 	protected KeywordMap keywordmap;
 	protected AsyncTask<KeywordMap, Integer, String> currentTask;
-	
-	
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,9 +83,9 @@ public class QueryWrapper extends Activity {
 				result = recentSearches.getKeywords(0);
 			else
 				result = recentSearches.getKeywords(1);
-			
+
 			recentSearches.close();
-			
+
 			if (result == null || result.length == 0) {
 				Toast toast;
 				if (id == RECENT_DIALOG) {
@@ -161,7 +161,7 @@ public class QueryWrapper extends Activity {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Helper function to process going to next page and getting the correct info
 	 */
@@ -170,7 +170,7 @@ public class QueryWrapper extends Activity {
 			showDialog(NO_MATCH_FOUND_DIALOG);
 			return;
 		}
-		
+
 		Type type = Type.UNKNOWN;	// Default to UNKNOWN type
 
 		if (fromAuto) {
@@ -189,7 +189,7 @@ public class QueryWrapper extends Activity {
 		keywordmap = autoCompleteDB.getInfoForParser(searchTerm,  type);
 
 		autoCompleteDB.close();
-		
+
 		// Display error dialog if the resulting keywordmap is null 
 		if (keywordmap == null) {
 			Log.w("SearchPage", "enter pressed, no data found");
@@ -208,7 +208,7 @@ public class QueryWrapper extends Activity {
 		// Run async thread to get the correct information for the keywordmap
 		currentTask = new ServerQuery(this).execute(keywordmap);
 	}
-	
+
 	/**
 	 * Helper function to check if the given searchTerm exists in the database
 	 * @return
@@ -256,7 +256,7 @@ public class QueryWrapper extends Activity {
 		}
 
 		Type type = keywordmap.getType();
-		
+
 		if (type == Type.COURSE) {
 			Intent i = new Intent(this, DisplayReviewsForCourse.class);
 			i.putExtra(getResources().getString(R.string.SEARCH_ALIAS), keywordmap.getAlias());
@@ -270,7 +270,7 @@ public class QueryWrapper extends Activity {
 			i.putExtra(getResources().getString(R.string.SEARCH_ALIAS), keywordmap.getAlias());
 			i.putExtra(getResources().getString(R.string.SEARCH_NAME), keywordmap.getName());
 			i.putExtra(getResources().getString(R.string.SEARCH_TYPE), Constants.DEPARTMENT_TAG);
-			
+
 			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 		}
 		else if (type == Type.INSTRUCTOR) {
@@ -282,20 +282,30 @@ public class QueryWrapper extends Activity {
 			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 		}
 	}
-		
-	
+
+
 	protected class ServerQuery extends AsyncTask<KeywordMap, Integer, String> {
 
 		private ProgressDialog dialog;
 		int progress = 0;
 		int total;
-		
+
 		Activity _activity;
-		
+
 		ServerQuery(Activity activity) {
 			_activity = activity;
 		}
-		
+
+		@Override 
+		protected void onPreExecute() {
+			dialog = new ProgressDialog(_activity);
+			dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
+			dialog.setCancelable(true);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setIndeterminate(false);
+			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		}
+
 		/**
 		 * Inputs are: path, name, course_id, type
 		 * Recall: type: course-0, instructor-1, department-2, UNKNOWN-3
@@ -306,17 +316,6 @@ public class QueryWrapper extends Activity {
 				Log.w("SearchPage: ServerQuery", "Too many arguments provided to AsyncTask");
 				return null;
 			}
-			
-			QueryWrapper.this.runOnUiThread(new Runnable() {
-				public void run() {
-					dialog = new ProgressDialog(_activity);
-					dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
-					dialog.setCancelable(true);
-					dialog.setCanceledOnTouchOutside(false);
-					dialog.setIndeterminate(false);
-					dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				}
-			});
 
 			// Run the parser
 			runParser(input[0]);
@@ -337,7 +336,7 @@ public class QueryWrapper extends Activity {
 
 			final ExecutorService executor = Executors.newFixedThreadPool(8);
 			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-			
+
 			if (input.getType() == Type.COURSE) {
 				// Check cache first, if exists, proceed
 				if (checkCache(input.getAlias(), Type.COURSE)) {
@@ -381,7 +380,7 @@ public class QueryWrapper extends Activity {
 						dialog.show();
 					}
 				});
-				
+
 				final CourseAverage[] avg = new CourseAverage[dept_courses.length()];
 				for (int i = 0; i < dept_courses.length(); i++) {
 					try {
@@ -396,7 +395,7 @@ public class QueryWrapper extends Activity {
 								else {
 									Log.w("SearchPage Error", "NULL CourseAverage is returned by parser");
 								}
-								
+
 								QueryWrapper.this.runOnUiThread(new Runnable() {
 									public void run() {
 										dialog.setProgress(++progress);
@@ -404,12 +403,12 @@ public class QueryWrapper extends Activity {
 								});
 							}
 						});
-						
+
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				}
-				
+
 				try {
 					// Make sure all of the queries complete executing before proceeding
 					executor.shutdown();
@@ -417,7 +416,7 @@ public class QueryWrapper extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				Department department = new Department(input.getName(), input.getAlias(), input.getPath(), new ArrayList<CourseAverage>(Arrays.asList(avg)));
 
 				departmentSearchCache.open();
@@ -436,7 +435,7 @@ public class QueryWrapper extends Activity {
 					Log.w("Parser", "getReviewsForInstructor returned null JSONArray");
 					return;
 				}
-				
+
 				final ArrayList<Course> courses = new ArrayList<Course>();
 				for (int i = 0; i < arr.length(); i++) {
 					try {
@@ -450,7 +449,7 @@ public class QueryWrapper extends Activity {
 						e.printStackTrace();
 					}
 				}
-				
+
 				try {
 					// Make sure all of the queries complete executing before proceeding
 					executor.shutdown();
@@ -458,7 +457,7 @@ public class QueryWrapper extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				courseSearchCache.open();
 				courseSearchCache.addCourse(courses, 1);
 				courseSearchCache.close();
@@ -468,5 +467,5 @@ public class QueryWrapper extends Activity {
 			}
 		}
 	}
-	
+
 }

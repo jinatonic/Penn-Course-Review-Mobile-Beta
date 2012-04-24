@@ -3,15 +3,19 @@
 
     <item
         android:id="@+id/menu_recent"
+        android:icon="@drawable/ic_menu_recent_history"
         android:title="@string/recent"/>
     <item
         android:id="@+id/menu_favorites"
+        android:icon="@drawable/ic_menu_favorite"
         android:title="@string/favorites"/>
     <item
         android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_menu_settings"
         android:title="@string/settings"/>
     <item
         android:id="@+id/menu_quit"
+        android:icon="@drawable/ic_menu_quit"
         android:title="@string/quit"/>
 
 </menu>

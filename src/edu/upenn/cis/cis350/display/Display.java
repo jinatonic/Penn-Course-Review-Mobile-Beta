@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -123,6 +124,28 @@ public abstract class Display extends QueryWrapper {
 			recentSearches.addKeyword(keyword, 1);
 		}
 		recentSearches.close();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// do nothing
+			}
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
+				// Quit application if quit is issued
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_SEARCH) {
+				setResult(Constants.RESULT_GO_TO_SEARCH);
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_START) {
+				setResult(Constants.RESULT_GO_TO_START);
+				this.finish();
+			}
+		}
 	}
 
 	/** Formats and prints each row of the table of reviews for course,

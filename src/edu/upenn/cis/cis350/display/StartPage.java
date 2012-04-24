@@ -58,11 +58,18 @@ public class StartPage extends QueryWrapper {
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
+
+		StartPage.this.runOnUiThread(new Runnable() {
+			public void run() {
+				downloadAutoComplete();
+			}
+		});
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 		// remove any remaining dialogs
 		removeDialog(FAVORITES_DIALOG);
 		removeDialog(RECENT_DIALOG);
@@ -73,17 +80,20 @@ public class StartPage extends QueryWrapper {
 
 			goToSearchPage();
 		}
+		else if (DLstarted) {
+			StartPage.this.runOnUiThread(new Runnable() {
+				public void run() {
+					downloadAutoComplete();
+				}
+			});
+		}
 	}
 
 	public void addListenerOnButton() {
 		searchButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				StartPage.this.runOnUiThread(new Runnable() {
-					public void run() {
-						downloadAutoComplete();
-					}
-				});
+				goToSearchPage();
 			}
 		});
 
@@ -111,9 +121,9 @@ public class StartPage extends QueryWrapper {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == Constants.NORMAL_OPEN_REQUEST || requestCode == Constants.PROCESS_REQUEST) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
 			if (resultCode == RESULT_OK) {
-				// Don't do anything
+				// do nothing
 			}
 			else if (resultCode == Constants.RESULT_QUIT) {
 				setResult(Constants.RESULT_QUIT);
@@ -136,8 +146,6 @@ public class StartPage extends QueryWrapper {
 		}
 		else {
 			autoCompleteDB.close();
-			
-			goToSearchPage();
 		}
 	}
 
@@ -227,8 +235,6 @@ public class StartPage extends QueryWrapper {
 
 			publishMessage("Done", 200);
 
-			DLcomplete = true;
-
 			return "COMPLETE"; // CHANGE
 		}
 
@@ -236,8 +242,9 @@ public class StartPage extends QueryWrapper {
 			if (dialog.isShowing()) {
 				dialog.dismiss();
 			}
-
-			goToSearchPage();
+			
+			DLcomplete = true;
+			DLstarted = false;
 		}
 
 		private void publishMessage(final String msg, final int progress) {

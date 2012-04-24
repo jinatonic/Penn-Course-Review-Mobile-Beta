@@ -58,7 +58,7 @@ public class SettingsPage extends Activity {
 	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
 	        if (autoCleared) {
 	        	Log.w("SettingsPage", "Cleared autocomplete, going back to startpage");
-	        	setResult(Constants.AUTOCOMPLETE_RESET);
+	        	setResult(Constants.RESULT_GO_TO_START);
 	        }
 	        else {
 	        	Log.w("SettingsPage", "Going back to searchPage");

@@ -173,8 +173,11 @@ public class SearchPage extends QueryWrapper {
 				setResult(Constants.RESULT_QUIT);
 				this.finish();
 			}
-			else if (resultCode == Constants.AUTOCOMPLETE_RESET) {
-				setResult(Constants.AUTOCOMPLETE_RESET);
+			else if (resultCode == Constants.RESULT_GO_TO_SEARCH) {
+				// Don't do anything
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_START) {
+				setResult(Constants.RESULT_GO_TO_START);
 				this.finish();
 			}
 		}

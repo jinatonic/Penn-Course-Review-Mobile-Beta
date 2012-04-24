@@ -30,7 +30,7 @@ public class Constants {
 	
 	// database sizes
 	public static final int AUTOCOMPLETE_ROW_SIZE = 100;
-	public static final int SEARCH_CACHE_ROW_SIZE = 1000;
-	public static final int DEPARTMENT_CACHE_ROW_SIZE = 700;
-	public static final int FAVORITE_ROW_SIZE = 30;
+	public static final int SEARCH_CACHE_ROW_SIZE = 500;
+	public static final int DEPARTMENT_CACHE_ROW_SIZE = 300;
+	public static final int FAVORITE_ROW_SIZE = 100;
 }

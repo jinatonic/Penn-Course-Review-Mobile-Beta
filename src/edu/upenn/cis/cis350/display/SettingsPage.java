@@ -92,7 +92,7 @@ public class SettingsPage extends Activity {
 	public void showHistorySize() {
 		TextView historySize = (TextView)findViewById(R.id.history_size);
 		recentSearches.open();
-		long size = recentSearches.getSize(0);
+		double size = recentSearches.getSize(0);
 		recentSearches.close();
 		historySize.setText(size + "KB"); // TODO
 	}
@@ -103,7 +103,7 @@ public class SettingsPage extends Activity {
 	public void showFavoriteSize() {
 		TextView favSize = (TextView)findViewById(R.id.fav_size);
 		recentSearches.open();
-		long size = recentSearches.getSize(0);
+		double size = recentSearches.getSize(0);
 		recentSearches.close();
 		favSize.setText(size + "KB"); // TODO
 	}

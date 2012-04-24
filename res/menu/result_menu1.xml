@@ -3,9 +3,11 @@
 
     <item
         android:id="@+id/menu_add_fav"
+        android:icon="@drawable/ic_menu_favorite"
         android:title="Add to favorites"/>
     <item
         android:id="@+id/menu_quit"
+        android:icon="@drawable/ic_menu_quit"
         android:title="@string/quit"/>
 
 </menu>

@@ -10,6 +10,7 @@
         android:layout_height="40dip"
         android:background="@color/text_navy"
         android:gravity="center_vertical"
+        android:onClick="onPCRHeaderClick"
         android:padding="10dp"
         android:text="@string/pcr"
         android:textColor="@color/white"
@@ -30,9 +31,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:paddingBottom="15dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="15dp"
-                android:paddingBottom="15dp"
                 android:textColor="@color/text_navy"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -144,6 +145,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:cacheColorHint="#00000000"
+                android:scrollbarStyle="insideOverlay"
                 android:scrollbars="none" >
             </ListView>
         </LinearLayout>

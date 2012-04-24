@@ -57,14 +57,14 @@ public abstract class Display extends QueryWrapper {
 
 		// Set font Times New Roman
 		timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		
+
 		favHeart = (ImageButton) findViewById(R.id.fav_heart);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		
+
 		MenuInflater inflater = getMenuInflater();
 
 		recentSearches.open();
@@ -78,7 +78,7 @@ public abstract class Display extends QueryWrapper {
 
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -125,7 +125,7 @@ public abstract class Display extends QueryWrapper {
 		}
 		recentSearches.close();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
@@ -146,6 +146,11 @@ public abstract class Display extends QueryWrapper {
 				this.finish();
 			}
 		}
+	}
+
+	/* Called when user taps on PCR header */
+	public void onPCRHeaderClick(View v) {
+		// TODO
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -314,12 +319,12 @@ public abstract class Display extends QueryWrapper {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
 					CourseAverage c = row_map_dept.get(new Integer(position));
-					
+
 					if (c == null) {
 						Log.v("Course", "course is null");
 						return;
 					}
-					
+
 					preProcessForNextPage(Constants.COURSE_TAG + c.getId() + " - " + c.getName(), true);
 				}
 			});

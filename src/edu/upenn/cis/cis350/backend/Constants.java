@@ -23,5 +23,6 @@ public class Constants {
 	public static final int PROCESS_REQUEST = 101;
 	public static final int AUTOCOMPLETE_RESET = 102;
 	
+	// Authentication key is cached for 30 days (change to what the OSA people want)
 	public static final int MAX_DAY_FOR_AUTHENTICATION = 30;
 }

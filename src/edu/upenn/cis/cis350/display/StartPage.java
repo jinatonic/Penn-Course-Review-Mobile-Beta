@@ -160,6 +160,7 @@ public class StartPage extends QueryWrapper {
 			dialog = new ProgressDialog(_activity);
 			dialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
 			dialog.setCanceledOnTouchOutside(false);
+			dialog.setCancelable(false);
 			dialog.setIndeterminate(false);
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setMax(200);	// change, 157

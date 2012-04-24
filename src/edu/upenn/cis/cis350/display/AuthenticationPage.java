@@ -107,8 +107,6 @@ public class AuthenticationPage extends Activity {
 				startActivity(launchBrowser);  
 			}
 		});
-
-
 	}
 
 	public void onAuthSerialButtonClick(View v) {
@@ -132,6 +130,9 @@ public class AuthenticationPage extends Activity {
 				this.finish();
 			}
 			else if (resultCode == Constants.RESULT_QUIT) {
+				this.finish();
+			}
+			else {
 				this.finish();
 			}
 		}

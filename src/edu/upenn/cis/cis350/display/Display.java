@@ -124,6 +124,11 @@ public abstract class Display extends QueryWrapper {
 		}
 		recentSearches.close();
 	}
+	
+	/* Called when user taps on PCR header */
+	public void onPCRHeaderClick(View v) {
+		// TODO
+	}
 
 	/** Formats and prints each row of the table of reviews for course,
 	 * instructor, or department pages

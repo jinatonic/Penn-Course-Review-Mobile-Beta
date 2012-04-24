@@ -76,6 +76,7 @@ public class QueryWrapper extends Activity {
 		switch (id) {
 		case RECENT_DIALOG: 
 		case FAVORITES_DIALOG:
+			Log.w("DEBUG", "SHOWING DIALOG FOR RECENT/FAV");
 			// Get the data from RecentSearches
 			recentSearches.open();
 			final String[] result;
@@ -147,7 +148,9 @@ public class QueryWrapper extends Activity {
 						removeDialog(PROGRESS_BAR);
 
 						AutoCompleteTextView search = (AutoCompleteTextView)findViewById(R.id.search_term);
-						search.setText("");
+						if (search != null) {
+							search.setText("");
+						}
 
 						return true;
 					}

@@ -21,8 +21,9 @@ public class Constants {
 	
 	// RESULT CODES
 	public static final int RESULT_QUIT = 200;
-	public static final int RESULT_GO_TO_SEARCH = 201;
-	public static final int RESULT_GO_TO_START = 202;
+	public static final int RESULT_AUTOCOMPLETE_RESETTED = 201;
+	public static final int RESULT_GO_TO_SEARCH = 202;
+	public static final int RESULT_GO_TO_START = 203;
 	
 	// Authentication key is cached for 30 days (change to what the OSA people want)
 	public static final int MAX_DAY_FOR_AUTHENTICATION = 30;

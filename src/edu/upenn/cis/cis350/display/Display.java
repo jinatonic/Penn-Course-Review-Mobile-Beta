@@ -78,7 +78,7 @@ public abstract class Display extends QueryWrapper {
 		case R.id.menu_recent:
 			showDialog(RECENT_DIALOG);
 			return true;
-		case R.id.menu_favorites:
+		case R.id.menu_favorite:
 			showDialog(FAVORITES_DIALOG);
 			return true;
 		case R.id.menu_settings:
@@ -106,7 +106,8 @@ public abstract class Display extends QueryWrapper {
 			// Remove keyword from favorites
 			recentSearches.removeKeyword(keyword, 1);
 		}
-		else { // was not favorited, now favoriting
+		else { 
+			// was not favorited, now favoriting
 			// Toggle to selected heart icon
 			favHeart = (ImageButton) findViewById(R.id.fav_heart);
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
@@ -117,6 +118,15 @@ public abstract class Display extends QueryWrapper {
 		recentSearches.close();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// dismiss any remaining dialog that might be open
+		removeDialog(RECENT_DIALOG);
+		removeDialog(FAVORITES_DIALOG);
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
@@ -134,6 +144,10 @@ public abstract class Display extends QueryWrapper {
 			}
 			else if (resultCode == Constants.RESULT_GO_TO_START) {
 				setResult(Constants.RESULT_GO_TO_START);
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_AUTOCOMPLETE_RESETTED) {
+				setResult(Constants.RESULT_AUTOCOMPLETE_RESETTED);
 				this.finish();
 			}
 		}

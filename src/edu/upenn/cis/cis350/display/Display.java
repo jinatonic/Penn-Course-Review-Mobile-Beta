@@ -62,18 +62,30 @@ public abstract class Display extends QueryWrapper {
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();		
 		inflater.inflate(R.menu.result_menu, menu);
-
-		return super.onPrepareOptionsMenu(menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		// TODO finish
+		case R.id.menu_search:
+			setResult(Constants.RESULT_GO_TO_SEARCH);
+			this.finish();
+			return true;
+		case R.id.menu_recent:
+			showDialog(RECENT_DIALOG);
+			return true;
+		case R.id.menu_favorites:
+			showDialog(FAVORITES_DIALOG);
+			return true;
+		case R.id.menu_settings:
+			Intent i = new Intent(this, SettingsPage.class);
+			// Start Settings Page activity
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
+			return true;
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT, null);
 			this.finish();

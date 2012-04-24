@@ -39,11 +39,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.EasySSLSocketFactory;
+import edu.upenn.cis.cis350.database.AuthCache;
 import edu.upenn.isc.fastPdfServiceClient.api.FpsPennGroupsHasMember;
 
 public class AuthenticationPage extends Activity {
 
 	Context context;
+	
+	AuthCache auth_cache;
 	
 	private String path = "http://beta.penncoursereview.com/androidapp/auth/?serial=";
 	
@@ -56,6 +59,16 @@ public class AuthenticationPage extends Activity {
 		setContentView(R.layout.authentication_page);
 		
 		context = this.getApplicationContext();
+		
+		auth_cache = new AuthCache(context);
+		auth_cache.open();
+		// Check if key exists
+		if (auth_cache.checkKey() != null) {
+			auth_cache.close();
+			goToStartPage();
+			return;
+		}
+		auth_cache.close();
 
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
@@ -114,11 +127,11 @@ public class AuthenticationPage extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Constants.NORMAL_PAGE_LOAD) {
+			// TODO: check if this is right
 			if (resultCode == RESULT_OK) {
-				// Don't do anything
+				this.finish();
 			}
 			else if (resultCode == Constants.RESULT_QUIT) {
-				setResult(Constants.RESULT_QUIT);
 				this.finish();
 			}
 		}
@@ -130,6 +143,7 @@ public class AuthenticationPage extends Activity {
 		Activity _activity;
 		
 		boolean auth;
+		String serialNumber;
 		
 		AuthKey(Activity activity) {
 			_activity = activity;
@@ -145,13 +159,16 @@ public class AuthenticationPage extends Activity {
 		protected void onPostExecute(String result) {
 			dialog.dismiss();
 			if (auth) {
+				auth_cache.open();
+				auth_cache.insertKey(serialNumber);
+				auth_cache.close();
 				goToStartPage();
 			}
 		}
 
 		@Override
 		protected String doInBackground(String... arg0) {
-			String serialNumber = arg0[0];
+			serialNumber = arg0[0];
 			
 			int count = 0;
 			String pennKey_response = "!ERROR";

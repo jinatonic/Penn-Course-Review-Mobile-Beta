@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
@@ -20,10 +19,6 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
  */
 
 public class RecentSearches extends DatabaseHelperClass {
-	
-	private final Context mCtx;
-	private DatabaseHelper mDbHelper;
-	private SQLiteDatabase mDb;
 	
 	/* TAG for logging purposes */
 	private static final String TAG = "RecentSearches";

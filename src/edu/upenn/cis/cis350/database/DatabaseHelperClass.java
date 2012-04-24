@@ -7,6 +7,8 @@ import android.util.Log;
 
 public class DatabaseHelperClass {
 
+	protected Context mCtx;
+	
 	protected DatabaseHelper mDbHelper;
 	protected SQLiteDatabase mDb;
 	
@@ -81,6 +83,12 @@ public class DatabaseHelperClass {
 	protected static final String FAVORITES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + FAVORITES_TABLE + " (" +
 			"s_id integer PRIMARY KEY," +
 			"keyword char(50) NOT NULL)";
+	
+	protected static final String AUTHENTICATION_TABLE = "AuthenticationTable";
+	protected static final String AUTHENTICATION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + AUTHENTICATION_TABLE + " (" +
+			"auth_key char(10) NOT NULL," +
+			"year integer NOT NULL," +
+			"day integer NOT NULL)";
 	
 	
 	protected static class DatabaseHelper extends SQLiteOpenHelper {

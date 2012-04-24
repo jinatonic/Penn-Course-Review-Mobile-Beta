@@ -21,8 +21,6 @@ import edu.upenn.cis.cis350.objects.Ratings;
 
 public class DepartmentSearchCache extends DatabaseHelperClass {
 
-	private final Context mCtx;
-
 	/* TAG for logging purposes */
 	private static final String TAG = "DepartmentSearchCache";
 
@@ -58,16 +56,6 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 		Log.w(TAG, "Resetting database tables");
 		mDb.execSQL("DROP TABLE IF EXISTS " + DEPARTMENT_TABLE);
 		mDb.execSQL(DEPARTMENT_TABLE_CREATE);
-	}
-
-	/** 
-	 * Scan the table and remove any entries older than 30 days
-	 */
-	public void clearOldEntries() {
-		Log.w(TAG, "Clearing database of old entries");
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-		int end_day = (day < 30) ? day + 365 - 30 : day - 80;
-		mDb.execSQL("DELETE FROM " + DEPARTMENT_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")");
 	}
 
 	/** 

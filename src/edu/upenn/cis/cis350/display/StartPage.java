@@ -58,9 +58,6 @@ public class StartPage extends QueryWrapper {
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
-
-		// Run db maintenance in the background
-		new DatabaseMaintenance().execute("");
 	}
 
 	@Override
@@ -249,34 +246,6 @@ public class StartPage extends QueryWrapper {
 					dialog.setMessage(msg);
 				}
 			});
-		}
-	}
-
-	class DatabaseMaintenance extends AsyncTask<String, Integer, String> {
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			databaseMaintenance();
-
-			return "DB maintainance complete";
-		}
-
-
-		/**
-		 * Helper function to check for out-of-date entries in all of the databases and delete them if necessary
-		 * Also fires the async query to get autocomplete data if the database doesn't exist 
-		 */
-		public void databaseMaintenance() {
-			// Perform clear on database
-			courseSearchCache.open();
-			courseSearchCache.clearOldEntries();
-			// cache.resetTables();
-			courseSearchCache.close();
-
-			departmentSearchCache.open();
-			departmentSearchCache.clearOldEntries();
-			// dept_cache.resetTables();
-			departmentSearchCache.close();
 		}
 	}
 }

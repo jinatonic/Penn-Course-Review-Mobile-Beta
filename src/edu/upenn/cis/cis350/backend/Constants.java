@@ -22,4 +22,6 @@ public class Constants {
 	public static final int NORMAL_OPEN_REQUEST = 100;
 	public static final int PROCESS_REQUEST = 101;
 	public static final int AUTOCOMPLETE_RESET = 102;
+	
+	public static final int MAX_DAY_FOR_AUTHENTICATION = 30;
 }

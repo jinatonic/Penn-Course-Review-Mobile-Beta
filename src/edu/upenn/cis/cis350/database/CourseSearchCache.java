@@ -22,8 +22,6 @@ import edu.upenn.cis.cis350.objects.Section;
 
 public class CourseSearchCache extends DatabaseHelperClass {
 	
-	private final Context mCtx;
-	
 	/* TAG for logging purposes */
 	private static final String TAG = "CourseSearchCache";
 	
@@ -60,17 +58,6 @@ public class CourseSearchCache extends DatabaseHelperClass {
 		Log.w(TAG, "Resetting database tables");
 		mDb.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
 		mDb.execSQL(COURSE_TABLE_CREATE);
-	}
-	
-	/** 
-	 * Scan the table and remove any entries older than 30 days
-	 */
-	public void clearOldEntries() {
-		Log.w(TAG, "Clearing database of old entries");
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-		int end_day = (day < 30) ? day + 365 - 30 : day - 80;
-		mDb.execSQL("DELETE FROM " + COURSE_TABLE + " WHERE date < " + end_day + " or (date > " + day + " and date > " + end_day + ")");
-		// TODO: TEST THIS QUERY
 	}
 	
 	/**

@@ -76,7 +76,6 @@ public class QueryWrapper extends Activity {
 		switch (id) {
 		case RECENT_DIALOG: 
 		case FAVORITES_DIALOG:
-			Log.w("DEBUG", "SHOWING DIALOG FOR RECENT/FAV");
 			// Get the data from RecentSearches
 			recentSearches.open();
 			final String[] result;
@@ -115,6 +114,8 @@ public class QueryWrapper extends Activity {
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int pos, long arg3) {
 					Log.w("SearchPage", "Selected " + result[pos] + " from recentlist");
+					removeDialog(RECENT_DIALOG);
+					removeDialog(FAVORITES_DIALOG);
 					preProcessForNextPage(result[pos], true);
 				}
 

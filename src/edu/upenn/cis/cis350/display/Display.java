@@ -64,17 +64,8 @@ public abstract class Display extends QueryWrapper {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-
-		MenuInflater inflater = getMenuInflater();
-
-		recentSearches.open();
-		if (recentSearches.ifExists(keyword, 1)) {
-			inflater.inflate(R.menu.result_menu2, menu);
-		}
-		else {
-			inflater.inflate(R.menu.result_menu1, menu);
-		}
-		recentSearches.close();
+		MenuInflater inflater = getMenuInflater();		
+		inflater.inflate(R.menu.result_menu, menu);
 
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -82,19 +73,7 @@ public abstract class Display extends QueryWrapper {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_remove_fav:
-			// Remove from db
-			recentSearches.open();
-			favHeart.setImageResource(R.drawable.favorites_unselected_100);
-			recentSearches.removeKeyword(keyword, 1);
-			recentSearches.close();
-			return true;
-		case R.id.menu_add_fav:
-			recentSearches.open();
-			favHeart.setImageResource(R.drawable.favorites_selected_100);
-			recentSearches.addKeyword(keyword, 1);
-			recentSearches.close();
-			return true;
+		// TODO finish
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT, null);
 			this.finish();

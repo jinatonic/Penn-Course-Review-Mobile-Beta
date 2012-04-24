@@ -60,16 +60,6 @@ public class AuthenticationPage extends Activity {
 		
 		context = this.getApplicationContext();
 		
-		auth_cache = new AuthCache(context);
-		auth_cache.open();
-		// Check if key exists
-		if (auth_cache.checkKey() != null) {
-			auth_cache.close();
-			goToStartPage();
-			return;
-		}
-		auth_cache.close();
-
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView SerialPrompt1 = (TextView) findViewById(R.id.serial_prompt1);
@@ -98,7 +88,6 @@ public class AuthenticationPage extends Activity {
 		//button to launch a browser to get serial number
 		Button launchBrowser = (Button)findViewById(R.id.launch);
 		launchBrowser.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 
@@ -107,6 +96,16 @@ public class AuthenticationPage extends Activity {
 				startActivity(launchBrowser);  
 			}
 		});
+		
+		auth_cache = new AuthCache(context);
+		auth_cache.open();
+		// Check if key exists
+		if (auth_cache.checkKey() != null) {
+			auth_cache.close();
+			goToStartPage();
+			return;
+		}
+		auth_cache.close();
 	}
 
 	public void onAuthSerialButtonClick(View v) {
@@ -119,12 +118,12 @@ public class AuthenticationPage extends Activity {
 		Intent i = new Intent(this, StartPage.class);
 
 		// Pass the Intent to the proper Activity (check for course search vs. dept search)
-		startActivityForResult(i, Constants.NORMAL_PAGE_LOAD);
+		startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == Constants.NORMAL_PAGE_LOAD) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
 			// TODO: check if this is right
 			if (resultCode == RESULT_OK) {
 				this.finish();

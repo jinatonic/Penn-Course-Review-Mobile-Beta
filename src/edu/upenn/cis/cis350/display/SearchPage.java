@@ -143,18 +143,18 @@ public class SearchPage extends QueryWrapper {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_recent:
+		case R.id.search_menu_recent:
 			showDialog(RECENT_DIALOG);
 			return true;
-		case R.id.menu_favorites:
+		case R.id.search_menu_favorites:
 			showDialog(FAVORITES_DIALOG);
 			return true;
-		case R.id.menu_settings:
+		case R.id.search_menu_settings:
 			Intent i = new Intent(this, SettingsPage.class);
 			// Start Settings Page activity
 			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 			return true;
-		case R.id.menu_quit:
+		case R.id.search_menu_quit:
 			setResult(Constants.RESULT_QUIT);
 			this.finish();
 			return true;
@@ -173,8 +173,15 @@ public class SearchPage extends QueryWrapper {
 				setResult(Constants.RESULT_QUIT);
 				this.finish();
 			}
-			else if (resultCode == Constants.AUTOCOMPLETE_RESET) {
-				setResult(Constants.AUTOCOMPLETE_RESET);
+			else if (resultCode == Constants.RESULT_GO_TO_SEARCH) {
+				// Don't do anything
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_START) {
+				setResult(Constants.RESULT_GO_TO_START);
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_AUTOCOMPLETE_RESETTED) {
+				setResult(Constants.RESULT_AUTOCOMPLETE_RESETTED);
 				this.finish();
 			}
 		}

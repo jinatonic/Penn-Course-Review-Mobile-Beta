@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,24 +57,35 @@ public abstract class Display extends QueryWrapper {
 
 		// Set font Times New Roman
 		timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
-		
+
 		favHeart = (ImageButton) findViewById(R.id.fav_heart);
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();		
 		inflater.inflate(R.menu.result_menu, menu);
-
-		return super.onPrepareOptionsMenu(menu);
+		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		// TODO finish
+		case R.id.menu_search:
+			setResult(Constants.RESULT_GO_TO_SEARCH);
+			this.finish();
+			return true;
+		case R.id.menu_recent:
+			showDialog(RECENT_DIALOG);
+			return true;
+		case R.id.menu_favorite:
+			showDialog(FAVORITES_DIALOG);
+			return true;
+		case R.id.menu_settings:
+			Intent i = new Intent(this, SettingsPage.class);
+			// Start Settings Page activity
+			startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
+			return true;
 		case R.id.menu_quit:
 			setResult(Constants.RESULT_QUIT, null);
 			this.finish();
@@ -94,7 +106,8 @@ public abstract class Display extends QueryWrapper {
 			// Remove keyword from favorites
 			recentSearches.removeKeyword(keyword, 1);
 		}
-		else { // was not favorited, now favoriting
+		else { 
+			// was not favorited, now favoriting
 			// Toggle to selected heart icon
 			favHeart = (ImageButton) findViewById(R.id.fav_heart);
 			favHeart.setImageResource(R.drawable.favorites_selected_100);
@@ -104,10 +117,40 @@ public abstract class Display extends QueryWrapper {
 		}
 		recentSearches.close();
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// dismiss any remaining dialog that might be open
+		removeDialog(RECENT_DIALOG);
+		removeDialog(FAVORITES_DIALOG);
+	}
 	
-	/* Called when user taps on PCR header */
-	public void onPCRHeaderClick(View v) {
-		// TODO
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// do nothing
+			}
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
+				// Quit application if quit is issued
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_SEARCH) {
+				setResult(Constants.RESULT_GO_TO_SEARCH);
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_GO_TO_START) {
+				setResult(Constants.RESULT_GO_TO_START);
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_AUTOCOMPLETE_RESETTED) {
+				setResult(Constants.RESULT_AUTOCOMPLETE_RESETTED);
+				this.finish();
+			}
+		}
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -276,12 +319,12 @@ public abstract class Display extends QueryWrapper {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
 					CourseAverage c = row_map_dept.get(new Integer(position));
-					
+
 					if (c == null) {
 						Log.v("Course", "course is null");
 						return;
 					}
-					
+
 					preProcessForNextPage(Constants.COURSE_TAG + c.getId() + " - " + c.getName(), true);
 				}
 			});

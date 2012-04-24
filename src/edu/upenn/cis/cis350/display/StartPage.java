@@ -6,7 +6,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -26,10 +29,12 @@ public class StartPage extends QueryWrapper {
 	private boolean DLcomplete;
 	private boolean DLstarted;
 
+	private static final int ALERT_FOR_AUTO = 5;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -60,11 +65,18 @@ public class StartPage extends QueryWrapper {
 
 		setProgressBarIndeterminateVisibility(true);
 		addListenerOnButton();
+
+		StartPage.this.runOnUiThread(new Runnable() {
+			public void run() {
+				downloadAutoComplete();
+			}
+		});
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
 		// remove any remaining dialogs
 		removeDialog(FAVORITES_DIALOG);
 		removeDialog(RECENT_DIALOG);
@@ -77,15 +89,55 @@ public class StartPage extends QueryWrapper {
 		}
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				// do nothing
+			}
+			else if (resultCode == Constants.RESULT_QUIT) {
+				setResult(Constants.RESULT_QUIT);
+				// Quit application if quit is issued
+				this.finish();
+			}
+			else if (resultCode == Constants.RESULT_AUTOCOMPLETE_RESETTED) {
+				showDialog(ALERT_FOR_AUTO);
+			}
+		}
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch (id) {
+		case ALERT_FOR_AUTO:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Do you want to redownload autocomplete data?")
+			.setCancelable(false)
+			.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					downloadAutoComplete();
+					removeDialog(ALERT_FOR_AUTO);
+				}
+			})
+			.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					setResult(Constants.RESULT_QUIT);
+					StartPage.this.finish();
+				}
+			});
+			dialog = builder.create();
+			return dialog;
+		default:
+			return super.onCreateDialog(id);
+		}
+	}
+
 	public void addListenerOnButton() {
 		searchButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				StartPage.this.runOnUiThread(new Runnable() {
-					public void run() {
-						downloadAutoComplete();
-					}
-				});
+				goToSearchPage();
 			}
 		});
 
@@ -120,21 +172,9 @@ public class StartPage extends QueryWrapper {
 		startActivityForResult(i, Constants.NORMAL_OPEN_REQUEST);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == Constants.NORMAL_OPEN_REQUEST || requestCode == Constants.PROCESS_REQUEST) {
-			if (resultCode == RESULT_OK) {
-				// Don't do anything
-			}
-			else if (resultCode == Constants.RESULT_QUIT) {
-				setResult(Constants.RESULT_QUIT);
-				// Quit application if quit is issued
-				this.finish();
-			}
-		}
-	}
-
-	// file download simulator... a really simple
+	/**
+	 * Helper function to download autocomplete
+	 */
 	public void downloadAutoComplete() {
 		autoCompleteDB.open();
 		//autoCompleteDB.resetTables();		// COMMENT THIS OUT IF U DONT WANT TO LOAD AUTOCOMPLETE EVERY TIME
@@ -147,8 +187,6 @@ public class StartPage extends QueryWrapper {
 		}
 		else {
 			autoCompleteDB.close();
-			
-			goToSearchPage();
 		}
 	}
 
@@ -235,10 +273,9 @@ public class StartPage extends QueryWrapper {
 			}
 
 			autoCompleteDB.addEntries(course_result);
+			autoCompleteDB.close();
 
 			publishMessage("Done", 200);
-
-			DLcomplete = true;
 
 			return "COMPLETE"; // CHANGE
 		}
@@ -248,7 +285,8 @@ public class StartPage extends QueryWrapper {
 				dialog.dismiss();
 			}
 
-			goToSearchPage();
+			DLcomplete = true;
+			DLstarted = false;
 		}
 
 		private void publishMessage(final String msg, final int progress) {

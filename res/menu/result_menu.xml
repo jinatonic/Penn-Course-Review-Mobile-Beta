@@ -6,6 +6,10 @@
         android:icon="@drawable/ic_menu_recent_history"
         android:title="@string/recent"/>
     <item
+        android:id="@+id/menu_favorite"
+        android:icon="@drawable/ic_menu_favorite"
+        android:title="@string/favorites"/>
+    <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_menu_search"
         android:title="@string/search"/>

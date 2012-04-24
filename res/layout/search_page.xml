@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:completionThreshold="2"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions|textVisiblePassword" />
         
     </LinearLayout>
 

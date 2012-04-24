@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
@@ -82,6 +84,16 @@ public class DisplayReviewsForDept extends Display {
 		sortingField = Sort.DIFFICULTY_ASC;
 
 		printReviews(Type.DEPARTMENT);
+		
+		// Set the onclick callback for header
+		TextView header = (TextView) findViewById(R.id.header);
+		header.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setResult(Constants.RESULT_GO_TO_START);
+				DisplayReviewsForDept.this.finish();
+			}
+		});
 	}
 
 }

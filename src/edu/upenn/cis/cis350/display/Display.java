@@ -148,11 +148,6 @@ public abstract class Display extends QueryWrapper {
 		}
 	}
 
-	/* Called when user taps on PCR header */
-	public void onPCRHeaderClick(View v) {
-		// TODO
-	}
-
 	/** Formats and prints each row of the table of reviews for course,
 	 * instructor, or department pages
 	 * @param displayType - the type of page we are printing on (course, instructor, or dept)

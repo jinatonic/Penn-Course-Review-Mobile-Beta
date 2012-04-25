@@ -37,6 +37,7 @@ public class AutoComplete {
 						JSONObject o = instructor_values.getJSONObject(i);
 						if(o.has("name")) {
 							name = o.getString("name");
+							name = Normalizer.convertCase(name);
 						}
 						if(o.has("path")) {
 							path = o.getString("path");
@@ -74,8 +75,10 @@ public class AutoComplete {
 						JSONObject dpt = dept_values.getJSONObject(j);
 						if(dpt.has("id"))
 							dept_id = dpt.getString("id");
-						if(dpt.has("name"))
+						if(dpt.has("name")) {
 							dept_name = dpt.getString("name");
+							dept_name = Normalizer.convertCase(dept_name);
+						}
 						if(dpt.has("path"))
 							dept_path = dpt.getString("path");
 						KeywordMap deptMap = new KeywordMap(dept_path, dept_name, dept_id, Type.DEPARTMENT);
@@ -113,8 +116,10 @@ public class AutoComplete {
 						String course_name = "";
 						if(course.has("aliases"))
 							course_id = course.getJSONArray("aliases").getString(0);
-						if(course.has("name"))
+						if(course.has("name")) {
 							course_name = course.getString("name");
+							course_name = Normalizer.convertCase(course_name);
+						}
 						if(course.has("path"))
 							course_path = course.getString("path");
 						KeywordMap courseMap = new KeywordMap(course_path, course_name, course_id, Type.COURSE);

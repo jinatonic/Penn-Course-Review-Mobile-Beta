@@ -34,4 +34,27 @@ public class Normalizer {
 		Log.w("Normalizer", "input is " + input + " output is " + output);
 		return output;
 	}
+	
+	/**
+	 * Given input string, change the string to capitalize first letter of each word
+	 */
+	public static String convertCase(String input) {
+		input = input.toLowerCase();
+		final StringBuilder result = new StringBuilder(input.length());
+		String[] words = input.split("\\s");
+		for (int i = 0; i < words.length; ++i) {
+		  if(i > 0) { 
+			  result.append(" "); 
+		  }
+		  if (words[i].length() <= 1) {
+			  result.append(words[i]);
+		  }
+		  else {
+			  result.append(Character.toUpperCase(words[i].charAt(0)))
+			        .append(words[i].substring(1));
+		  }
+		}
+		
+		return result.toString();
+	}
 }

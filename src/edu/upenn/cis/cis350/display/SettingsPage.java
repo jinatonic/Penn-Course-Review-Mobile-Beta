@@ -132,6 +132,8 @@ public class SettingsPage extends Activity {
 		departmentSearchCache.resetTables();
 		departmentSearchCache.close();
 		
+		showSearchCacheSize();
+		
 		Context context = getApplicationContext();
 		CharSequence text = "Search cache cleared";
 
@@ -152,6 +154,8 @@ public class SettingsPage extends Activity {
 		recentSearches.resetTables(0);
 		recentSearches.close();
 		
+		showHistorySize();
+		
 		Context context = getApplicationContext();
 		CharSequence text = "History cleared";
 
@@ -171,6 +175,8 @@ public class SettingsPage extends Activity {
 		recentSearches.open();
 		recentSearches.resetTables(1);
 		recentSearches.close();
+		
+		showFavoriteSize();
 		
 		Context context = getApplicationContext();
 		CharSequence text = "Favorites cleared";

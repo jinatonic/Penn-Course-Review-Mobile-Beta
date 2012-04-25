@@ -208,6 +208,7 @@ public class SearchPage extends QueryWrapper {
 			Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 			// Set autocomplete rows
 			search.setAdapter(new ArrayAdapter<String>(SearchPage.this, R.layout.item_list, result) {
+				
 				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
 					String word = result[position];
@@ -218,21 +219,22 @@ public class SearchPage extends QueryWrapper {
 						((TextView)convertView).setTextSize(14);
 						convertView.setPadding(7, 8, 3, 8);
 					}
-					
+
 					if (word.substring(0, 4).equals(Constants.COURSE_TAG)) {
-						convertView.setBackgroundColor(COURSE_COLOR);
+						convertView.setBackgroundResource(R.drawable.course_bg);
 					}
 					else if (word.substring(0, 4).equals(Constants.INSTRUCTOR_TAG)) {
-						convertView.setBackgroundColor(INSTRUCTOR_COLOR);
+						convertView.setBackgroundResource(R.drawable.instructor_bg);
 					}
 					else {
-						convertView.setBackgroundColor(DEPARTMENT_COLOR);
+						convertView.setBackgroundResource(R.drawable.dept_bg);
 					}
 						
 					((TextView)convertView).setText(word);
 					
 					return convertView;
 				}
+
 			});
 			search.showDropDown();
 

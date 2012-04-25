@@ -62,10 +62,6 @@ public class QueryWrapper extends Activity {
 	protected AsyncTask<KeywordMap, Integer, String> currentTask;
 
 	Typeface calibri;
-	int COURSE_COLOR;
-	int INSTRUCTOR_COLOR;
-	int DEPARTMENT_COLOR;
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -79,9 +75,6 @@ public class QueryWrapper extends Activity {
 
 		// Set the calibri font for autocomplete
 		calibri = Typeface.createFromAsset(this.getAssets(), "fonts/CALIBRI.TTF");
-		COURSE_COLOR = getResources().getColor(R.color.course_color);
-		INSTRUCTOR_COLOR = getResources().getColor(R.color.instructor_color);
-		DEPARTMENT_COLOR = getResources().getColor(R.color.department_color);
 	}
 
 	@Override
@@ -127,13 +120,13 @@ public class QueryWrapper extends Activity {
 					}
 					
 					if (word.substring(0, 4).equals(Constants.COURSE_TAG)) {
-						convertView.setBackgroundColor(COURSE_COLOR);
+						convertView.setBackgroundResource(R.drawable.course_bg);
 					}
 					else if (word.substring(0, 4).equals(Constants.INSTRUCTOR_TAG)) {
-						convertView.setBackgroundColor(INSTRUCTOR_COLOR);
+						convertView.setBackgroundResource(R.drawable.instructor_bg);
 					}
 					else {
-						convertView.setBackgroundColor(DEPARTMENT_COLOR);
+						convertView.setBackgroundResource(R.drawable.dept_bg);
 					}
 						
 					((TextView)convertView).setText(word);

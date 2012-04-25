@@ -17,15 +17,18 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Normalizer;
@@ -58,6 +61,11 @@ public class QueryWrapper extends Activity {
 	protected KeywordMap keywordmap;
 	protected AsyncTask<KeywordMap, Integer, String> currentTask;
 
+	Typeface calibri;
+	int COURSE_COLOR;
+	int INSTRUCTOR_COLOR;
+	int DEPARTMENT_COLOR;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +76,12 @@ public class QueryWrapper extends Activity {
 		departmentSearchCache = new DepartmentSearchCache(this.getApplicationContext());
 		autoCompleteDB = new AutoCompleteDB(this.getApplicationContext());
 		recentSearches = new RecentSearches(this.getApplicationContext());
+
+		// Set the calibri font for autocomplete
+		calibri = Typeface.createFromAsset(this.getAssets(), "fonts/CALIBRI.TTF");
+		COURSE_COLOR = getResources().getColor(R.color.course_color);
+		INSTRUCTOR_COLOR = getResources().getColor(R.color.instructor_color);
+		DEPARTMENT_COLOR = getResources().getColor(R.color.department_color);
 	}
 
 	@Override
@@ -100,10 +114,33 @@ public class QueryWrapper extends Activity {
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);
 
-			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(QueryWrapper.this,
-					R.layout.item_list, result);
-
-			recentList.setAdapter(auto_adapter);
+			recentList.setAdapter(new ArrayAdapter<String>(QueryWrapper.this, R.layout.item_list, result) {
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+					String word = result[position];
+					if (convertView == null) {
+						convertView = new TextView(QueryWrapper.this);
+						((TextView)convertView).setTextColor(Color.BLACK);
+						((TextView)convertView).setTypeface(calibri);
+						((TextView)convertView).setTextSize(14);
+						convertView.setPadding(7, 8, 3, 8);
+					}
+					
+					if (word.substring(0, 4).equals(Constants.COURSE_TAG)) {
+						convertView.setBackgroundColor(COURSE_COLOR);
+					}
+					else if (word.substring(0, 4).equals(Constants.INSTRUCTOR_TAG)) {
+						convertView.setBackgroundColor(INSTRUCTOR_COLOR);
+					}
+					else {
+						convertView.setBackgroundColor(DEPARTMENT_COLOR);
+					}
+						
+					((TextView)convertView).setText(word);
+					
+					return convertView;
+				}
+			});
 			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
 			bDialog.setView(recentList);
 			bDialog.setInverseBackgroundForced(true);

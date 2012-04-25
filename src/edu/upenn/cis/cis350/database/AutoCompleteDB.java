@@ -112,8 +112,8 @@ public class AutoCompleteDB {
 		String sql = "Insert into " + AUTOCOMPLETE_TABLE + " (path, name, course_id, " +
 				"course_id_norm, type, year) values(?,?,?,?,?,?)";
         SQLiteStatement insert = mDb.compileStatement(sql);
-		
-		for (KeywordMap keyword : keywords) {
+        
+        for (KeywordMap keyword : keywords) {
 			// First we add to the course table 
 			String course_id = keyword.getAlias();
 			String course_id_norm = "";

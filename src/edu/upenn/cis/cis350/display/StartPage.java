@@ -123,6 +123,7 @@ public class StartPage extends QueryWrapper {
 			.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					setResult(Constants.RESULT_QUIT);
+					removeDialog(ALERT_FOR_AUTO);
 					StartPage.this.finish();
 				}
 			});

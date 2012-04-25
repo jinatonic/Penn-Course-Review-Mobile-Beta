@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,7 +46,7 @@ public class SearchPage extends QueryWrapper {
 		setContentView(R.layout.search_page);
 
 		search_term = "";
-
+		
 		// Set font to Times New Roman
 		Typeface timesNewRoman = Typeface.createFromAsset(this.getAssets(),"fonts/Times_New_Roman.ttf");
 		TextView searchPCRView = (TextView) findViewById(R.id.search_pcr);
@@ -114,7 +116,7 @@ public class SearchPage extends QueryWrapper {
 				return false;
 			}
 		});
-		
+
 		Intent i = getIntent();
 		String keyword = i.getStringExtra("keyword");
 		if (keyword != null) {
@@ -200,14 +202,38 @@ public class SearchPage extends QueryWrapper {
 
 			// Check database for autocomplete key terms
 			autoCompleteDB.open();
-			String[] result = autoCompleteDB.checkAutocomplete(term);
+			final String[] result = autoCompleteDB.checkAutocomplete(term);
 			autoCompleteDB.close();
 
 			Log.w("SearchPage", "Got results, setting autocomplete. Results: " + result);
 			// Set autocomplete rows
-			ArrayAdapter<String> auto_adapter = new ArrayAdapter<String>(SearchPage.this,
-					R.layout.item_list, result);
-			search.setAdapter(auto_adapter);
+			search.setAdapter(new ArrayAdapter<String>(SearchPage.this, R.layout.item_list, result) {
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+					String word = result[position];
+					if (convertView == null) {
+						convertView = new TextView(SearchPage.this);
+						((TextView)convertView).setTextColor(Color.BLACK);
+						((TextView)convertView).setTypeface(calibri);
+						((TextView)convertView).setTextSize(14);
+						convertView.setPadding(7, 8, 3, 8);
+					}
+					
+					if (word.substring(0, 4).equals(Constants.COURSE_TAG)) {
+						convertView.setBackgroundColor(COURSE_COLOR);
+					}
+					else if (word.substring(0, 4).equals(Constants.INSTRUCTOR_TAG)) {
+						convertView.setBackgroundColor(INSTRUCTOR_COLOR);
+					}
+					else {
+						convertView.setBackgroundColor(DEPARTMENT_COLOR);
+					}
+						
+					((TextView)convertView).setText(word);
+					
+					return convertView;
+				}
+			});
 			search.showDropDown();
 
 			// Set the on-click listener for when user clicks on an item

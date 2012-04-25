@@ -35,10 +35,12 @@ public class AutoComplete {
 						String name = "";
 						String path = "";
 						JSONObject o = instructor_values.getJSONObject(i);
-						if(o.has("name"))
+						if(o.has("name")) {
 							name = o.getString("name");
-						if(o.has("path"))
+						}
+						if(o.has("path")) {
 							path = o.getString("path");
+						}
 						KeywordMap k = new KeywordMap(path, name, null, Type.INSTRUCTOR);
 						keywordMap.add(k);
 

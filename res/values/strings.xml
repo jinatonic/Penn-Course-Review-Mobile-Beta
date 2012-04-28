@@ -36,7 +36,7 @@
     <string name="SEARCH_ALIAS">SEARCH_ALIAS</string>
     <string name="SEARCH_NAME">SEARCH_NAME</string>
     <string name="main_auth2">Please retrieve and enter your serial number below</string>
-    <color name="instructor_color">#CAE1FF</color>
-    <color name="department_color">#87CEFA</color>
-    <color name="course_color">#98F5FF</color>
+    <color name="instructor_color">#D7D7EB</color>
+    <color name="department_color">#C6CBF4</color>
+    <color name="course_color">#EFEFF0</color>
 </resources>

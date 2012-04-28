@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.objects.Course;
@@ -31,16 +35,21 @@ import edu.upenn.cis.cis350.objects.Ratings;
 
 public abstract class Display extends QueryWrapper {
 
-
 	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
 		CQ_DES, IQ_ASC, IQ_DES, DIFFICULTY_ASC, DIFFICULTY_DES, ID_ASC, ID_DES,
 		SEM_ASC, SEM_DES }
+
 	Sort sortingField;
 	ArrayList<Course> courseReviews; // for course, instructor
 	ArrayList<CourseAverage> courseAvgs; // for department
 	HashMap<Integer, Course> row_map; // for retrieving Course from row clicked on
 	HashMap<Integer, CourseAverage> row_map_dept; // for retrieving CourseAverage from row clicked on, for use by dept page
 	Type displayType; // Type of page displayed (course, instructor, dept)
+
+	// For selecting which field populates which column
+	static final int FIELD_SELECTION_DIALOG = 7;
+	TextView selectedCol = null;
+	TextView firstCol = null, secondCol = null, thirdCol = null;
 
 	public String keyword;
 
@@ -121,12 +130,12 @@ public abstract class Display extends QueryWrapper {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		// dismiss any remaining dialog that might be open
 		removeDialog(RECENT_DIALOG);
 		removeDialog(FAVORITES_DIALOG);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
@@ -150,6 +159,93 @@ public abstract class Display extends QueryWrapper {
 				setResult(Constants.RESULT_AUTOCOMPLETE_RESETTED);
 				this.finish();
 			}
+		}
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch (id) {
+		case FIELD_SELECTION_DIALOG:
+			String[] temp = null;
+			switch (this.displayType) {
+			case COURSE:
+				temp = Constants.COURSE_SELECTION;
+				break;
+			case INSTRUCTOR:
+				temp = Constants.INSTRUCTOR_SELECTION;
+				break;
+			case DEPARTMENT:
+				temp = Constants.DEPT_SELECTION;
+				break;
+			}
+			final String[] selection = temp;
+			
+			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
+			ListView recentList = new ListView(this);
+
+			recentList.setAdapter(new ArrayAdapter<String>(Display.this, R.layout.item_list, selection));
+			recentList.setCacheColorHint(Color.TRANSPARENT);	// Fix issue with list turning black on scrolling
+			bDialog.setView(recentList);
+			bDialog.setInverseBackgroundForced(true);
+
+			recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int pos, long arg3) {
+					String selected_field = selection[pos];
+					// TODO: FINISH
+					if (selected_field.equals(Constants.amountLearned)) {
+						
+					}
+					else if (selected_field.equals(Constants.commAbility)) {
+						
+					}
+					else if (selected_field.equals(Constants.courseQuality)) {
+						
+					}
+					else if (selected_field.equals(Constants.difficulty)) {
+						
+					}
+					else if (selected_field.equals(Constants.instructorAccess)) {
+						
+					}
+					else if (selected_field.equals(Constants.instructorQuality)) {
+						
+					}
+					else if (selected_field.equals(Constants.readingsValue)) {
+						
+					}
+					else if (selected_field.equals(Constants.recommendMajor)) {
+						
+					}
+					else if (selected_field.equals(Constants.recommendNonMajor)) {
+						
+					}
+					else if (selected_field.equals(Constants.stimulateInterest)) {
+						
+					}
+					else if (selected_field.equals(Constants.workRequired)) {
+						
+					}
+					else if (selected_field.equals(Constants.semester)) {
+						
+					}
+					else {
+						Toast toast = Toast.makeText(Display.this, "Error occurred", Toast.LENGTH_SHORT);
+						toast.show();
+					}
+					
+					removeDialog(FIELD_SELECTION_DIALOG);
+				}
+
+			});
+
+			dialog = bDialog.create();
+			return dialog;
+		default:
+			return super.onCreateDialog(id);
 		}
 	}
 
@@ -177,6 +273,18 @@ public abstract class Display extends QueryWrapper {
 		switch (displayType) {
 		case COURSE:
 		case INSTRUCTOR:
+
+			// Set the appropriate textview fields for rows
+			if (displayType == Type.COURSE) {
+				firstCol = (TextView) findViewById(R.id.course_first_tab);
+				secondCol = (TextView) findViewById(R.id.course_second_tab);
+				thirdCol = (TextView) findViewById(R.id.course_third_tab);
+			}
+			else {
+				firstCol = (TextView) findViewById(R.id.inst_first_tab);
+				secondCol = (TextView) findViewById(R.id.inst_second_tab);
+				thirdCol = (TextView) findViewById(R.id.inst_third_tab);
+			}
 
 			row_map = new HashMap<Integer, Course>(); // Used for mapping row number to Course in the row
 
@@ -281,6 +389,11 @@ public abstract class Display extends QueryWrapper {
 			break; // end of COURSE and INSTRUCTOR cases
 		case DEPARTMENT:
 
+			// Set the appropriate textview fields for rows
+			firstCol = (TextView) findViewById(R.id.dept_first_tab);
+			secondCol = (TextView) findViewById(R.id.dept_second_tab);
+			thirdCol = (TextView) findViewById(R.id.dept_third_tab);
+
 			row_map_dept = new HashMap<Integer, CourseAverage>(); // Used for mapping row number to Course in the row
 
 			// Iterate through reviews for course and fill table cells
@@ -331,6 +444,37 @@ public abstract class Display extends QueryWrapper {
 
 			break; // end of DEPT case
 		} // outer switch
+
+		// Set the longclick listeners 
+		firstCol.setOnLongClickListener(new View.OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				selectedCol = firstCol;
+				showDialog(FIELD_SELECTION_DIALOG);
+				return true;
+			}
+		});
+
+		secondCol.setOnLongClickListener(new View.OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				selectedCol = secondCol;
+				showDialog(FIELD_SELECTION_DIALOG);
+				return true;
+			}
+		});
+
+		thirdCol.setOnLongClickListener(new View.OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				selectedCol = thirdCol;
+				showDialog(FIELD_SELECTION_DIALOG);
+				return true;
+			}
+		});
 	}
 
 	public void onClickSort(View v) {
@@ -346,7 +490,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortAlphabetically(courseReviews, Type.INSTRUCTOR, 0);
 					sortingField = Sort.INSTRUCTOR_ASC;
 				}
-			} else if(v.getId() == R.id.course_quality_tab) {
+			} else if(v.getId() == R.id.course_first_tab) {
 				if (sortingField == Sort.CQ_ASC) {
 					courseReviews = s.sortByRating(courseReviews, "courseQuality", 1);
 					sortingField = Sort.CQ_DES;
@@ -354,7 +498,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortByRating(courseReviews, "courseQuality", 0);
 					sortingField = Sort.CQ_ASC;
 				}
-			} else if(v.getId() == R.id.instructor_quality_tab) {
+			} else if(v.getId() == R.id.course_second_tab) {
 				if (sortingField == Sort.IQ_ASC) {
 					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 1);
 					sortingField = Sort.IQ_DES;
@@ -362,7 +506,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 0);
 					sortingField = Sort.IQ_ASC;
 				}
-			} else if(v.getId() == R.id.difficulty_tab) {
+			} else if(v.getId() == R.id.course_third_tab) {
 				if (sortingField == Sort.DIFFICULTY_ASC) {
 					courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
 					sortingField = Sort.DIFFICULTY_DES;
@@ -381,7 +525,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortAlphabetically(courseReviews, Type.COURSE, 0);
 					sortingField = Sort.ID_ASC;
 				}
-			} else if(v.getId() == R.id.semester_tab) {
+			} else if(v.getId() == R.id.inst_first_tab) {
 				if (sortingField == Sort.SEM_ASC) {
 					courseReviews = s.sortBySemester(courseReviews, 1);
 					sortingField = Sort.SEM_DES;
@@ -389,7 +533,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortBySemester(courseReviews, 0);
 					sortingField = Sort.SEM_ASC;
 				}
-			} else if(v.getId() == R.id.instructor_quality_tab) {
+			} else if(v.getId() == R.id.inst_second_tab) {
 				if (sortingField == Sort.IQ_ASC) {
 					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 1);
 					sortingField = Sort.IQ_DES;
@@ -397,7 +541,7 @@ public abstract class Display extends QueryWrapper {
 					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 0);
 					sortingField = Sort.IQ_ASC;
 				}
-			} else if(v.getId() == R.id.difficulty_tab) {
+			} else if(v.getId() == R.id.inst_third_tab) {
 				if (sortingField == Sort.DIFFICULTY_ASC) {
 					courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
 					sortingField = Sort.DIFFICULTY_DES;
@@ -430,7 +574,7 @@ public abstract class Display extends QueryWrapper {
 					tempCourses = s.sortAlphabetically(tempCourses, Type.COURSE, 0);
 					sortingField = Sort.ID_ASC;
 				}
-			} else if(v.getId() == R.id.course_quality_tab) {
+			} else if(v.getId() == R.id.dept_first_tab) {
 				if (sortingField == Sort.CQ_ASC) {
 					tempCourses = s.sortByRating(tempCourses, "courseQuality", 1);
 					sortingField = Sort.CQ_DES;
@@ -438,7 +582,7 @@ public abstract class Display extends QueryWrapper {
 					tempCourses = s.sortByRating(tempCourses, "courseQuality", 0);
 					sortingField = Sort.CQ_ASC;
 				}
-			} else if(v.getId() == R.id.instructor_quality_tab) {
+			} else if(v.getId() == R.id.dept_second_tab) {
 				if (sortingField == Sort.IQ_ASC) {
 					tempCourses = s.sortByRating(tempCourses, "instructorQuality", 1);
 					sortingField = Sort.IQ_DES;
@@ -446,7 +590,7 @@ public abstract class Display extends QueryWrapper {
 					tempCourses = s.sortByRating(tempCourses, "instructorQuality", 0);
 					sortingField = Sort.IQ_ASC;
 				}
-			} else if(v.getId() == R.id.difficulty_tab) {
+			} else if(v.getId() == R.id.dept_third_tab) {
 				if (sortingField == Sort.DIFFICULTY_ASC) {
 					tempCourses = s.sortByRating(tempCourses, "difficulty", 1);
 					sortingField = Sort.DIFFICULTY_DES;
@@ -469,21 +613,25 @@ public abstract class Display extends QueryWrapper {
 		switch (displayType) {
 		case COURSE:
 			findViewById(R.id.instructor_tab).setBackgroundColor(0);
-			findViewById(R.id.course_quality_tab).setBackgroundColor(0);
+			findViewById(R.id.course_first_tab).setBackgroundColor(0);
+			findViewById(R.id.course_second_tab).setBackgroundColor(0);
+			findViewById(R.id.course_third_tab).setBackgroundColor(0);
 			break;
 		case INSTRUCTOR:
 			findViewById(R.id.course_id_tab).setBackgroundColor(0);
-			findViewById(R.id.semester_tab).setBackgroundColor(0);
+			findViewById(R.id.inst_first_tab).setBackgroundColor(0);
+			findViewById(R.id.inst_second_tab).setBackgroundColor(0);
+			findViewById(R.id.inst_third_tab).setBackgroundColor(0);
 			break;
 		case DEPARTMENT:
 			findViewById(R.id.course_id_tab).setBackgroundColor(0);
-			findViewById(R.id.course_quality_tab).setBackgroundColor(0);
+			findViewById(R.id.dept_first_tab).setBackgroundColor(0);
+			findViewById(R.id.dept_second_tab).setBackgroundColor(0);
+			findViewById(R.id.dept_third_tab).setBackgroundColor(0);
 			break;
 		default:
 			break;
 		}
-		findViewById(R.id.instructor_quality_tab).setBackgroundColor(0);
-		findViewById(R.id.difficulty_tab).setBackgroundColor(0);
 		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		printReviews(this.displayType);
 	}

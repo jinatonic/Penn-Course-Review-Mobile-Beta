@@ -68,7 +68,7 @@ public class DisplayReviewsForInstructor extends Display {
 		}
 
 		// Set difficulty to be thing its sorted by first
-		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);
+		TextView defaultTab = (TextView) findViewById(R.id.inst_third_tab);
 		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		sortingField = Sort.DIFFICULTY_ASC;
 

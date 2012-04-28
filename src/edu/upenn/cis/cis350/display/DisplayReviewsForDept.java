@@ -79,7 +79,7 @@ public class DisplayReviewsForDept extends Display {
 		name_view.setTypeface(timesNewRoman);
 
 		// Set difficulty to be thing its sorted by first
-		TextView defaultTab = (TextView) findViewById(R.id.difficulty_tab);
+		TextView defaultTab = (TextView) findViewById(R.id.dept_third_tab);
 		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		sortingField = Sort.DIFFICULTY_ASC;
 

@@ -82,7 +82,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/semester_tab"
+                android:id="@+id/inst_first_tab"
                 android:layout_width="70dip"
                 android:layout_height="43dip"
                 android:layout_column="2"
@@ -96,7 +96,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/instructor_quality_tab"
+                android:id="@+id/inst_second_tab"
                 android:layout_width="70dip"
                 android:layout_height="43dip"
                 android:layout_column="3"
@@ -110,7 +110,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/difficulty_tab"
+                android:id="@+id/inst_third_tab"
                 android:layout_width="65dip"
                 android:layout_height="43dip"
                 android:layout_column="4"

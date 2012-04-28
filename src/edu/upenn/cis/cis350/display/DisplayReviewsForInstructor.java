@@ -79,7 +79,7 @@ public class DisplayReviewsForInstructor extends Display {
 		}
 
 		// Set difficulty to be thing its sorted by first
-		defaultCol.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
+		thirdCol.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		sortingField = Sort.THIRD_ASC;
 
 		printReviews(Type.INSTRUCTOR);

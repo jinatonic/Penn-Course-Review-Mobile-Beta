@@ -101,7 +101,7 @@ public class Parser {
 
 			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
-			
+
 			return values;
 			//reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { 
@@ -340,18 +340,18 @@ public class Parser {
 					}
 
 					r = new Ratings(
-							rAmountLearned != null ? Double.parseDouble(rAmountLearned) : null,
-									rCommAbility != null ? Double.parseDouble(rCommAbility) : null,
-											rCourseQuality != null ? Double.parseDouble(rCourseQuality) : null,
-													rDifficulty != null ? Double.parseDouble(rDifficulty) : null,
-															rInstructorAccess != null ? Double.parseDouble(rInstructorAccess) : null,
-																	rInstructorQuality != null ? Double.parseDouble(rInstructorQuality) : null,
-																			rReadingsValue != null ? Double.parseDouble(rReadingsValue) : null,
-																					rRecommendMajor != null ? Double.parseDouble(rRecommendMajor) : null,
-																							rRecommendNonMajor != null ? Double.parseDouble(rRecommendNonMajor) : null,
-																									rStimulateInterest != null ? Double.parseDouble(rStimulateInterest) : null,
-																											rWorkRequired != null ? Double.parseDouble(rWorkRequired) : null
-							);
+							(rAmountLearned != null && !rAmountLearned.equals("null")) ? Double.parseDouble(rAmountLearned) : null,
+							(rCommAbility != null && !rCommAbility.equals("null")) ? Double.parseDouble(rCommAbility) : null,
+							(rCourseQuality != null && !rCourseQuality.equals("null")) ? Double.parseDouble(rCourseQuality) : null,
+							(rDifficulty != null && !rDifficulty.equals("null")) ? Double.parseDouble(rDifficulty) : null,
+							(rInstructorAccess != null && !rInstructorAccess.equals("null")) ? Double.parseDouble(rInstructorAccess) : null,
+							(rInstructorQuality != null && !rInstructorQuality.equals("null")) ? Double.parseDouble(rInstructorQuality) : null,
+							(rReadingsValue != null && !rReadingsValue.equals("null")) ? Double.parseDouble(rReadingsValue) : null,
+							(rRecommendMajor != null && !rRecommendMajor.equals("null")) ? Double.parseDouble(rRecommendMajor) : null,
+							(rRecommendNonMajor != null && !rRecommendNonMajor.equals("null")) ? Double.parseDouble(rRecommendNonMajor) : null,
+							(rStimulateInterest != null && rStimulateInterest.equals("null")) ? Double.parseDouble(rStimulateInterest) : null,
+							(rWorkRequired != null && !rWorkRequired.equals("null")) ? Double.parseDouble(rWorkRequired) : null
+					);
 				}
 				JSONObject section = null;
 				Section s = null;

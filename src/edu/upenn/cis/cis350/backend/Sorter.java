@@ -158,7 +158,14 @@ public class Sorter {
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;
 		for (Course c: courses) {
-			Double d = new Double(c.getRatings().getRating(rRating));
+			String rate = c.getRatings().getRating(rRating);
+			Double d;
+			if (rate.equals(Constants.NA)) {
+				d = 0.0;
+			}
+			else {
+				d = new Double(rate);
+			}
 			Pair p = new Pair(d,c);
 			pairs[count] = p;
 			count++;

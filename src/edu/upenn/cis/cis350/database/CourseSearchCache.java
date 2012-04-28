@@ -22,15 +22,15 @@ import edu.upenn.cis.cis350.objects.Section;
  */
 
 public class CourseSearchCache extends DatabaseHelperClass {
-	
+
 	/* TAG for logging purposes */
 	private static final String TAG = "CourseSearchCache";
-	
-	
+
+
 	public CourseSearchCache(Context ctx) {
 		this.mCtx = ctx;
 	}
-	
+
 	/**
 	 * Open the SQLite database and get the associating tables (if they exist, else create them)
 	 * @return SearchCache with the database opened
@@ -43,7 +43,7 @@ public class CourseSearchCache extends DatabaseHelperClass {
 		mDb.execSQL(COURSE_TABLE_CREATE);
 		return this;
 	}
-	
+
 	/**
 	 * Close all associated database tables
 	 */
@@ -51,7 +51,7 @@ public class CourseSearchCache extends DatabaseHelperClass {
 		Log.w(TAG, "Closing CourseSearchCache");
 		mDbHelper.close();
 	}
-	
+
 	/** 
 	 * Delete all entries from all tables in database (for testing purposes)
 	 */
@@ -60,7 +60,7 @@ public class CourseSearchCache extends DatabaseHelperClass {
 		mDb.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
 		mDb.execSQL(COURSE_TABLE_CREATE);
 	}
-	
+
 	/**
 	 * Takes a given course and store the information in the database (if not exists)
 	 * @param course given course to be added to the database
@@ -71,12 +71,12 @@ public class CourseSearchCache extends DatabaseHelperClass {
 			Log.w(TAG, "Starting to add list of courses, size " + courses.size());
 		else
 			Log.w(TAG, "Starting to add list of courses for instructor, size " + courses.size());
-		
+
 		for (Course course : courses) {
 			Log.w(TAG, "adding course " + course.getAlias() + " " + course.getName() + " to database");
 
 			String id = course.getID();
-			
+
 			// First we add to the course table 
 			ContentValues values = new ContentValues();
 			values.put("name", course.getName());
@@ -91,20 +91,20 @@ public class CourseSearchCache extends DatabaseHelperClass {
 			values.put("num_reviewers", course.getNumReviewers());
 			values.put("num_students", course.getNumStudents());
 			values.put("course_path", course.getPath());
-			
+
 			Ratings r = course.getRatings();
-			values.put("ratings_amountLearned", r.getAmountLearned());
-			values.put("ratings_commAbility", r.getCommAbility());
-			values.put("ratings_courseQuality", r.getCourseQuality());
-			values.put("ratings_difficulty", r.getDifficulty());
-			values.put("ratings_instructorAccess", r.getInstructorAccess());
-			values.put("ratings_instructorQuality", r.getInstructorQuality());
-			values.put("ratings_readingsValue", r.getReadingsValue());
-			values.put("ratings_recommendMajor", r.getRecommendMajor());
-			values.put("ratings_recommendNonMajor", r.getRecommendNonMajor());
-			values.put("ratings_stimulateInterest", r.getStimulateInterest());
-			values.put("ratings_workRequired", r.getWorkRequired());
-			
+			values.put("ratings_amountLearned", (r.getAmountLearned().equals(Constants.NA)) ? null : r.getAmountLearned());
+			values.put("ratings_commAbility", (r.getCommAbility().equals(Constants.NA)) ? null : r.getCommAbility());
+			values.put("ratings_courseQuality", (r.getCourseQuality().equals(Constants.NA)) ? null : r.getCourseQuality());
+			values.put("ratings_difficulty", (r.getDifficulty().equals(Constants.NA)) ? null : r.getDifficulty());
+			values.put("ratings_instructorAccess", (r.getInstructorAccess().equals(Constants.NA)) ? null : r.getInstructorAccess());
+			values.put("ratings_instructorQuality", (r.getInstructorQuality().equals(Constants.NA)) ? null : r.getInstructorQuality());
+			values.put("ratings_readingsValue", (r.getReadingsValue().equals(Constants.NA)) ? null : r.getReadingsValue());
+			values.put("ratings_recommendMajor", (r.getRecommendMajor().equals(Constants.NA)) ? null : r.getRecommendMajor());
+			values.put("ratings_recommendNonMajor", (r.getRecommendNonMajor().equals(Constants.NA)) ? null : r.getRecommendNonMajor());
+			values.put("ratings_stimulateInterest", (r.getStimulateInterest().equals(Constants.NA)) ? null : r.getStimulateInterest());
+			values.put("ratings_workRequired", (r.getWorkRequired().equals(Constants.NA)) ? null : r.getWorkRequired());
+
 			Section section = course.getSection();
 			values.put("section_id", section.getID());
 			values.put("section_alias", section.getAlias());
@@ -112,14 +112,14 @@ public class CourseSearchCache extends DatabaseHelperClass {
 			values.put("section_name", section.getName());
 			values.put("section_number", section.getSectionNum());
 			values.put("type", type);
-			
+
 			values.put("date", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
-			
+
 			if (mDb.insert(COURSE_TABLE, null, values) == -1) 
 				Log.w(TAG, "Failed to insert new course into table");
 		}
 	}
-	
+
 	/**
 	 * Checks if a given keyword exists in the table
 	 * @param keyword
@@ -138,10 +138,10 @@ public class CourseSearchCache extends DatabaseHelperClass {
 			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + type;
 		}
 		Cursor c = mDb.rawQuery(query, null);
-		
+
 		return c.getCount() != 0;
 	}
-	
+
 	/**
 	 * Takes a course alias ('-' included in course, e.g. cis-121) and search cached database for data
 	 * @param keyword can be either course-alias (normalized) or professor's name
@@ -153,70 +153,99 @@ public class CourseSearchCache extends DatabaseHelperClass {
 
 		keyword = keyword.toLowerCase().replace("'", "''");
 		ArrayList<Course> rs = new ArrayList<Course>();
-		
+
 		// First try to match based on course alias
 		String query = null;
 		if (type == 0)
 			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + 0;
 		else
 			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + 1;
-		
+
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
-		
+
 		// If cached data found, recreate object and return it
 		if (c.getCount() > 0) {
 			Log.w(TAG, "getCourse: courses found, number is " + c.getCount());
+
+			Double amountLearned;
+			Double commAbility;
+			Double courseQuality;
+			Double difficulty;
+			Double instructorAccess;
+			Double instructorQuality;
+			Double readingsValue;
+			Double recommendMajor;
+			Double recommendNonMajor;
+			Double stimulateInterest;
+			Double workRequired;
+
 			do {
 				Section tSection = new Section(	
-												c.getString(25),
-												c.getString(24),
-												c.getString(26),
-												c.getString(27),
-												c.getString(28)
-											  );
+						c.getString(25),
+						c.getString(24),
+						c.getString(26),
+						c.getString(27),
+						c.getString(28)
+						);
+				
+
+				amountLearned = (c.isNull(13)) ? null : c.getDouble(13);
+				commAbility = (c.isNull(14)) ? null : c.getDouble(14);
+				courseQuality = (c.isNull(15)) ? null : c.getDouble(15);
+				difficulty = (c.isNull(16)) ? null : c.getDouble(16);
+				instructorAccess = (c.isNull(17)) ? null : c.getDouble(17);
+				instructorQuality = (c.isNull(18)) ? null : c.getDouble(18);
+				readingsValue = (c.isNull(19)) ? null : c.getDouble(19);
+				recommendMajor = (c.isNull(20)) ? null : c.getDouble(20);
+				recommendNonMajor = (c.isNull(21)) ? null : c.getDouble(21);
+				stimulateInterest = (c.isNull(22)) ? null : c.getDouble(22);
+				workRequired = (c.isNull(23)) ? null : c.getDouble(23);
+
 				Ratings tRate = new Ratings(
-												c.getDouble(13),
-												c.getDouble(14),
-												c.getDouble(15),
-												c.getDouble(16),
-												c.getDouble(17),
-												c.getDouble(18),
-												c.getDouble(19),
-												c.getDouble(20),
-												c.getDouble(21),
-												c.getDouble(22),
-												c.getDouble(23)
-										   );
+						amountLearned,
+						commAbility,
+						courseQuality,
+						difficulty,
+						instructorAccess,
+						instructorQuality,
+						readingsValue,
+						recommendMajor,
+						recommendNonMajor,
+						stimulateInterest,
+						workRequired
+						);
+				
 				Instructor tIns = new Instructor(
-												c.getString(7),
-												c.getString(8),
-												c.getString(9)
-												);
+						c.getString(7),
+						c.getString(8),
+						c.getString(9)
+						);
+				
 				Course tCourse = new Course(
-												c.getString(2),
-												c.getString(1),
-												c.getString(3),
-												c.getString(4),
-												c.getString(6),
-												c.getString(5),
-												tIns,
-												c.getInt(10),
-												c.getInt(11),
-												c.getString(12),
-												tRate,
-												tSection
-										   );
+						c.getString(2),
+						c.getString(1),
+						c.getString(3),
+						c.getString(4),
+						c.getString(6),
+						c.getString(5),
+						tIns,
+						c.getInt(10),
+						c.getInt(11),
+						c.getString(12),
+						tRate,
+						tSection
+						);
 				rs.add(tCourse);
 			} while (c.moveToNext());
 		}
 		else {
 			Log.w(TAG, "No results found!");
 		}
-		
+
 		return rs;
 	}
-	
+
 	/**
 	 * Get the size of the cache (number of entries)
 	 * @return
@@ -225,7 +254,7 @@ public class CourseSearchCache extends DatabaseHelperClass {
 		Cursor c = mDb.rawQuery("SELECT count(*) AS num FROM " + COURSE_TABLE, null);
 		c.moveToFirst();
 		int num = c.getInt(c.getColumnIndex("num"));
-		
+
 		return num * Constants.SEARCH_CACHE_ROW_SIZE / 1000;
 	}
 }

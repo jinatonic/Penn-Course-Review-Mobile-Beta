@@ -152,9 +152,12 @@ public class CourseAverage {
 		int temp_workRequired = (int)((tot_workRequired/count_workRequired) * 100);
 		double avg_workRequired = (double)temp_workRequired/100.0;
 
-		Ratings avgRatings = new Ratings(avg_amountLearned, avg_commAbility, avg_courseQuality,
-				avg_difficulty, avg_instructorAccess, avg_instructorQuality, avg_readingsValue,
-				avg_recommendMajor, avg_recommendNonMajor, avg_stimulateInterest, avg_workRequired);
+		Ratings avgRatings = new Ratings((count_amountLearned < 1) ? null : avg_amountLearned, (count_commAbility < 1) ? null : avg_commAbility,
+				(count_courseQuality < 1) ? null : avg_courseQuality, (count_difficulty < 1) ? null : avg_difficulty,
+				(count_instructorAccess < 1) ? null : avg_instructorAccess, (count_instructorQuality < 1) ? null : avg_instructorQuality,
+				(count_readingsValue < 1) ? null : avg_readingsValue, (count_recommendMajor < 1) ? null : avg_recommendMajor,
+				(count_recommendNonMajor < 1) ? null : avg_recommendNonMajor, (count_stimulateInterest < 1) ? null : avg_stimulateInterest,
+				(count_workRequired < 1) ? null : avg_workRequired);
 		return avgRatings;
 	}
 

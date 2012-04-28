@@ -56,16 +56,16 @@ public class Constants {
 	
 	// All can access these fields
 	public static final String amountLearned = "Amount Learned";
-	public static final String commAbility = "Communication Ability";
+	public static final String commAbility = "Comm Ability";
 	public static final String courseQuality = "Course Quality";
 	public static final String difficulty = "Difficulty";
 	public static final String instructorAccess = "Instructor Access";
 	public static final String instructorQuality = "Instructor Quality";
 	public static final String readingsValue = "Readings Value";
-	public static final String recommendMajor = "Recommend Major";
-	public static final String recommendNonMajor = "Recommend Non Major";
+	public static final String recommendMajor = "Rec Major";
+	public static final String recommendNonMajor = "Rec Non-major";
 	public static final String stimulateInterest = "Stimulate Interest";
-	public static final String workRequired = "Amount of Work Required";
+	public static final String workRequired = "Work Required";
 	
 	public static final String NA = "N/A";
 	

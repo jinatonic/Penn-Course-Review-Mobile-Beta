@@ -88,8 +88,8 @@
         android:background="@layout/bg_gradient"
         android:orientation="vertical"
         android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:paddingTop="5dp" >
 
         <LinearLayout
@@ -141,7 +141,7 @@
 
             <TextView
                 android:id="@+id/third_tab"
-                android:layout_width="65dip"
+                android:layout_width="70dip"
                 android:layout_height="43dip"
                 android:layout_column="4"
                 android:clickable="true"

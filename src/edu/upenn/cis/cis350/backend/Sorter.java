@@ -68,8 +68,8 @@ public class Sorter {
 	}
 
 	// sort list by instructor or course depending on the Type, order = 0 is alphabetical, 1 is reverse
-	//we first have to add the arraylist into a wrapper object InstructorCourse or IdCourse since for instructors
-	//we are sorting by Name, while for courses we are sorting by Course ID (two different fields).
+	// we first have to add the arraylist into a wrapper object InstructorCourse or IdCourse since for instructors
+	// we are sorting by Name, while for courses we are sorting by Course ID (two different fields).
 	public ArrayList<Course> sortAlphabetically(ArrayList<Course> courses, Type sortType, int order) {
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
 		switch (sortType) {
@@ -154,7 +154,7 @@ public class Sorter {
 	}
 
 	// Sort array according to a specified rating, rRating, and order (0 = increasing, 1 = decreasing)
-	public ArrayList<Course> sortByRating(ArrayList<Course> courses, String rRating, int order) {
+	public ArrayList<Course> sortByRating(ArrayList<Course> courses, int rRating, int order) {
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;
 		for (Course c: courses) {

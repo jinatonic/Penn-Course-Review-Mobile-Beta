@@ -198,7 +198,7 @@ public class Parser {
 
 	public ArrayList<Course> displayCourseReviews(ArrayList<Course> reviews) {
 		// Right now this method just sorts by difficulty, add additional sorting functionality here or in other methods?
-		reviews = s.sortByRating(reviews, "difficulty", 0);
+		reviews = s.sortByRating(reviews, Constants.difficultyId, 0);
 		return reviews;
 	}
 

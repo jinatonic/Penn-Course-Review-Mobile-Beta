@@ -92,7 +92,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/course_id_tab"
+                android:id="@+id/default_tab"
                 android:layout_width="97dip"
                 android:layout_height="43dip"
                 android:layout_column="1"
@@ -106,7 +106,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/dept_first_tab"
+                android:id="@+id/first_tab"
                 android:layout_width="70dip"
                 android:layout_height="43dip"
                 android:layout_column="2"
@@ -120,7 +120,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/dept_second_tab"
+                android:id="@+id/second_tab"
                 android:layout_width="70dip"
                 android:layout_height="43dip"
                 android:layout_column="3"
@@ -134,7 +134,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/dept_third_tab"
+                android:id="@+id/third_tab"
                 android:layout_width="65dip"
                 android:layout_height="43dip"
                 android:layout_column="4"

@@ -38,6 +38,22 @@ public class Constants {
 	
 	/******************** FOLLOWING CONSTANTS ARE FOR CHANGING FIELDS IN DISPLAY ********************/
 	
+	// For easier access
+	public static final int amountLearnedId = 0;
+	public static final int commAbilityId = 1;
+	public static final int courseQualityId = 2;
+	public static final int difficultyId = 3;
+	public static final int instructorAccessId = 4;
+	public static final int instructorQualityId = 5;
+	public static final int readingsValueId = 6;
+	public static final int recommendMajorId = 7;
+	public static final int recommendNonMajorId = 8;
+	public static final int stimulateInterestId = 9;
+	public static final int workRequiredId = 10;
+	public static final int semesterId = 11;
+	public static final int instructorNameId = 12;
+	public static final int courseId = 13;
+	
 	// All can access these fields
 	public static final String amountLearned = "Amount Learned";
 	public static final String commAbility = "Communication Ability";
@@ -51,8 +67,14 @@ public class Constants {
 	public static final String stimulateInterest = "Stimulate Interest";
 	public static final String workRequired = "Amount of Work Required";
 	
+	public static final String NA = "N/A";
+	
 	// COURSE only fields
 	public static final String semester = "Semester";
+
+	public static final String[] fillString = {amountLearned, commAbility, courseQuality, difficulty, instructorAccess, instructorQuality,
+		readingsValue, recommendMajor, recommendNonMajor, stimulateInterest, workRequired, semester
+	};
 	
 	public static final String[] COURSE_SELECTION = {semester, amountLearned, commAbility, courseQuality, difficulty, instructorAccess, instructorQuality, readingsValue,
 		recommendMajor, recommendNonMajor, stimulateInterest, workRequired

@@ -20,6 +20,17 @@ public class DisplayReviewsForDept extends Display {
 
 		setContentView(R.layout.dept_reviews);
 
+		// Set the default column fields
+		defaultColId = Constants.courseId;
+		firstColId = Constants.courseQualityId;
+		secondColId = Constants.instructorQualityId;
+		thirdColId = Constants.difficultyId;
+		
+		defaultCol = (TextView) findViewById(R.id.default_tab);
+		firstCol = (TextView) findViewById(R.id.first_tab);
+		secondCol = (TextView) findViewById(R.id.second_tab);
+		thirdCol = (TextView) findViewById(R.id.third_tab);
+		
 		// Get course reviews for the search term
 		Intent i = getIntent();
 		String type = i.getStringExtra(getResources().getString(R.string.SEARCH_TYPE));
@@ -79,9 +90,8 @@ public class DisplayReviewsForDept extends Display {
 		name_view.setTypeface(timesNewRoman);
 
 		// Set difficulty to be thing its sorted by first
-		TextView defaultTab = (TextView) findViewById(R.id.dept_third_tab);
-		defaultTab.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
-		sortingField = Sort.DIFFICULTY_ASC;
+		defaultCol.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
+		sortingField = Sort.THIRD_ASC;
 
 		printReviews(Type.DEPARTMENT);
 		

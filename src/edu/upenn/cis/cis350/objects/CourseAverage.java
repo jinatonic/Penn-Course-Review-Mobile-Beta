@@ -2,6 +2,8 @@ package edu.upenn.cis.cis350.objects;
 
 import java.util.ArrayList;
 
+import edu.upenn.cis.cis350.backend.Constants;
+
 public class CourseAverage {
 	private String name;
 	private String id;
@@ -67,48 +69,48 @@ public class CourseAverage {
 
 		for(int i = 0; i < courses.size(); i++){
 			Ratings r = courses.get(i).getRatings();
-			if(r.getAmountLearned() > 0){
-				tot_amountLearned += r.getAmountLearned();
+			if(!r.getAmountLearned().equals(Constants.NA)){
+				tot_amountLearned += new Double(r.getAmountLearned());
 				count_amountLearned += 1;
 			}
-			if(r.getCommAbility() > 0){
-				tot_commAbility += r.getCommAbility();
+			if(!r.getCommAbility().equals(Constants.NA)){
+				tot_commAbility += new Double(r.getCommAbility());
 				count_commAbility += 1;
 			}
-			if(r.getCourseQuality() > 0){
-				tot_courseQuality += r.getCourseQuality();
+			if(!r.getCourseQuality().equals(Constants.NA)){
+				tot_courseQuality += new Double(r.getCourseQuality());
 				count_courseQuality += 1;
 			}
-			if(r.getDifficulty() > 0){
-				tot_difficulty += r.getDifficulty();
+			if(!r.getDifficulty().equals(Constants.NA)){
+				tot_difficulty += new Double(r.getDifficulty());
 				count_difficulty += 1;
 			}
-			if(r.getInstructorAccess() > 0){
-				tot_instructorAccess += r.getInstructorAccess();
-				count_instructorAccess += r.getInstructorAccess();
+			if(!r.getInstructorAccess().equals(Constants.NA)){
+				tot_instructorAccess += new Double(r.getInstructorAccess());
+				count_instructorAccess += new Double(r.getInstructorAccess());
 			}
-			if(r.getInstructorQuality() > 0){
-				tot_instructorQuality += r.getInstructorQuality();
+			if(!r.getInstructorQuality().equals(Constants.NA)){
+				tot_instructorQuality += new Double(r.getInstructorQuality());
 				count_instructorQuality += 1;
 			}
-			if(r.getReadingsValue() > 0){
-				tot_readingsValue += r.getReadingsValue();
+			if(!r.getReadingsValue().equals(Constants.NA)){
+				tot_readingsValue += new Double(r.getReadingsValue());
 				count_readingsValue += 1;
 			}
-			if(r.getRecommendMajor() > 0){
-				tot_recommendMajor += r.getRecommendMajor();
+			if(!r.getRecommendMajor().equals(Constants.NA)){
+				tot_recommendMajor += new Double(r.getRecommendMajor());
 				count_recommendMajor += 1;
 			}
-			if(r.getRecommendNonMajor() > 0){
-				tot_recommendNonMajor += r.getRecommendNonMajor();
+			if(!r.getRecommendNonMajor().equals(Constants.NA)){
+				tot_recommendNonMajor += new Double(r.getRecommendNonMajor());
 				count_recommendNonMajor += 1;
 			}
-			if(r.getStimulateInterest() > 0){
-				tot_stimulateInterest += r.getStimulateInterest();
+			if(!r.getStimulateInterest().equals(Constants.NA)){
+				tot_stimulateInterest += new Double(r.getStimulateInterest());
 				count_stimulateInterest += 1;
 			}
-			if(r.getWorkRequired() > 0){
-				tot_workRequired += r.getWorkRequired();
+			if(!r.getWorkRequired().equals(Constants.NA)){
+				tot_workRequired += new Double(r.getWorkRequired());
 				count_workRequired += 1;
 			}
 

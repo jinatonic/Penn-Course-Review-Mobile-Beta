@@ -2,7 +2,6 @@ package edu.upenn.cis.cis350.display;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +30,10 @@ import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
-import edu.upenn.cis.cis350.objects.Ratings;
 
 public abstract class Display extends QueryWrapper {
 
-	public enum Sort {INSTRUCTOR_ASC, INSTRUCTOR_DES, NAME_ASC, NAME_DES, CQ_ASC, 
-		CQ_DES, IQ_ASC, IQ_DES, DIFFICULTY_ASC, DIFFICULTY_DES, ID_ASC, ID_DES,
-		SEM_ASC, SEM_DES }
+	public enum Sort { DEFAULT_DESC, DEFAULT_ASC, FIRST_DESC, FIRST_ASC, SECOND_DESC, SECOND_ASC, THIRD_DESC, THIRD_ASC }
 
 	Sort sortingField;
 	ArrayList<Course> courseReviews; // for course, instructor
@@ -46,10 +42,15 @@ public abstract class Display extends QueryWrapper {
 	HashMap<Integer, CourseAverage> row_map_dept; // for retrieving CourseAverage from row clicked on, for use by dept page
 	Type displayType; // Type of page displayed (course, instructor, dept)
 
+	// Used for selecting individual courses to show more information
+	static final int COURSE_INFO_DIALOG = 8;
+	Course c;
+
 	// For selecting which field populates which column
 	static final int FIELD_SELECTION_DIALOG = 7;
 	TextView selectedCol = null;
-	TextView firstCol = null, secondCol = null, thirdCol = null;
+	TextView defaultCol = null, firstCol = null, secondCol = null, thirdCol = null;
+	int firstColId, secondColId, thirdColId, defaultColId;
 
 	public String keyword;
 
@@ -164,7 +165,7 @@ public abstract class Display extends QueryWrapper {
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		Dialog dialog;
+		final Dialog dialog;
 		switch (id) {
 		case FIELD_SELECTION_DIALOG:
 			String[] temp = null;
@@ -180,7 +181,7 @@ public abstract class Display extends QueryWrapper {
 				break;
 			}
 			final String[] selection = temp;
-			
+
 			AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
 			ListView recentList = new ListView(this);
 
@@ -195,58 +196,120 @@ public abstract class Display extends QueryWrapper {
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int pos, long arg3) {
 					String selected_field = selection[pos];
-					// TODO: FINISH
 					if (selected_field.equals(Constants.amountLearned)) {
-						
+						setColumnId(Constants.amountLearnedId);
 					}
 					else if (selected_field.equals(Constants.commAbility)) {
-						
+						setColumnId(Constants.commAbilityId);
 					}
 					else if (selected_field.equals(Constants.courseQuality)) {
-						
+						setColumnId(Constants.courseQualityId);
 					}
 					else if (selected_field.equals(Constants.difficulty)) {
-						
+						setColumnId(Constants.difficultyId);
 					}
 					else if (selected_field.equals(Constants.instructorAccess)) {
-						
+						setColumnId(Constants.instructorAccessId);
 					}
 					else if (selected_field.equals(Constants.instructorQuality)) {
-						
+						setColumnId(Constants.instructorQualityId);
 					}
 					else if (selected_field.equals(Constants.readingsValue)) {
-						
+						setColumnId(Constants.readingsValueId);
 					}
 					else if (selected_field.equals(Constants.recommendMajor)) {
-						
+						setColumnId(Constants.recommendMajorId);
 					}
 					else if (selected_field.equals(Constants.recommendNonMajor)) {
-						
+						setColumnId(Constants.recommendNonMajorId);
 					}
 					else if (selected_field.equals(Constants.stimulateInterest)) {
-						
+						setColumnId(Constants.stimulateInterestId);
 					}
 					else if (selected_field.equals(Constants.workRequired)) {
-						
+						setColumnId(Constants.workRequiredId);
 					}
 					else if (selected_field.equals(Constants.semester)) {
-						
+						setColumnId(Constants.semesterId);
 					}
 					else {
 						Toast toast = Toast.makeText(Display.this, "Error occurred", Toast.LENGTH_SHORT);
 						toast.show();
 					}
-					
+
 					removeDialog(FIELD_SELECTION_DIALOG);
+					printReviews(displayType);
 				}
 
 			});
 
 			dialog = bDialog.create();
 			return dialog;
+
+		case COURSE_INFO_DIALOG:
+			dialog = new Dialog(Display.this);
+			dialog.setContentView(R.layout.main_dialog);					
+
+			dialog.setTitle(c.getAlias());
+
+			dialog.setCancelable(true);
+			dialog.setCanceledOnTouchOutside(true);
+
+			// Set up title
+			TextView title = (TextView) dialog.findViewById(R.id.CourseContent);
+			title.setTypeface(timesNewRoman);
+			String titleText = 
+					c.getName() + "\n"
+							+ c.getFullSemester() + "\n"
+							+ c.getInstructor().getName() + "\n"
+							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
+
+			title.setText((CharSequence) titleText);
+
+			//set up comments
+			TextView description = (TextView) dialog.findViewById(R.id.Comments);
+			String ratingString = "Course Quality: " + c.getRatings().getCourseQuality();
+			ratingString += "\nInstructor Quality: " + c.getRatings().getInstructorQuality();
+			ratingString += "\nDifficulty: " + c.getRatings().getDifficulty();
+			ratingString += "\nMajor Recommendation: " + c.getRatings().getRecommendMajor();
+			ratingString += "\nNonmajor Recommendation: " + c.getRatings().getRecommendNonMajor();
+			ratingString += "\nAmount Learned: " + c.getRatings().getAmountLearned();
+			ratingString += "\nWork Required: " + c.getRatings().getWorkRequired()+ "\n\n";
+
+			String commentString = "";
+			if (displayType == KeywordMap.Type.COURSE) {
+				commentString = c.getComments();
+
+			} else if (displayType == KeywordMap.Type.INSTRUCTOR) {
+				commentString = c.getDescription();
+			}
+			if (commentString == null || commentString.equals("null") || commentString.length() < 6) {
+				commentString = "There are no available comments for this course.\n";
+			}
+			ratingString += commentString;
+			description.setText((CharSequence) ratingString);
+
+			return dialog;
 		default:
 			return super.onCreateDialog(id);
 		}
+	}
+	
+	public void setColumnId(int newId) {
+		if (selectedCol == firstCol) {
+			firstCol.setText(Constants.fillString[newId]);
+			firstColId = newId;
+		}
+		else if (selectedCol == secondCol) {
+			secondCol.setText(Constants.fillString[newId]);
+			secondColId = newId;
+		}
+		else if (selectedCol == thirdCol) {
+			thirdCol.setText(Constants.fillString[newId]);
+			thirdColId = newId;
+		}
+		else 
+			return;
 	}
 
 	/** Formats and prints each row of the table of reviews for course,
@@ -268,65 +331,80 @@ public abstract class Display extends QueryWrapper {
 		// List of all rows (each row being a map of columnHeader to cell text)
 		List<HashMap<String, String>> allRows = new ArrayList<HashMap<String, String>>();
 
-		int rowNumber = 0; // used to keep track of which row we are on, for mapping in row_map
+		ArrayList<String> default_info = new ArrayList<String>();
+		ArrayList<String> col1_info = new ArrayList<String>();
+		ArrayList<String> col2_info = new ArrayList<String>();
+		ArrayList<String> col3_info = new ArrayList<String>();
 
-		switch (displayType) {
-		case COURSE:
-		case INSTRUCTOR:
+		if (displayType == Type.DEPARTMENT) {
+			for (CourseAverage avg : courseAvgs) {
+				default_info.add(avg.getId());
+				col1_info.add(avg.getRatings().getRating(firstColId));
+				col2_info.add(avg.getRatings().getRating(secondColId));
+				col3_info.add(avg.getRatings().getRating(thirdColId));
+			}
+		}
+		else {
+			for (Course course : courseReviews) {
+				// DEFAULT column
+				if (displayType == Type.COURSE) {
+					default_info.add(course.getInstructor().getName());
+				}
+				else {
+					default_info.add(course.getAlias());
+				}
 
-			// Set the appropriate textview fields for rows
-			if (displayType == Type.COURSE) {
-				firstCol = (TextView) findViewById(R.id.course_first_tab);
-				secondCol = (TextView) findViewById(R.id.course_second_tab);
-				thirdCol = (TextView) findViewById(R.id.course_third_tab);
+				// First column
+				if (firstColId == Constants.semesterId) {
+					col1_info.add(course.getFullSemester());
+				}
+				else {
+					col1_info.add(course.getRatings().getRating(firstColId));
+				}
+
+				// Second column
+				if (secondColId == Constants.semesterId) {
+					col2_info.add(course.getFullSemester());
+				}
+				else {
+					col2_info.add(course.getRatings().getRating(secondColId));
+				}
+
+				// Third column
+				if (thirdColId == Constants.semesterId) {
+					col3_info.add(course.getFullSemester());
+				}
+				else {
+					col3_info.add(course.getRatings().getRating(thirdColId));
+				}
+			}
+		}
+
+		// Error check
+		if (default_info.size() != col1_info.size() || col1_info.size() != col2_info.size() && col2_info.size() != col3_info.size()) {
+			Log.w("DISPLAY ERROR", "The size of the arrays do not match");
+		}
+
+		row_map = new HashMap<Integer, Course>();
+		row_map_dept = new HashMap<Integer, CourseAverage>();
+		for (int i=0; i < default_info.size(); i++) {
+			HashMap<String, String> row = new HashMap<String, String>();
+			row.put("col_1", default_info.get(i));
+			row.put("col_2", col1_info.get(i));
+			row.put("col_3", col2_info.get(i));
+			row.put("col_4", col3_info.get(i));
+
+			if (displayType != Type.DEPARTMENT) {
+				row_map.put(i, courseReviews.get(i));
 			}
 			else {
-				firstCol = (TextView) findViewById(R.id.inst_first_tab);
-				secondCol = (TextView) findViewById(R.id.inst_second_tab);
-				thirdCol = (TextView) findViewById(R.id.inst_third_tab);
+				row_map_dept.put(i, courseAvgs.get(i));
 			}
 
-			row_map = new HashMap<Integer, Course>(); // Used for mapping row number to Course in the row
+			allRows.add(row);
+		}
 
-			// Iterate through Courses and create a new row mapping for each
-			Iterator<Course> iter = courseReviews.iterator();
-			while(iter.hasNext()) {
-				Course curCourse = iter.next();
-				Ratings curRatings = curCourse.getRatings();
-
-				// Map the current row number to this Course
-				row_map.put(new Integer(rowNumber), curCourse);
-
-				// Mapping of columnHeader to text in each cell for this row
-				HashMap<String, String> row = new HashMap<String, String>();
-
-				switch (displayType) {
-				case COURSE:
-					// Instructor
-					row.put("col_1", curCourse.getInstructor().getName());
-					// Course Quality
-					row.put("col_2", ((Double)curRatings.getCourseQuality()).toString());
-					break;
-				case INSTRUCTOR:
-					// Course Id
-					row.put("col_1", curCourse.getAlias());
-					// Course Semester
-					row.put("col_2", curCourse.getFullSemester());
-					break;
-				default:
-					break;
-
-				}
-				// Instructor Quality
-				row.put("col_3", ((Double)curRatings.getInstructorQuality()).toString());
-				// Difficulty
-				row.put("col_4", ((Double)curRatings.getDifficulty()).toString());
-				// Add this row to allRows
-				allRows.add(row);
-
-				rowNumber++;
-			} // while loop
-
+		if (displayType != Type.DEPARTMENT) {
 			SimpleAdapter adapter = new SimpleAdapter(
 					this, allRows, R.layout.list_row, columnHeaders, cellIds);
 			lv.setAdapter(adapter);
@@ -334,96 +412,17 @@ public abstract class Display extends QueryWrapper {
 				public void onItemClick(AdapterView parent, View v, int position, long id) {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
-					Course c = row_map.get(new Integer(position));
+					c = row_map.get(new Integer(position));
 					if (c == null) {
 						Log.v("Course", "course is null");
 					}
-					final Dialog dialog = new Dialog(Display.this);
-					dialog.setContentView(R.layout.main_dialog);					
 
-					dialog.setTitle(c.getAlias());
-
-					dialog.setCancelable(true);
-					dialog.setCanceledOnTouchOutside(true);
-
-					// Set up title
-					TextView title = (TextView) dialog.findViewById(R.id.CourseContent);
-					title.setTypeface(timesNewRoman);
-					String titleText = 
-							c.getName() + "\n"
-									+ c.getFullSemester() + "\n"
-									+ c.getInstructor().getName() + "\n"
-									+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
-
-					title.setText((CharSequence) titleText);
-
-					//set up comments
-					TextView description = (TextView) dialog.findViewById(R.id.Comments);
-					String ratingString = "Course Quality: " + c.getRatings().getCourseQuality();
-					ratingString += "\nInstructor Quality: " + c.getRatings().getInstructorQuality();
-					ratingString += "\nDifficulty: " + c.getRatings().getDifficulty();
-					ratingString += "\nMajor Recommendation: " + c.getRatings().getRecommendMajor();
-					ratingString += "\nNonmajor Recommendation: " + c.getRatings().getRecommendNonMajor();
-					ratingString += "\nAmount Learned: " + c.getRatings().getAmountLearned();
-					ratingString += "\nWork Required: " + c.getRatings().getWorkRequired()+ "\n\n";
-
-					String commentString = "";
-					if (displayType == KeywordMap.Type.COURSE) {
-						commentString = c.getComments();
-
-					} else if (displayType == KeywordMap.Type.INSTRUCTOR) {
-						commentString = c.getDescription();
-					}
-					if (commentString == null || commentString.equals("null") || commentString.length() < 6) {
-						commentString = "There are no available comments for this course.\n";
-					}
-					ratingString += commentString;
-					description.setText((CharSequence) ratingString);
-
-					//now that the dialog is set up, it's time to show it    
-					dialog.show();
+					showDialog(COURSE_INFO_DIALOG);
 				}
-
 			});
+		}
 
-			break; // end of COURSE and INSTRUCTOR cases
-		case DEPARTMENT:
-
-			// Set the appropriate textview fields for rows
-			firstCol = (TextView) findViewById(R.id.dept_first_tab);
-			secondCol = (TextView) findViewById(R.id.dept_second_tab);
-			thirdCol = (TextView) findViewById(R.id.dept_third_tab);
-
-			row_map_dept = new HashMap<Integer, CourseAverage>(); // Used for mapping row number to Course in the row
-
-			// Iterate through reviews for course and fill table cells
-			Iterator<CourseAverage> iter2 = courseAvgs.iterator();
-
-			while(iter2.hasNext()) {
-				CourseAverage curCourseAvg = iter2.next();
-				Ratings curRatings = curCourseAvg.getRatings();
-
-				// Map the current row number to this Course
-				row_map_dept.put(new Integer(rowNumber), curCourseAvg);
-
-				// Mapping of columnHeader to text in each cell for this row
-				HashMap<String, String> row = new HashMap<String, String>();
-
-				// Course Id
-				row.put("col_1", curCourseAvg.getId());
-				// Course Quality
-				row.put("col_2", ((Double)curRatings.getCourseQuality()).toString());
-				// Instructor Quality
-				row.put("col_3", ((Double)curRatings.getInstructorQuality()).toString());
-				// Difficulty
-				row.put("col_4", ((Double)curRatings.getDifficulty()).toString());
-
-				// Add this row to allRows
-				allRows.add(row);
-
-				rowNumber++;
-			} // while loop
-
+		else {
 			SimpleAdapter adapter_dept = new SimpleAdapter(
 					this, allRows, R.layout.list_row, columnHeaders, cellIds);
 			lv.setAdapter(adapter_dept);
@@ -441,11 +440,9 @@ public abstract class Display extends QueryWrapper {
 					preProcessForNextPage(Constants.COURSE_TAG + c.getId() + " - " + c.getName(), true);
 				}
 			});
+		}
 
-			break; // end of DEPT case
-		} // outer switch
-
-		// Set the longclick listeners 
+		// Set the longclick listeners for only the last 3 columns, default column is never changed
 		firstCol.setOnLongClickListener(new View.OnLongClickListener() {
 
 			@Override
@@ -480,158 +477,132 @@ public abstract class Display extends QueryWrapper {
 	public void onClickSort(View v) {
 		Sorter s = new Sorter();
 
-		switch (displayType) {
-		case COURSE:
-			if(v.getId() == R.id.instructor_tab) {
-				if (sortingField == Sort.INSTRUCTOR_ASC) {
-					courseReviews = s.sortAlphabetically(courseReviews, Type.INSTRUCTOR, 1);
-					sortingField = Sort.INSTRUCTOR_DES;
-				} else {
-					courseReviews = s.sortAlphabetically(courseReviews, Type.INSTRUCTOR, 0);
-					sortingField = Sort.INSTRUCTOR_ASC;
-				}
-			} else if(v.getId() == R.id.course_first_tab) {
-				if (sortingField == Sort.CQ_ASC) {
-					courseReviews = s.sortByRating(courseReviews, "courseQuality", 1);
-					sortingField = Sort.CQ_DES;
-				} else {
-					courseReviews = s.sortByRating(courseReviews, "courseQuality", 0);
-					sortingField = Sort.CQ_ASC;
-				}
-			} else if(v.getId() == R.id.course_second_tab) {
-				if (sortingField == Sort.IQ_ASC) {
-					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 1);
-					sortingField = Sort.IQ_DES;
-				} else {
-					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 0);
-					sortingField = Sort.IQ_ASC;
-				}
-			} else if(v.getId() == R.id.course_third_tab) {
-				if (sortingField == Sort.DIFFICULTY_ASC) {
-					courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
-					sortingField = Sort.DIFFICULTY_DES;
-				} else {
-					courseReviews = s.sortByRating(courseReviews, "difficulty", 0);
-					sortingField = Sort.DIFFICULTY_ASC;
-				}
-			}
-			break;
-		case INSTRUCTOR:
-			if(v.getId() == R.id.course_id_tab) {
-				if (sortingField == Sort.ID_ASC) {
-					courseReviews = s.sortAlphabetically(courseReviews, Type.COURSE, 1);
-					sortingField = Sort.ID_DES;
-				} else {
-					courseReviews = s.sortAlphabetically(courseReviews, Type.COURSE, 0);
-					sortingField = Sort.ID_ASC;
-				}
-			} else if(v.getId() == R.id.inst_first_tab) {
-				if (sortingField == Sort.SEM_ASC) {
-					courseReviews = s.sortBySemester(courseReviews, 1);
-					sortingField = Sort.SEM_DES;
-				} else {
-					courseReviews = s.sortBySemester(courseReviews, 0);
-					sortingField = Sort.SEM_ASC;
-				}
-			} else if(v.getId() == R.id.inst_second_tab) {
-				if (sortingField == Sort.IQ_ASC) {
-					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 1);
-					sortingField = Sort.IQ_DES;
-				} else {
-					courseReviews = s.sortByRating(courseReviews, "instructorQuality", 0);
-					sortingField = Sort.IQ_ASC;
-				}
-			} else if(v.getId() == R.id.inst_third_tab) {
-				if (sortingField == Sort.DIFFICULTY_ASC) {
-					courseReviews = s.sortByRating(courseReviews, "difficulty", 1);
-					sortingField = Sort.DIFFICULTY_DES;
-				} else {
-					courseReviews = s.sortByRating(courseReviews, "difficulty", 0);
-					sortingField = Sort.DIFFICULTY_ASC;
-				}
-			}
-			break;
-		case DEPARTMENT:
-			// Map each CourseAverage into a Course for purposes of calling sorting methods on Courses
-			Map<Course, CourseAverage> courseToCourseAvg = new HashMap<Course, CourseAverage>();
+		ArrayList<Course> temp_courses = new ArrayList<Course>();
+
+		// Map each CourseAverage into a Course for purposes of calling sorting methods on Courses
+		Map<Course, CourseAverage> courseToCourseAvg = new HashMap<Course, CourseAverage>();
+		if (displayType == Type.DEPARTMENT) {
 			for (CourseAverage cAvg : courseAvgs) {
 				Course c = new Course(cAvg.getId(), cAvg.getName(), "", "", "", cAvg.getId(), null, 0,
 						0, cAvg.getPath(), cAvg.getRatings(), null);
 				courseToCourseAvg.put(c, cAvg);
 			}
 
-			// ArrayList of Courses to sort from and into before mapping back to CourseAverages
-			ArrayList<Course> tempCourses = new ArrayList<Course>();
-			for (Course tempCourse : courseToCourseAvg.keySet()) {
-				tempCourses.add(tempCourse);
+			for (Course c : courseToCourseAvg.keySet()) {
+				temp_courses.add(c);
 			}
+		}
+		else {
+			temp_courses = courseReviews;
+		}
 
-			if(v.getId() == R.id.course_id_tab) {
-				if (sortingField == Sort.ID_ASC) {
-					tempCourses = s.sortAlphabetically(tempCourses, Type.COURSE, 1);
-					sortingField = Sort.ID_DES;
-				} else {
-					tempCourses = s.sortAlphabetically(tempCourses, Type.COURSE, 0);
-					sortingField = Sort.ID_ASC;
+		switch (v.getId()) {
+		case R.id.default_tab:
+			// Check if we are sorting desc or asc
+			// DEFAULT tab can only be instructor name or course id
+			if (sortingField == Sort.DEFAULT_ASC) {
+				sortingField = Sort.DEFAULT_DESC;
+				if (defaultColId == Constants.instructorNameId) {
+					temp_courses = s.sortAlphabetically(temp_courses, Type.INSTRUCTOR, 1);
 				}
-			} else if(v.getId() == R.id.dept_first_tab) {
-				if (sortingField == Sort.CQ_ASC) {
-					tempCourses = s.sortByRating(tempCourses, "courseQuality", 1);
-					sortingField = Sort.CQ_DES;
-				} else {
-					tempCourses = s.sortByRating(tempCourses, "courseQuality", 0);
-					sortingField = Sort.CQ_ASC;
-				}
-			} else if(v.getId() == R.id.dept_second_tab) {
-				if (sortingField == Sort.IQ_ASC) {
-					tempCourses = s.sortByRating(tempCourses, "instructorQuality", 1);
-					sortingField = Sort.IQ_DES;
-				} else {
-					tempCourses = s.sortByRating(tempCourses, "instructorQuality", 0);
-					sortingField = Sort.IQ_ASC;
-				}
-			} else if(v.getId() == R.id.dept_third_tab) {
-				if (sortingField == Sort.DIFFICULTY_ASC) {
-					tempCourses = s.sortByRating(tempCourses, "difficulty", 1);
-					sortingField = Sort.DIFFICULTY_DES;
-				} else {
-					tempCourses = s.sortByRating(tempCourses, "difficulty", 0);
-					sortingField = Sort.DIFFICULTY_ASC;
+				else {
+					temp_courses = s.sortAlphabetically(temp_courses, Type.COURSE, 1);
 				}
 			}
+			else {
+				sortingField = Sort.DEFAULT_ASC;
+				if (defaultColId == Constants.instructorNameId) {
+					temp_courses = s.sortAlphabetically(temp_courses, Type.INSTRUCTOR, 0);
+				}
+				else {
+					temp_courses = s.sortAlphabetically(temp_courses, Type.COURSE, 0);
+				}
+			}
+			break;
+		case R.id.first_tab:
+			// Check if we are sorting desc or asc
+			if (sortingField == Sort.FIRST_ASC) {
+				sortingField = Sort.FIRST_DESC;
+				if (firstColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 1);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, firstColId, 1);
+				}
+			}
+			else {
+				sortingField = Sort.FIRST_ASC;
+				if (firstColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 0);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, firstColId, 0);
+				}
+			}
+			break;
+		case R.id.second_tab:
+			// Check if we are sorting desc or asc
+			if (sortingField == Sort.SECOND_ASC) {
+				sortingField = Sort.SECOND_DESC;
+				if (secondColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 1);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, secondColId, 1);
+				}
+			}
+			else {
+				sortingField = Sort.SECOND_ASC;
+				if (secondColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 0);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, secondColId, 0);
+				}
+			}
+			break;
+		case R.id.third_tab:
+			// Check if we are sorting desc or asc
+			if (sortingField == Sort.THIRD_ASC) {
+				sortingField = Sort.THIRD_DESC;
+				if (thirdColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 1);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, thirdColId, 1);
+				}
+			}
+			else {
+				sortingField = Sort.THIRD_ASC;
+				if (thirdColId == Constants.semesterId) {
+					temp_courses = s.sortBySemester(temp_courses, 0);
+				}
+				else {
+					temp_courses = s.sortByRating(temp_courses, thirdColId, 0);
+				}
+			}
+			break;
+		default:
+			break;
+		}
 
-			// Map the sorted Courses back to their sorted Course Averages
+		// Now temp_courses is sorted in order, need to re-insert courseAvg if type is department
+		if (displayType == Type.DEPARTMENT) {
 			courseAvgs = new ArrayList<CourseAverage>();
-			for (int i = 0; i < tempCourses.size(); i++) {
-				courseAvgs.add(courseToCourseAvg.get(tempCourses.get(i)));
+			for (int i = 0; i < temp_courses.size(); i++) {
+				courseAvgs.add(courseToCourseAvg.get(temp_courses.get(i)));
 			}
-			break;
-		default:
-			break;
+		}
+		else {
+			courseReviews = temp_courses;
 		}
 
-		switch (displayType) {
-		case COURSE:
-			findViewById(R.id.instructor_tab).setBackgroundColor(0);
-			findViewById(R.id.course_first_tab).setBackgroundColor(0);
-			findViewById(R.id.course_second_tab).setBackgroundColor(0);
-			findViewById(R.id.course_third_tab).setBackgroundColor(0);
-			break;
-		case INSTRUCTOR:
-			findViewById(R.id.course_id_tab).setBackgroundColor(0);
-			findViewById(R.id.inst_first_tab).setBackgroundColor(0);
-			findViewById(R.id.inst_second_tab).setBackgroundColor(0);
-			findViewById(R.id.inst_third_tab).setBackgroundColor(0);
-			break;
-		case DEPARTMENT:
-			findViewById(R.id.course_id_tab).setBackgroundColor(0);
-			findViewById(R.id.dept_first_tab).setBackgroundColor(0);
-			findViewById(R.id.dept_second_tab).setBackgroundColor(0);
-			findViewById(R.id.dept_third_tab).setBackgroundColor(0);
-			break;
-		default:
-			break;
-		}
+		// Reset background color for all fields
+		defaultCol.setBackgroundColor(0);
+		firstCol.setBackgroundColor(0);
+		secondCol.setBackgroundColor(0);
+		thirdCol.setBackgroundColor(0);
+
 		v.setBackgroundColor(getResources().getColor(R.color.highlight_blue));
 		printReviews(this.displayType);
 	}

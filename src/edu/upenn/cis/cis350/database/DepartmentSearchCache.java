@@ -153,8 +153,6 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 				String course_id = c.getString(5);
 				String course_path = c.getString(6);
 
-				Log.w("DSADA", "Diff is " + c.getBlob(10));
-
 				amountLearned = (c.isNull(7)) ? null : c.getDouble(7);
 				commAbility = (c.isNull(8)) ? null : c.getDouble(8);
 				courseQuality = (c.isNull(9)) ? null : c.getDouble(9);

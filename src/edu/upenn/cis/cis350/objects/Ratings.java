@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis350.objects;
 
-import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
 
 public class Ratings {
@@ -20,14 +19,6 @@ public class Ratings {
 	public Ratings(Double _amountLearned, Double _commAbility, Double _courseQuality, Double _difficulty, Double _instructorAccess,
 			Double _instructorQuality, Double _readingsValue, Double _recommendMajor, Double _recommendNonMajor, Double _stimulateInterest,
 			Double _workRequired) {
-
-		if (_difficulty == null) {
-			Log.w("DIFFICULTY IS NULL", "BAM");
-		}
-		else {
-			Log.w("WTF", "WTF");
-		}
-		
 		this.amountLearned = (_amountLearned!=null) ? _amountLearned.toString() : Constants.NA;
 		this.commAbility = (_commAbility!=null) ? _commAbility.toString() : Constants.NA;
 		this.courseQuality = (_courseQuality!=null) ? _courseQuality.toString() : Constants.NA;

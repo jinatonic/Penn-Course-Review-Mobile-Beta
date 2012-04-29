@@ -31,7 +31,6 @@ import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.backend.Sorter;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
-import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 

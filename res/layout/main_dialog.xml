@@ -2,28 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/bg_blue"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/CourseContent"
-        android:layout_width="fill_parent"
+        android:id="@+id/dialog_course_number"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_navy"
-        android:textSize="16sp"
+        android:background="@color/text_navy"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dialog_course_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_blue"
+        android:lineSpacingExtra="2sp"
+        android:padding="10dp"
+        android:textColor="@color/text_gray"
+        android:textSize="20sp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#FFFFFF" />
 
     <ScrollView
         android:id="@+id/ScrollView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-        <TextView
-            android:id="@+id/Comments"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:background="@layout/bg_gradient"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/RatingsList"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2sp"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/ReviewComments"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

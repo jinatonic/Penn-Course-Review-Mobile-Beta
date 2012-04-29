@@ -59,12 +59,12 @@ public class Constants {
 	public static final String commAbility = "Comm Ability";
 	public static final String courseQuality = "Course Quality";
 	public static final String difficulty = "Difficulty";
-	public static final String instructorAccess = "Instructor Access";
-	public static final String instructorQuality = "Instructor Quality";
+	public static final String instructorAccess = "Instr Access";
+	public static final String instructorQuality = "Instr Quality";
 	public static final String readingsValue = "Readings Value";
 	public static final String recommendMajor = "Rec Major";
 	public static final String recommendNonMajor = "Rec Non-major";
-	public static final String stimulateInterest = "Stimulate Interest";
+	public static final String stimulateInterest = "Stim Interest";
 	public static final String workRequired = "Work Required";
 	
 	public static final String NA = "N/A";

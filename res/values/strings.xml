@@ -10,7 +10,7 @@
     <string name="search_text">Search for a class, professor, or department</string>
     <string name="instructor">Instructor</string>
     <string name="course_quality">Course Quality</string>
-    <string name="instructor_quality">Instructor Quality</string>
+    <string name="instructor_quality">Instr Quality</string>
     <string name="difficulty">Difficulty</string>
     <string name="course_id">Course ID</string>
     <string name="dept_note">*Ratings listed here are averaged over all past course offerings in the department.</string>

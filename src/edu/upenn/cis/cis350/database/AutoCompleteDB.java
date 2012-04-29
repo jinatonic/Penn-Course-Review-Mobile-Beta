@@ -218,7 +218,7 @@ public class AutoCompleteDB {
 	}
 	
 	public KeywordMap getInfoForParser(String keyword, Type type) {
-		keyword = keyword.toLowerCase();
+		keyword = keyword.toLowerCase().replace("'", "''");
 		String query = null;
 		String backup_query = null;
 		if (type == Type.COURSE || type == Type.DEPARTMENT) 

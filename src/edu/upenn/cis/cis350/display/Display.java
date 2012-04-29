@@ -7,10 +7,13 @@ import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +33,7 @@ import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
+import edu.upenn.cis.cis350.objects.Ratings;
 
 public abstract class Display extends QueryWrapper {
 
@@ -248,53 +252,70 @@ public abstract class Display extends QueryWrapper {
 
 		case COURSE_INFO_DIALOG:
 			dialog = new Dialog(Display.this);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			dialog.setContentView(R.layout.main_dialog);					
-
-			dialog.setTitle(c.getAlias());
 
 			dialog.setCancelable(true);
 			dialog.setCanceledOnTouchOutside(true);
 
-			// Set up title
-			TextView title = (TextView) dialog.findViewById(R.id.CourseContent);
+			// Set course Alias (title)
+			TextView title = (TextView) dialog.findViewById(R.id.dialog_course_number);
 			title.setTypeface(timesNewRoman);
-			String titleText = 
-					c.getName() + "\n"
-							+ c.getFullSemester() + "\n"
-							+ c.getInstructor().getName() + "\n"
-							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses\n";
+			String titleText = c.getAlias();
 
 			title.setText((CharSequence) titleText);
+			
+			// Set up course info
+			TextView courseInfo = (TextView) dialog.findViewById(R.id.dialog_course_info);
+			courseInfo.setTypeface(timesNewRoman);
+			String courseInfoText = 
+							c.getName() + "\n"
+							+ c.getFullSemester() + "\n"
+							+ c.getInstructor().getName() + "\n"
+							+ c.getNumReviewers() + "/" + c.getNumStudents() + " responses";
 
-			//set up comments
-			TextView description = (TextView) dialog.findViewById(R.id.Comments);
-			String ratingString = "Course Quality: " + c.getRatings().getCourseQuality();
-			ratingString += "\nInstructor Quality: " + c.getRatings().getInstructorQuality();
-			ratingString += "\nDifficulty: " + c.getRatings().getDifficulty();
-			ratingString += "\nMajor Recommendation: " + c.getRatings().getRecommendMajor();
-			ratingString += "\nNonmajor Recommendation: " + c.getRatings().getRecommendNonMajor();
-			ratingString += "\nAmount Learned: " + c.getRatings().getAmountLearned();
-			ratingString += "\nWork Required: " + c.getRatings().getWorkRequired()+ "\n\n";
+			courseInfo.setText((CharSequence) courseInfoText);
 
-			String commentString = "";
-			if (displayType == KeywordMap.Type.COURSE) {
-				commentString = c.getComments();
+			Ratings ratings = c.getRatings();
+			//Ratings
+			TextView ratingsList = (TextView) dialog.findViewById(R.id.RatingsList);
+			
+			
+			String ratingString = "<b>Amount Learned:</b><pre>\t\t\t\t\t\t</pre>" + ratings.getAmountLearned();
+			ratingString += "<br><b>Communication Ability:</b><pre>\t\t\t</pre>" + ratings.getCommAbility();
+			ratingString += "<br><b>Course Quality:</b><pre>\t\t\t\t\t\t\t</pre>"+ ratings.getCourseQuality();
+			ratingString += "<br><b>Difficulty:</b><pre>\t\t\t\t\t\t\t\t\t\t</pre>" + ratings.getDifficulty();
+			ratingString += "<br><b>Instructor Access:</b><pre>\t\t\t\t\t</pre>" + ratings.getInstructorAccess();
+			ratingString += "<br><b>Instructor Quality:</b><pre>\t\t\t\t\t</pre>" + ratings.getInstructorQuality();
+			ratingString += "<br><b>Readings Value:</b><pre>\t\t\t\t\t\t\t</pre>" + ratings.getReadingsValue();
+			ratingString += "<br><b>Recommend Major:</b><pre>\t\t\t\t\t</pre>" + ratings.getRecommendMajor();
+			ratingString += "<br><b>Recommend Non-major:</b><pre>\t\t</pre>" + ratings.getRecommendNonMajor();
+			ratingString += "<br><b>Stimulate Interest:</b><pre>\t\t\t\t\t</pre>" + ratings.getStimulateInterest();
+			ratingString += "<br><b>Work Required:</b><pre>\t\t\t\t\t\t\t</pre>" + ratings.getWorkRequired() + "<br>";
 
-			} else if (displayType == KeywordMap.Type.INSTRUCTOR) {
-				commentString = c.getDescription();
-			}
+			ratingsList.setText(Html.fromHtml(ratingString));
+
+			TextView reviewComments = (TextView) dialog.findViewById(R.id.ReviewComments);
+			// Comments
+			String commentString = c.getComments();
 			if (commentString == null || commentString.equals("null") || commentString.length() < 6) {
 				commentString = "There are no available comments for this course.\n";
 			}
-			ratingString += commentString;
-			description.setText((CharSequence) ratingString);
+			reviewComments.setText((CharSequence)commentString);
+
+			dialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface arg0) {
+					removeDialog(COURSE_INFO_DIALOG);
+				}
+			});
 
 			return dialog;
 		default:
 			return super.onCreateDialog(id);
 		}
 	}
-	
+
 	public void setColumnId(int newId) {
 		if (selectedCol == firstCol) {
 			firstCol.setText(Constants.fillString[newId]);

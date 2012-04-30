@@ -17,8 +17,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 /**
  * Helper class to access Android SQLite database and store the data for auto text completion
  * The table is populated asynchronously upon application start if it doesn't exist already
- * @author Jinyan
- *
+ * @author Jinyan Cao
  */
 
 public class AutoCompleteDB {

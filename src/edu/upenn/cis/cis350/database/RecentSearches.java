@@ -14,8 +14,7 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 /**
  * Helper class to access Android SQLite database and store the recently searched data for fast access
  * Old data is deleted on application start (e.g. a week old)
- * @author Jinyan
- *
+ * @author Jinyan Cao
  */
 
 public class RecentSearches extends DatabaseHelperClass {

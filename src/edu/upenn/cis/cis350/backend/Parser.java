@@ -14,6 +14,12 @@ import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.Ratings;
 import edu.upenn.cis.cis350.objects.Section;
 
+/**
+ * Main class for retrieving and parsing the necessary information for a given keyword
+ * e.g. CIS, CIS121, Christian Murphy, etc.
+ * @author Charles Kong
+ */
+
 public class Parser {
 
 	Sorter s = new Sorter();

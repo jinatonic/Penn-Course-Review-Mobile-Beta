@@ -42,6 +42,11 @@ import edu.upenn.cis.cis350.backend.EasySSLSocketFactory;
 import edu.upenn.cis.cis350.database.AuthCache;
 import edu.upenn.isc.fastPdfServiceClient.api.FpsPennGroupsHasMember;
 
+/**
+ * Initial page if user hasn't authenticated yet
+ * @author Connie Ho, Cynthia Mai, Jinyan Cao, Charles Kong
+ */
+
 public class AuthenticationPage extends Activity {
 
 	Context context;

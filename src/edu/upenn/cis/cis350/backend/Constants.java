@@ -1,5 +1,11 @@
 package edu.upenn.cis.cis350.backend;
 
+
+/** 
+ * Constants used in application
+ * @author Jinyan Cao
+ */
+
 public class Constants {
 
 	public static final int MAX_ATTEMPTS_FOR_CONNECTION = 3;

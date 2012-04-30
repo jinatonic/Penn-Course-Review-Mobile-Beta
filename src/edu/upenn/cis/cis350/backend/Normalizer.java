@@ -3,6 +3,12 @@ package edu.upenn.cis.cis350.backend;
 import android.util.Log;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+
+/**
+ * Helper class to perform String manipulation for normalization
+ * @author Jinyan Cao
+ */
+
 public class Normalizer {
 
 	/** 

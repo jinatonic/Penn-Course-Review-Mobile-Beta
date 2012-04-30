@@ -11,6 +11,11 @@ import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+/**
+ * Activity that represents the results for a given course
+ * @author Connie Ho, Cynthia Mai
+ */
+
 /* Display all reviews for a specific course */
 public class DisplayReviewsForCourse extends Display {
 

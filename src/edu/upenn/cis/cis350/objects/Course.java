@@ -1,5 +1,10 @@
 package edu.upenn.cis.cis350.objects;
 
+/**
+ * Represents a Course object
+ * @author Charles Kong
+ */
+
 public class Course {
 	
 	private String alias;

@@ -9,6 +9,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 import edu.upenn.isc.fastPdfServiceClient.api.FpsPennGroupsHasMember;
 
+/**
+ * Helper class to process PennKey authentication
+ * @author Charles Kong
+ */
+
 public class PennAuthenticate extends AsyncTask<Void, Void, Boolean>{
 	
 	private String serialNumber;

@@ -9,6 +9,11 @@ import org.json.JSONObject;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+/**
+ * Query class that performs all the necessary JSON parsing for autocomplete information
+ * @author Charles Kong
+ */
+
 public class AutoComplete {
 
 	// Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR

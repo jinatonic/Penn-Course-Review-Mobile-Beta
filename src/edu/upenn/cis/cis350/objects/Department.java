@@ -2,6 +2,11 @@ package edu.upenn.cis.cis350.objects;
 
 import java.util.ArrayList;
 
+/**
+ * Department class
+ * @author Charles Kong
+ */
+
 public class Department {
 	private String name;
 	private String id;

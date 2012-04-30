@@ -23,6 +23,13 @@ import edu.upenn.cis.cis350.backend.AutoComplete;
 import edu.upenn.cis.cis350.backend.Constants;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 
+/**
+ * The main page that follows user authentication
+ * 
+ * @author Connie Ho, Jinyan Cao, Cynthia Mai
+ *
+ */
+
 public class StartPage extends QueryWrapper {
 	private Button searchButton, historyButton, favoritesButton, settingsButton;
 

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import edu.upenn.cis.cis350.backend.Constants;
 
+/**
+ * Represents a Course object with all of its fields averaged across all sections
+ * Used by Departments
+ * @author Charles Kong
+ */
+
 public class CourseAverage {
 	private String name;
 	private String id;

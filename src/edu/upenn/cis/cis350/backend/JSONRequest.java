@@ -11,6 +11,11 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+/**
+ * Helper class to retrieve a JSON Object given a URL
+ * @author Charles Kong
+ */
+
 public class JSONRequest {
 
 	public static JSONObject retrieveJSONObject(String path){

@@ -2,6 +2,11 @@ package edu.upenn.cis.cis350.objects;
 
 import edu.upenn.cis.cis350.backend.Constants;
 
+/**
+ * Ratings (stored as String) for given course/courseaverage
+ * @author Charles Kong, Jinyan Cao
+ */
+
 public class Ratings {
 	private String amountLearned;
 	private String commAbility;

@@ -15,6 +15,11 @@ import edu.upenn.cis.cis350.database.CourseSearchCache;
 import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.database.RecentSearches;
 
+/**
+ * Settings page to clear local data
+ * @author Jinyan Cao
+ */
+
 public class SettingsPage extends Activity {
 
 	// Database pointers

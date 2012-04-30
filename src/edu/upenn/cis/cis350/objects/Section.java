@@ -1,5 +1,10 @@
 package edu.upenn.cis.cis350.objects;
 
+/**
+ * Section
+ * @author Charles Kong
+ */
+
 public class Section {
 	private String alias;
 	private String id;

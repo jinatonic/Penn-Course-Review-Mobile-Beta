@@ -9,6 +9,12 @@ import android.database.SQLException;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
 
+
+/**
+ * Database to maintain PennKey authentication token
+ * @author Jinyan Cao
+ */
+
 public class AuthCache extends DatabaseHelperClass {
 
 	/* TAG for logging purposes */

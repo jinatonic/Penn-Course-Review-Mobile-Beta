@@ -6,6 +6,12 @@ import java.util.Collections;
 import edu.upenn.cis.cis350.objects.Course;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+
+/**
+ * Helper class to sort an array of fields given the criteria 
+ * @author Charles Kong, Connie Ho, Cynthia Mai
+ */
+
 public class Sorter {
 
 	private class Pair implements Comparable<Pair> {

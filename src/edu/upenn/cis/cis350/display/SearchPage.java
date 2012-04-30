@@ -28,6 +28,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import edu.upenn.cis.cis350.backend.Constants;
 
+/**
+ * Main search page
+ * 
+ * @author Connie Ho, Jinyan Cao, Cynthia Mai
+ */
 
 public class SearchPage extends QueryWrapper {
 	private String search_term;

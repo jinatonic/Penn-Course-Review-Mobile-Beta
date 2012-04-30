@@ -43,6 +43,12 @@ import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+/**
+ * Main super class for all of the activities. Contains most of the essential functionalities that all of the activities
+ * require, such as dialogs, option menu, queryhelper, etc.
+ * @author Jinyan Cao
+ */
+
 public class QueryWrapper extends Activity {
 
 	// Database pointers

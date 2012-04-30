@@ -5,6 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+
+/**
+ * Super class that manages most of the local DBs (except for pennkey and autocomplete tables)
+ * @author Jinyan Cao
+ */
+
 public class DatabaseHelperClass {
 
 	protected Context mCtx;

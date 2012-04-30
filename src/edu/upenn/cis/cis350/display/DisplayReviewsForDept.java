@@ -12,6 +12,11 @@ import edu.upenn.cis.cis350.database.DepartmentSearchCache;
 import edu.upenn.cis.cis350.objects.Department;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
+/**
+ * Activity that represents the results for a given department
+ * @author Connie Ho, Cynthia Mai
+ */
+
 /* Display all reviews for a specific dept */
 public class DisplayReviewsForDept extends Display {
 

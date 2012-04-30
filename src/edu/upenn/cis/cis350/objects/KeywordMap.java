@@ -1,5 +1,10 @@
 package edu.upenn.cis.cis350.objects;
 
+/**
+ * KeywordMap that represents the autocomplete data
+ * @author Charles Kong, Jinyan Cao
+ */
+
 public class KeywordMap {
 	private String path;
 	private String name;

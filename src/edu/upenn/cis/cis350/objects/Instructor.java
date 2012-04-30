@@ -1,5 +1,10 @@
 package edu.upenn.cis.cis350.objects;
 
+/**
+ * Instructor class
+ * @author Charles Kong
+ */
+
 public class Instructor {
 	private String id;
 	private String name;

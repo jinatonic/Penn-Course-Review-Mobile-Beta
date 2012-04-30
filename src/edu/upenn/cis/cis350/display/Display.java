@@ -34,6 +34,11 @@ import edu.upenn.cis.cis350.objects.CourseAverage;
 import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 import edu.upenn.cis.cis350.objects.Ratings;
 
+/**
+ * Parent activity for all the result pages
+ * @author Jinyan Cao, Cynthia Mai, Connie Ho
+ */
+
 public abstract class Display extends QueryWrapper {
 
 	public enum Sort { DEFAULT_DESC, DEFAULT_ASC, FIRST_DESC, FIRST_ASC, SECOND_DESC, SECOND_ASC, THIRD_DESC, THIRD_ASC }

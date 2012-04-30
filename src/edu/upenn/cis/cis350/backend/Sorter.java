@@ -35,7 +35,9 @@ public class Sorter {
 		}
 	}
 
-	// Allows for sorting Courses based on Instructor field
+	/**
+	 *  Allows for sorting Courses based on Instructor field
+	 */
 	private class InstructorCourse implements Comparable<InstructorCourse> {
 		Course c;
 		public InstructorCourse(Course c) {
@@ -54,7 +56,9 @@ public class Sorter {
 		}
 	}
 
-	// Allows for sorting Courses based on courseID (alias) field
+	/**
+	 *  Allows for sorting Courses based on courseID (alias) field
+	 */
 	private class IdCourse implements Comparable<IdCourse> {
 		Course c;
 		public IdCourse(Course c) {
@@ -73,9 +77,15 @@ public class Sorter {
 		}
 	}
 
-	// sort list by instructor or course depending on the Type, order = 0 is alphabetical, 1 is reverse
-	// we first have to add the arraylist into a wrapper object InstructorCourse or IdCourse since for instructors
-	// we are sorting by Name, while for courses we are sorting by Course ID (two different fields).
+	/**
+	 * sort list by instructor or course depending on the Type, order
+	 * we first have to add the arraylist into a wrapper object InstructorCourse or IdCourse since for instructors
+	 * we are sorting by Name, while for courses we are sorting by Course ID (two different fields).
+	 * @param courses
+	 * @param sortType
+	 * @param order - 0 is alphabetical, 1 is reverse
+	 * @return
+	 */
 	public ArrayList<Course> sortAlphabetically(ArrayList<Course> courses, Type sortType, int order) {
 		ArrayList<Course> sortedCourses = new ArrayList<Course>();
 		switch (sortType) {
@@ -127,9 +137,11 @@ public class Sorter {
 		return sortedCourses;
 	}
 
-	//sort Arraylist of Courses by semester, order = 0 is increasing, 1 is decreasing
-	//Semester is a string like '2007A' or '2011B' - we first create a wrapper Pair object (implements comparable) that matches 
-	//the semester to the Course object.
+	/**
+	 * sort Arraylist of Courses by semester, order = 0 is increasing, 1 is decreasing
+	 * Semester is a string like '2007A' or '2011B' - we first create a wrapper Pair object (implements comparable) that matches 
+	 * the semester to the Course object.
+	 */
 	public ArrayList<Course> sortBySemester(ArrayList<Course> courses, int order){
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;
@@ -159,7 +171,13 @@ public class Sorter {
 
 	}
 
-	// Sort array according to a specified rating, rRating, and order (0 = increasing, 1 = decreasing)
+	/**
+	 *  Sort array according to a specified rating, rRating, and order
+	 * @param courses
+	 * @param rRating
+	 * @param order - 0 = increasing, 1 = decreasing
+	 * @return
+	 */
 	public ArrayList<Course> sortByRating(ArrayList<Course> courses, int rRating, int order) {
 		Pair [] pairs = new Pair[courses.size()];
 		int count = 0;

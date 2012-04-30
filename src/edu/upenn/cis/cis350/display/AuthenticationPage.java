@@ -129,7 +129,6 @@ public class AuthenticationPage extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Constants.NORMAL_OPEN_REQUEST) {
-			// TODO: check if this is right
 			if (resultCode == RESULT_OK) {
 				this.finish();
 			}
@@ -239,7 +238,6 @@ public class AuthenticationPage extends Activity {
 					}
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					Log.w("Error","should not be here");
 					e.printStackTrace();
 

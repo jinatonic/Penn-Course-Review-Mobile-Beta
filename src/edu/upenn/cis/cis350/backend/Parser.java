@@ -29,27 +29,6 @@ public class Parser {
 
 	public JSONArray getReviewsForDept(KeywordMap dept_map) {
 		String dept_path = dept_map.getPath();
-		/*if(dept == null) return null;
-		dept = dept.trim().toUpperCase();
-
-		//change this stuff once autocomplete works to get dept name, id
-		try{
-			JSONObject all_dept = JSONRequest.retrieveJSONObject(baseURL + "/depts" + token);
-
-		JSONArray dept_array = all_dept.getJSONObject("result").getJSONArray("values");
-		String dept_name = "";
-		String dept_id = "";
-		for(int h = 0; h < dept_array.length(); h ++){
-			if(dept_array.getJSONObject(h).getString("id").equalsIgnoreCase(dept)){
-				dept_name = dept_array.getJSONObject(h).getString("name");
-				dept_id = dept_array.getJSONObject(h).getString("id");
-				break;
-			}
-
-		}
-
-		System.out.println(dept);
-		String path = "/depts/"+dept;*/
 		String url = baseURL + dept_path + token;
 		try{
 			JSONObject json = JSONRequest.retrieveJSONObject(url);
@@ -100,16 +79,11 @@ public class Parser {
 	public JSONArray getReviewsForInstructor(KeywordMap instructor_map){
 		String path = instructor_map.getPath();
 		if (path == null) return null;
-		//String reviewpath = path + "/reviews";
-		//String instructor_name = "GET NAME FROM DATABASE"; //TBD
 		try {
-			//Log.w("PATH", reviewpath);
-
 			JSONObject js = JSONRequest.retrieveJSONObject(baseURL + path + token);
 			JSONArray values = js.getJSONObject("result").getJSONObject("reviews").getJSONArray("values");
 
 			return values;
-			//reviews = createCourseReview(reviewpath, null, instructor_name, null, null);
 		} catch (JSONException e) { 
 			e.printStackTrace();
 			return null;
@@ -142,57 +116,6 @@ public class Parser {
 		if (course_map == null) return null;
 		String course_path = course_map.getPath();
 
-		/*String dept = course.substring(0, course.indexOf('-'));
-
-		String url = baseURL + "/depts/"+ dept + token;
-
-		JSONObject json = JSONRequest.retrieveJSONObject(url);
-		if (json == null) {
-			return null;
-		}
-		JSONObject result = null;
-		JSONArray coursehistories = null;
-		if (json.has("result")) {
-			try {
-				result = (JSONObject)json.get("result");
-				if (result.has("coursehistories")) {
-					coursehistories = (JSONArray)result.getJSONArray("coursehistories");
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}	
-		else {
-			return null;
-		}
-
-
-		String path ="";
-		for (int i = 0; i < coursehistories.length(); ++i) {
-			try {
-				JSONObject j = coursehistories.getJSONObject(i);
-				JSONArray aliases = null;
-				if (j.has("aliases")) {
-					aliases = j.getJSONArray("aliases");
-
-					for (int k = 0; k < aliases.length(); ++k) {
-						if (aliases.getString(k).toLowerCase().equals(course)) {
-							System.out.println(j.toString());
-							path = (String)j.get("path");
-							break;
-						}
-					}
-				}
-				else {
-					return null;
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-		 */
 		System.out.println(course_path);
 		ArrayList<Course> reviews = new ArrayList<Course>();
 		reviews = storeReviews(course_path);
@@ -227,7 +150,6 @@ public class Parser {
 					}
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;
 			}

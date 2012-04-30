@@ -36,7 +36,7 @@ import edu.upenn.cis.cis350.objects.Ratings;
 
 /**
  * Parent activity for all the result pages
- * @author Jinyan Cao, Cynthia Mai, Connie Ho
+ * @author Jinyan Cao, Connie Ho, Cynthia Mai
  */
 
 public abstract class Display extends QueryWrapper {

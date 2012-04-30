@@ -16,9 +16,9 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
 
 public class AutoComplete {
 
-	// Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR
-	// Example format for course: name = "INTRO GREEK ARCHAELOGY", path = "/coursehistories/2", course_id = "AAMW-401", type = COURSE
-	/*This method retrieves various JSONObjects from specified URLS and parses the resulting JSONObject to retrieve various fields
+	/* Example format for instructor: name = "DONAL D FITTS", path = "/instructors/1-DONALD-D-FITTS", course_id = null, type = INSTRUCTOR
+	 * Example format for course: name = "INTRO GREEK ARCHAELOGY", path = "/coursehistories/2", course_id = "AAMW-401", type = COURSE
+	 * This method retrieves various JSONObjects from specified URLS and parses the resulting JSONObject to retrieve various fields
 	 * such as department names, instructor paths, course ids, etc. It stores the result as a KeywordMap object and returns an arraylist of 
 	 * KeywordMaps. 
 	 * 

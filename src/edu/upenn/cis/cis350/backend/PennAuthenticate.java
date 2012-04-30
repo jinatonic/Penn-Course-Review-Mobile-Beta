@@ -43,7 +43,6 @@ public class PennAuthenticate extends AsyncTask<Void, Void, Boolean>{
 		boolean hasMember = new FpsPennGroupsHasMember().assignGroupName("penn:isc:ait:apps:pennCourseReview:groups:pennCourseReviewStudents").assignSubjectSourceId("pennperson").assignSubjectIdentifier(pennKey).executeReturnBoolean();
 		return hasMember;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}

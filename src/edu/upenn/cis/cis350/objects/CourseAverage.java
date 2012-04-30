@@ -124,11 +124,9 @@ public class CourseAverage {
 
 		int temp_amountLearned = (int)((tot_amountLearned/count_amountLearned) * 100);
 		double avg_amountLearned = (double)temp_amountLearned/100.0;
-		//double avg_amountLearned = tot_amountLearned/count_amountLearned;
 
 		int temp_commAbility = (int)((tot_commAbility/count_commAbility) * 100);
 		double avg_commAbility = (double)temp_commAbility/100.0;
-		//double avg_commAbility = tot_commAbility/count_commAbility;
 
 		int temp_courseQuality = (int)((tot_courseQuality/count_courseQuality) * 100);
 		double avg_courseQuality = (double)temp_courseQuality/100.0;
@@ -138,7 +136,6 @@ public class CourseAverage {
 
 		int temp_instructorAccess = (int)((tot_instructorAccess/count_instructorAccess) * 100);
 		double avg_instructorAccess = (double)temp_instructorAccess/100.0;
-		//double avg_instructorAccess = tot_instructorAccess/count_instructorAccess;
 
 		int temp_instructorQuality = (int)((tot_instructorQuality/count_instructorQuality) * 100);
 		double avg_instructorQuality = (double)temp_instructorQuality/100.0;
@@ -164,6 +161,7 @@ public class CourseAverage {
 				(count_readingsValue < 1) ? null : avg_readingsValue, (count_recommendMajor < 1) ? null : avg_recommendMajor,
 				(count_recommendNonMajor < 1) ? null : avg_recommendNonMajor, (count_stimulateInterest < 1) ? null : avg_stimulateInterest,
 				(count_workRequired < 1) ? null : avg_workRequired);
+		
 		return avgRatings;
 	}
 

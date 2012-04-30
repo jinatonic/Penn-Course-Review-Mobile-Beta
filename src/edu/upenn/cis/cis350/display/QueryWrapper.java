@@ -389,6 +389,7 @@ public class QueryWrapper extends Activity {
 				// Add the resulting courses into cache
 				if (courses == null) {
 					Log.w("Parser", "getReviewsForCourse returned null");
+					showErrorToast();
 					return;
 				}
 
@@ -407,7 +408,6 @@ public class QueryWrapper extends Activity {
 
 				if (dept_courses == null) {
 					Log.w("SearchPage Error", "NULL JSONArray returned by getReviewsForDept");
-					// TODO: make toast?
 					return;
 				}
 
@@ -434,6 +434,7 @@ public class QueryWrapper extends Activity {
 								}
 								else {
 									Log.w("SearchPage Error", "NULL CourseAverage is returned by parser");
+									showErrorToast();
 								}
 
 								QueryWrapper.this.runOnUiThread(new Runnable() {
@@ -473,6 +474,7 @@ public class QueryWrapper extends Activity {
 				JSONArray arr = parser.getReviewsForInstructor(input);
 				if (arr == null) {
 					Log.w("Parser", "getReviewsForInstructor returned null JSONArray");
+					showErrorToast();
 					return;
 				}
 
@@ -505,6 +507,15 @@ public class QueryWrapper extends Activity {
 			else {
 				Log.w("ServerQuery", "Running ServerQuery with unknown type, keyword " + input.getAlias());
 			}
+		}
+		
+		private void showErrorToast() {
+			QueryWrapper.this.runOnUiThread(new Runnable() {
+				public void run() {
+					Toast toast = Toast.makeText(QueryWrapper.this, "Connection error. Please try again.", Toast.LENGTH_SHORT);
+					toast.show();
+				}
+			});
 		}
 	}
 

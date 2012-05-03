@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.test;
+package edu.upenn.cis.cis350.test.backend;
 
 import org.json.JSONObject;
 

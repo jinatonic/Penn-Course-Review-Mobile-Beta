@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.test;
+package edu.upenn.cis.cis350.test.database;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,6 @@ public class AutoCompleteDBTest extends AndroidTestCase {
 		cache = new AutoCompleteDB(getContext());
 		cache.open();
 		cache.resetTables();
-		cache.close();
 	}
 	
 	@Override
@@ -40,14 +39,10 @@ public class AutoCompleteDBTest extends AndroidTestCase {
 	}
 	
 	public void test_initialization() {
-		cache.open();
-		
 		assertEquals(0, cache.getSize());
 	}
 	
 	public void test_insertingIntoDB() {
-		cache.open();
-		
 		for (int i=0; i < 100; i++) 
 			cache.addEntries(km);
 		
@@ -55,7 +50,6 @@ public class AutoCompleteDBTest extends AndroidTestCase {
 	}
 	
 	public void test_gettingRecommendation() {
-		cache.open();
 		cache.addEntries(km);
 		
 		String[] result = cache.checkAutocomplete("k1_name");
@@ -75,8 +69,6 @@ public class AutoCompleteDBTest extends AndroidTestCase {
 	}
 	
 	public void test_getInfoForParser() {
-		cache.open();
-		
 		cache.addEntries(km);
 		
 		KeywordMap rs = cache.getInfoForParser("course_id_1", Type.COURSE);

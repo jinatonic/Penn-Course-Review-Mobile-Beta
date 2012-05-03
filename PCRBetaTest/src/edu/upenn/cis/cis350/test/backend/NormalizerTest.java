@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.test;
+package edu.upenn.cis.cis350.test.backend;
 
 import android.test.AndroidTestCase;
 import edu.upenn.cis.cis350.backend.Normalizer;

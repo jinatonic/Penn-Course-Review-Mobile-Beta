@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.test;
+package edu.upenn.cis.cis350.test.database;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 		cache = new CourseSearchCache(getContext());
 		cache.open();
 		cache.resetTables();
-		cache.close();
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
 		Ratings testRatings = new Ratings(4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0);
@@ -37,8 +36,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test initializing the tables and such
 	 */
 	public void test_initialization() {
-		cache.open();
-		
 		ArrayList<Course> rs = cache.getCourse("test", 0);
 		assertEquals(0, rs.size());
 	}
@@ -47,8 +44,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test inserting an element into the table
 	 */
 	public void test_insertingCourse() {
-		cache.open();
-		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
@@ -61,8 +56,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test inserting invalid elements into the table
 	 */
 	public void test_insertingCourseWithInvalidEntries() {
-		cache.open();
-		
 		assertEquals(0, cache.getSize());
 		
 		Section testSection = new Section("CIS-121-001", "12345", "section_path", "Data Structure and Algo", "001");
@@ -82,8 +75,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database based on course alias (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithCourseAlias() {
-		cache.open();
-		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
@@ -102,8 +93,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database based on professor's name (should still have the CIS-121 entry from previous tests)
 	 */
 	public void test_getCourseWithProfName() {
-		cache.open();
-		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		
@@ -122,8 +111,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test getting information from database with invalid input
 	 */
 	public void test_getCourseInvalidEntry() {
-		cache.open();
-		
 		ArrayList<Course> testCourses = cache.getCourse("HAHAHA", 0);
 		
 		assertEquals(0, testCourses.size());
@@ -133,8 +120,6 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 	 * Test resetting the table
 	 */
 	public void test_resetTable() {
-		cache.open();
-		
 		ArrayList<Course> t = new ArrayList<Course>();
 		t.add(testCourse);
 		

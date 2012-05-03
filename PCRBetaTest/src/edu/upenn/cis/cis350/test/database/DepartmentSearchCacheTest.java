@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis350.test;
+package edu.upenn.cis.cis350.test.database;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,6 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 		cache = new DepartmentSearchCache(getContext());
 		cache.open();
 		cache.resetTables();
-		cache.close();
 	}
 	
 	@Override
@@ -37,22 +36,16 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 	}
 	
 	public void test_initialization() {
-		cache.open();
-		
 		assertEquals(0, cache.getSizeDebug());
 	}
 	
 	public void test_insertIntoDB() {
-		cache.open();
-		
 		cache.addDepartment(d);
 		
 		assertEquals(2, cache.getSizeDebug());
 	}
 	
 	public void test_insertDupIntoDB() {
-		cache.open();
-		
 		cache.addDepartment(d);
 		cache.addDepartment(d);
 		
@@ -60,8 +53,6 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 	}
 	
 	public void test_retrievingObj() {
-		cache.open();
-		
 		cache.addDepartment(d);
 		
 		Department rs = cache.getDepartment("lala");
@@ -74,8 +65,6 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 	}
 
 	public void test_ifExists() {
-		cache.open();
-		
 		cache.addDepartment(d);
 		
 		assertTrue(cache.ifExistsInDB("d_id"));
@@ -83,8 +72,6 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 	}
 	
 	public void test_clearDB() {
-		cache.open();
-		
 		cache.addDepartment(d);
 		
 		assertEquals(2, cache.getSizeDebug());

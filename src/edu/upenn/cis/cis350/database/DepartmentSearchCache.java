@@ -199,4 +199,15 @@ public class DepartmentSearchCache extends DatabaseHelperClass {
 
 		return num * Constants.DEPARTMENT_CACHE_ROW_SIZE / 1000;
 	}
+	
+	/**
+	 * Used for unit testing
+	 * @return
+	 */
+	public int getSizeDebug() {
+		Cursor c = mDb.rawQuery("SELECT count(*) AS num FROM " + DEPARTMENT_TABLE, null);
+		c.moveToFirst();
+		
+		return c.getInt(c.getColumnIndex("num"));
+	}
 }

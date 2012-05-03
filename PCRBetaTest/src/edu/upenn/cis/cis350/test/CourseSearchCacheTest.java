@@ -54,7 +54,7 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 		
 		cache.addCourse(t, 0);
 		
-		assertEquals(1, cache.getSize());
+		assertEquals(0, cache.getSize());
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 		assertEquals("12", testCourses.get(0).getID());
 		assertEquals("123", testCourses.get(0).getInstructor().getID());
 		assertEquals("12345", testCourses.get(0).getSection().getID());
-		assertEquals(4.0, testCourses.get(0).getRatings().getAmountLearned());
+		assertEquals("4.0", testCourses.get(0).getRatings().getAmountLearned());
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class CourseSearchCacheTest extends AndroidTestCase {
 		assertEquals("12", testCourses.get(0).getID());
 		assertEquals("123", testCourses.get(0).getInstructor().getID());
 		assertEquals("12345", testCourses.get(0).getSection().getID());
-		assertEquals(4.0, testCourses.get(0).getRatings().getAmountLearned());
+		assertEquals("4.0", testCourses.get(0).getRatings().getAmountLearned());
 	}
 	
 	/**

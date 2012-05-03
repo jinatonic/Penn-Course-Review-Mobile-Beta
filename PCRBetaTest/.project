@@ -35,12 +35,12 @@
 		<link>
 			<name>code_source</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/PCRBeta/src</locationURI>
+			<location>C:/Users/Jinyan/workspace/PCRBeta/src</location>
 		</link>
 		<link>
 			<name>source_dir</name>
 			<type>2</type>
-			<location>/Users/hoconnie/Documents/Penn junior year/CIS350/Penn-Course-Review-Mobile-Beta/src</location>
+			<location>C:/Users/hoconnie/Documents/Penn junior year/CIS350/Penn-Course-Review-Mobile-Beta/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

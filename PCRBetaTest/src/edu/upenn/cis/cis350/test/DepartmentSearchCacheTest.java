@@ -39,7 +39,7 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 	public void test_initialization() {
 		cache.open();
 		
-		assertEquals(0, cache.getSize());
+		assertEquals(0, cache.getSizeDebug());
 	}
 	
 	public void test_insertIntoDB() {
@@ -47,7 +47,7 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 		
 		cache.addDepartment(d);
 		
-		assertEquals(2, cache.getSize());
+		assertEquals(2, cache.getSizeDebug());
 	}
 	
 	public void test_insertDupIntoDB() {
@@ -56,7 +56,7 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 		cache.addDepartment(d);
 		cache.addDepartment(d);
 		
-		assertEquals(4, cache.getSize());	// we actually allow this
+		assertEquals(4, cache.getSizeDebug());	// we actually allow this
 	}
 	
 	public void test_retrievingObj() {
@@ -87,11 +87,11 @@ public class DepartmentSearchCacheTest extends AndroidTestCase {
 		
 		cache.addDepartment(d);
 		
-		assertEquals(2, cache.getSize());
+		assertEquals(2, cache.getSizeDebug());
 		
 		cache.resetTables();
 		
-		assertEquals(0, cache.getSize());
+		assertEquals(0, cache.getSizeDebug());
 	}
 	
 }

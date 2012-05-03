@@ -434,7 +434,7 @@ public abstract class Display extends QueryWrapper {
 					this, allRows, R.layout.list_row, columnHeaders, cellIds);
 			lv.setAdapter(adapter);
 			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				public void onItemClick(AdapterView parent, View v, int position, long id) {
+				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
 					c = row_map.get(new Integer(position));
@@ -452,7 +452,7 @@ public abstract class Display extends QueryWrapper {
 					this, allRows, R.layout.list_row, columnHeaders, cellIds);
 			lv.setAdapter(adapter_dept);
 			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				public void onItemClick(AdapterView parent, View v, int position, long id) {
+				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 					Log.v("position", ""+position);
 					Log.v("id",""+id);
 					CourseAverage c = row_map_dept.get(new Integer(position));

@@ -68,7 +68,7 @@ public class RecentSearches extends DatabaseHelperClass {
 	 * Get the next integer for primary key
 	 * @param type - 0 for recent, 1 for favorites
 	 */
-	private int getNextPK(int type) {
+	public int getNextPK(int type) {
 		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
 		String query = "SELECT s_id FROM " + table + " ORDER BY s_id DESC LIMIT 1";
 		Cursor c = mDb.rawQuery(query, null);
@@ -201,5 +201,12 @@ public class RecentSearches extends DatabaseHelperClass {
 		int num = c.getInt(c.getColumnIndex("num"));
 		
 		return ((double)num * Constants.FAVORITE_ROW_SIZE) / 1000;
+	}
+	
+	public int getSizeDebug(int type) {
+		String table = (type == 0) ? SEARCHES_TABLE : FAVORITES_TABLE;
+		Cursor c = mDb.rawQuery("SELECT COUNT(*) as num FROM " + table , null);
+		c.moveToFirst();
+		return c.getInt(c.getColumnIndex("num"));
 	}
 }

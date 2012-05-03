@@ -36,6 +36,11 @@ public class Course {
 		this.ratings = _ratings;
 		this.section = _section;
 	}
+	
+	// For unit testing
+	public Course(Ratings _ratings) {
+		this.ratings = _ratings;
+	}
 
 	public String getAlias() { return alias; }
 	public String getName() { return name; }

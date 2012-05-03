@@ -93,7 +93,7 @@ public class CourseAverage {
 			}
 			if(!r.getInstructorAccess().equals(Constants.NA)){
 				tot_instructorAccess += new Double(r.getInstructorAccess());
-				count_instructorAccess += new Double(r.getInstructorAccess());
+				count_instructorAccess += 1;
 			}
 			if(!r.getInstructorQuality().equals(Constants.NA)){
 				tot_instructorQuality += new Double(r.getInstructorQuality());

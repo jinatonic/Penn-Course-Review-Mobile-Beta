@@ -46,14 +46,5 @@ public class PennAuthenticate extends AsyncTask<Void, Void, Boolean>{
 			e.printStackTrace();
 			return false;
 		}
-		
-		
-
 	}
-	
-
-
 }
-
-
-

@@ -88,7 +88,6 @@ public class AutoComplete {
 							dept_path = dpt.getString("path");
 						KeywordMap deptMap = new KeywordMap(dept_path, dept_name, dept_id, Type.DEPARTMENT);
 						keywordMap.add(deptMap);
-
 					}
 				}
 			}

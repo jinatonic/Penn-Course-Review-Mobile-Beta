@@ -21,7 +21,18 @@ public class DatabaseHelperClass {
 	private final static String TAG = "DBHelperClass";
 	
 	protected static final String DATABASE_NAME = "ResultsCache";
-	protected static final int DATABASE_VERSION = 5;
+	protected static final int DATABASE_VERSION = 8;
+	
+	protected static final String AUTOCOMPLETE_TABLE = "AutoCompleteEntries";
+	
+	/* Query strings */
+	protected static final String AUTOCOMPLETE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + AUTOCOMPLETE_TABLE + " (" +
+			"path char(50) NOT NULL," +
+			"name char(50) NOT NULL," +
+			"course_id char(50)," +
+			"course_id_norm char(50)," +
+			"type int NOT NULL," +		// 0 - course, 1 - instructor, 2 - department
+			"year int NOT NULL)";	
 	
 	protected static final String COURSE_TABLE = "CourseResults";
 	protected static final String COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + COURSE_TABLE + " (" +
@@ -92,7 +103,7 @@ public class DatabaseHelperClass {
 	
 	protected static final String AUTHENTICATION_TABLE = "AuthenticationTable";
 	protected static final String AUTHENTICATION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + AUTHENTICATION_TABLE + " (" +
-			"auth_key char(10) NOT NULL," +
+			"auth_key char(10) PRIMARY KEY NOT NULL," +
 			"year integer NOT NULL," +
 			"day integer NOT NULL)";
 	
@@ -105,6 +116,8 @@ public class DatabaseHelperClass {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+        	db.execSQL(AUTOCOMPLETE_TABLE_CREATE);
+        	db.execSQL(AUTHENTICATION_TABLE_CREATE);
             db.execSQL(COURSE_TABLE_CREATE);
             db.execSQL(DEPARTMENT_TABLE_CREATE);
             db.execSQL(FAVORITES_TABLE_CREATE);
@@ -115,6 +128,8 @@ public class DatabaseHelperClass {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
+            db.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + AUTHENTICATION_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + DEPARTMENT_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE);

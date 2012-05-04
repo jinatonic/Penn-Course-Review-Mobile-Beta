@@ -274,7 +274,7 @@ public class StartPage extends QueryWrapper {
 			try {
 				// Make sure all of the queries complete executing before proceeding
 				executor.shutdown();
-				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 				publishMessage("Saving data to database...", progress);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

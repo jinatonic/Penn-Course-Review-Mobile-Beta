@@ -155,10 +155,10 @@ public class CourseSearchCache extends DatabaseHelperClass {
 
 		// First try to match based on course alias
 		String query = null;
-		if (type == 0)
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + 0;
+		if (type == Constants.COURSE_ID)
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(course_alias)='" + keyword + "' AND type=" + Constants.COURSE_ID;
 		else
-			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + 1;
+			query = "SELECT * FROM " + COURSE_TABLE + " WHERE LOWER(instructor_name)='" + keyword + "' AND type=" + Constants.INSTRUCTOR_ID;
 
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();

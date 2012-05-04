@@ -6,8 +6,6 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 import edu.upenn.cis.cis350.backend.Constants;
@@ -20,48 +18,12 @@ import edu.upenn.cis.cis350.objects.KeywordMap.Type;
  * @author Jinyan Cao
  */
 
-public class AutoCompleteDB {
+public class AutoCompleteDB extends DatabaseHelperClass {
 	
-	private final Context mCtx;
-	private DatabaseHelper mDbHelper;
-	private SQLiteDatabase mDb;
-	
-	/* Database and table names */
-	private static final String DATABASE_NAME = "AutoComplete";
-	private static final String AUTOCOMPLETE_TABLE = "AutoCompleteEntries";
-	private static final int DATABASE_VERSION = 2;
-	
-	/* Query strings */
-	private static final String AUTOCOMPLETE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + AUTOCOMPLETE_TABLE + " (" +
-			"path char(50)," +
-			"name char(50)," +
-			"course_id char(50)," +
-			"course_id_norm char(50)," +
-			"type int NOT NULL," +		// 0 - course, 1 - instructor, 2 - department
-			"year int NOT NULL)";	
-	
+
 	/* TAG for logging purposes */
 	private static final String TAG = "AutoComplete";
-
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(AUTOCOMPLETE_TABLE_CREATE);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + AUTOCOMPLETE_TABLE);
-            onCreate(db);
-        }
-    }
+	
 	
 	public AutoCompleteDB(Context ctx) {
 		this.mCtx = ctx;
@@ -100,8 +62,8 @@ public class AutoCompleteDB {
 		mDb.beginTransaction();
 		
 		final int year = Calendar.getInstance().get(Calendar.YEAR);
-		final int type = (keywords.get(0).getType() == Type.COURSE) ? 0 : 
-			(keywords.get(0).getType() == Type.INSTRUCTOR) ? 1 : 2;
+		final int type = (keywords.get(0).getType() == Type.COURSE) ? Constants.COURSE_ID : 
+			(keywords.get(0).getType() == Type.INSTRUCTOR) ? Constants.INSTRUCTOR_ID : Constants.DEPARTMENT_ID;
 
 		if (keywords.get(0).getAlias() == null)
 			Log.w(TAG, "adding " + keywords.size() + " instructors to database");
@@ -156,7 +118,7 @@ public class AutoCompleteDB {
 		ArrayList<String> result = new ArrayList<String>();
 		
 		// We query for department first, then courses, then instructors, assuming that instructors will be least common query
-		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm = '" + keyword + "' AND type=2";
+		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm = '" + keyword + "' AND type=" + Constants.DEPARTMENT_ID;
 		Cursor c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		if (c.getCount() == 1) {
@@ -168,7 +130,7 @@ public class AutoCompleteDB {
 		
 		// Then we query for courses
 		query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE course_id_norm LIKE '" + 
-					keyword + "%' AND type=0 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+					keyword + "%' AND type=" + Constants.COURSE_ID + " LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
 		c = mDb.rawQuery(query, null);
 		c.moveToFirst();
 		if (c.getCount() > 0) {
@@ -185,7 +147,7 @@ public class AutoCompleteDB {
 		// Then we query for instructor (if and only if we didn't find enough course/departments
 		if (result.size() < Constants.MAX_AUTOCOMPLETE_RESULT) {
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name) LIKE '%" + 
-						keyword + "%' AND type != 2 LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
+						keyword + "%' AND type!=" + Constants.DEPARTMENT_ID + " LIMIT " + Constants.MAX_AUTOCOMPLETE_RESULT;
 			c = mDb.rawQuery(query, null);
 			c.moveToFirst();
 			if (c.getCount() > 0) {
@@ -223,7 +185,7 @@ public class AutoCompleteDB {
 		if (type == Type.COURSE || type == Type.DEPARTMENT) 
 			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(course_id_norm) LIKE '%" + keyword + "%' LIMIT 1";
 		else if (type == Type.INSTRUCTOR) 
-			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' LIMIT 1";
+			query = "SELECT * FROM " + AUTOCOMPLETE_TABLE + " WHERE LOWER(name)='" + keyword + "' AND type=" + Constants.INSTRUCTOR_ID + " LIMIT 1";
 		else {
 			// UNKNOWN type, find best match
 			// normalize input first
@@ -257,8 +219,8 @@ public class AutoCompleteDB {
 		String name = c.getString(c.getColumnIndex("name"));
 		String course_id = c.getString(c.getColumnIndex("course_id"));
 		int dbtype = c.getInt(c.getColumnIndex("type"));
-		Type convertedType = (dbtype == 0) ? Type.COURSE : (dbtype == 1) ? Type.INSTRUCTOR : 
-								(dbtype == 2) ? Type.DEPARTMENT : Type.UNKNOWN;
+		Type convertedType = (dbtype == Constants.COURSE_ID) ? Type.COURSE : (dbtype == Constants.INSTRUCTOR_ID) ? Type.INSTRUCTOR : 
+								(dbtype == Constants.DEPARTMENT_ID) ? Type.DEPARTMENT : Type.UNKNOWN;
 		
 		Log.w("AutocompleteDB", "result, path: " + path + " name: " + name + " course_id: " + course_id);
 		

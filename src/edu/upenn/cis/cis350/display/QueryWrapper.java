@@ -257,7 +257,7 @@ public class QueryWrapper extends Activity {
 		switch (type) {
 		case COURSE:
 			courseSearchCache.open();
-			if (courseSearchCache.ifExistsInDB(keyword, 0)) {
+			if (courseSearchCache.ifExistsInDB(keyword, Constants.COURSE_ID)) {
 				courseSearchCache.close();
 				return true;
 			}
@@ -273,7 +273,7 @@ public class QueryWrapper extends Activity {
 			return false;
 		case INSTRUCTOR:
 			courseSearchCache.open();
-			if (courseSearchCache.ifExistsInDB(keyword, 1)) {
+			if (courseSearchCache.ifExistsInDB(keyword, Constants.INSTRUCTOR_ID)) {
 				courseSearchCache.close();
 				return true;
 			}
@@ -394,7 +394,7 @@ public class QueryWrapper extends Activity {
 				}
 
 				courseSearchCache.open();
-				courseSearchCache.addCourse(courses, 0);
+				courseSearchCache.addCourse(courses, Constants.COURSE_ID);
 				courseSearchCache.close();
 			}
 			else if (input.getType() == Type.DEPARTMENT) {
@@ -453,7 +453,7 @@ public class QueryWrapper extends Activity {
 				try {
 					// Make sure all of the queries complete executing before proceeding
 					executor.shutdown();
-					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -495,13 +495,13 @@ public class QueryWrapper extends Activity {
 				try {
 					// Make sure all of the queries complete executing before proceeding
 					executor.shutdown();
-					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				courseSearchCache.open();
-				courseSearchCache.addCourse(courses, 1);
+				courseSearchCache.addCourse(courses, Constants.INSTRUCTOR_ID);
 				courseSearchCache.close();
 			}
 			else {

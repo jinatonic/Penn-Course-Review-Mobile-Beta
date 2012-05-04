@@ -44,7 +44,7 @@ public class DisplayReviewsForInstructor extends Display {
 		// Search database first
 		CourseSearchCache cache = new CourseSearchCache(this.getApplicationContext());
 		cache.open();
-		courseReviews = cache.getCourse(name, 1);
+		courseReviews = cache.getCourse(name, Constants.INSTRUCTOR_ID);
 		cache.close();
 
 		// Check whether heart icon should be set or not

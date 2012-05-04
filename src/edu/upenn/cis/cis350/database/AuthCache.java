@@ -30,7 +30,7 @@ public class AuthCache extends DatabaseHelperClass {
 	 * @throws SQLException
 	 */
 	public AuthCache open() throws SQLException {
-		Log.w(TAG, "Opening RecentSearches");
+		Log.w(TAG, "Opening authentication table");
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
 		mDb.execSQL(AUTHENTICATION_TABLE_CREATE);
